@@ -1,0 +1,26 @@
+{
+  "name": "developer-project-board",
+  "version": "0.0.1",
+  "description": "개발자 프로젝트 게시판",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": [
+    "portfolio",
+    "projects",
+    "dashboard",
+    "web",
+    "html",
+    "javascript",
+    "nodejs",
+    "dynamic",
+    "filesystem"
+  ],
+  "author": "Developer",
+  "license": "MIT",
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>섯다 게임</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="game-container">
+        <header>
+            <h1>섯다 게임</h1>
+            <div class="game-info">
+                <div class="pot">판돈: <span id="pot-amount">0</span>원</div>
+                <div class="round">라운드: <span id="round-number">1</span></div>
+            </div>
+        </header>
+
+        <div class="game-board">
+            <div class="opponent-area">
+                <div class="player opponent" id="opponent">
+                    <div class="player-info">
+                        <span class="player-name">상대방</span>
+                        <span class="player-money">보유금: <span id="opponent-money">10000</span>원</span>
+                    </div>
+                    <div class="cards">
+                        <div class="card back" id="opponent-card1"></div>
+                        <div class="card back" id="opponent-card2"></div>
+                    </div>
+                    <div class="player-action" id="opponent-action"></div>
+                </div>
+            </div>
+
+            <div class="center-area">
+                <div class="betting-controls">
+                    <button id="call-btn" class="action-btn">콜</button>
+                    <button id="raise-btn" class="action-btn">레이즈</button>
+                    <button id="fold-btn" class="action-btn">폴드</button>
+                </div>
+                <div class="bet-amount-controls">
+                    <input type="number" id="bet-input" min="100" step="100" placeholder="베팅 금액">
+                    <button id="confirm-bet">베팅</button>
+                </div>
+            </div>
+
+            <div class="player-area">
+                <div class="player user" id="player">
+                    <div class="cards">
+                        <div class="card" id="player-card1"></div>
+                        <div class="card" id="player-card2"></div>
+                    </div>
+                    <div class="player-info">
+                        <span class="player-name">나</span>
+                        <span class="player-money">보유금: <span id="player-money">10000</span>원</span>
+                    </div>
+                    <div class="hand-rank" id="hand-rank"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="game-status">
+            <div id="game-message">게임을 시작합니다!</div>
+        </div>
+
+        <div class="game-controls">
+            <button id="new-game-btn" class="control-btn">새 게임</button>
+            <button id="rules-btn" class="control-btn">규칙 보기</button>
+        </div>
+    </div>
+
+    <div id="rules-modal" class="modal hidden">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>섯다 게임 규칙</h2>
+            <div class="rules-content">
+                <h3>기본 규칙</h3>
+                <ul>
+                    <li>화투 20장(1월~10월)을 사용합니다.</li>
+                    <li>각 플레이어는 2장의 카드를 받습니다.</li>
+                    <li>베팅 후 카드를 공개하여 족보로 승부합니다.</li>
+                </ul>
+                
+                <h3>족보 순위 (높은 순)</h3>
+                <ol>
+                    <li><strong>38광</strong> - 3월 광패 + 8월 광패</li>
+                    <li><strong>13광</strong> - 1월 광패 + 3월 광패</li>
+                    <li><strong>18광</strong> - 1월 광패 + 8월 광패</li>
+                    <li><strong>10땡</strong> - 10월 + 10월</li>
+                    <li><strong>9땡</strong> - 9월 + 9월</li>
+                    <li><strong>8땡</strong> - 8월 + 8월</li>
+                    <li><strong>7땡</strong> - 7월 + 7월</li>
+                    <li><strong>6땡</strong> - 6월 + 6월</li>
+                    <li><strong>5땡</strong> - 5월 + 5월</li>
+                    <li><strong>4땡</strong> - 4월 + 4월</li>
+                    <li><strong>3땡</strong> - 3월 + 3월</li>
+                    <li><strong>2땡</strong> - 2월 + 2월</li>
+                    <li><strong>1땡</strong> - 1월 + 1월</li>
+                    <li><strong>알리</strong> - 1월 + 2월</li>
+                    <li><strong>독사</strong> - 1월 + 4월</li>
+                    <li><strong>구삥</strong> - 1월 + 9월</li>
+                    <li><strong>장삥</strong> - 1월 + 10월</li>
+                    <li><strong>장사</strong> - 4월 + 10월</li>
+                    <li><strong>세륙</strong> - 3월 + 6월</li>
+                    <li><strong>9끗</strong> - 두 패의 합이 19</li>
+                    <li><strong>8끗</strong> - 두 패의 합이 18</li>
+                    <li>...</li>
+                    <li><strong>0끗</strong> - 두 패의 합이 10, 20</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+
+    <!-- 분리된 클래스 파일들을 의존성 순서대로 로드 -->
+    <!-- 기초 클래스들 -->
+    <script src="SoundManager.js"></script>
+    <script src="GameLogic.js"></script>
+    <script src="AIPlayer.js"></script>
+    <script src="UIManager.js"></script>
+    
+    <!-- 컨트롤러 클래스들 -->
+    <script src="GameController.js"></script>
+    <script src="PlayerActions.js"></script>
+    <script src="AIController.js"></script>
+    
+    <!-- 메인 매니저 클래스 -->
+    <script src="GameManager.js"></script>
+</body>
+</html>

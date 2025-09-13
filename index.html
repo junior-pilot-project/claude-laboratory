@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>개발자 프로젝트 게시판</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>개발자 프로젝트 게시판</h1>
+        <div class="stats" id="projectStats">
+            <span id="totalProjects">0개 프로젝트</span>
+            <span id="totalDevelopers">0명 개발자</span>
+        </div>
+    </header>
+
+    <main>
+        <div class="search-bar">
+            <input type="text" id="searchInput" placeholder="프로젝트 또는 개발자 검색...">
+        </div>
+
+        <div class="filter-bar">
+            <select id="developerFilter">
+                <option value="all">모든 개발자</option>
+            </select>
+            
+            <select id="categoryFilter">
+                <option value="all">모든 프로젝트</option>
+                <option value="project">프로젝트</option>
+            </select>
+
+            <button id="viewModeToggle" class="view-toggle">그룹 보기</button>
+        </div>
+
+        <div id="projectList" class="project-list">
+            <!-- 프로젝트 목록이 여기에 동적으로 추가됩니다 -->
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
