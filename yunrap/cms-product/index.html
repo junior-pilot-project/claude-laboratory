@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CMS 상품등록 시스템</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>상품 관리 시스템</h1>
+            <div class="header-actions">
+                <button class="btn btn-primary" id="addProductBtn">새 상품 등록</button>
+                <button class="btn btn-secondary" id="viewProductsBtn">상품 목록</button>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <!-- 상품 등록 폼 -->
+            <section class="product-form-section" id="productFormSection">
+                <div class="form-header">
+                    <h2>상품 등록</h2>
+                    <div class="category-selector">
+                        <label for="categorySelect">카테고리:</label>
+                        <select id="categorySelect" class="form-select">
+                            <option value="">카테고리 선택</option>
+                            <option value="electronics">전자제품</option>
+                            <option value="clothing">의류</option>
+                            <option value="food">식품</option>
+                            <option value="books">도서</option>
+                            <option value="beauty">뷰티</option>
+                            <option value="sports">스포츠</option>
+                            <option value="home">생활용품</option>
+                        </select>
+                        <button type="button" class="btn btn-sm" id="addCategoryBtn">+ 카테고리 추가</button>
+                    </div>
+                </div>
+
+                <form class="product-form" id="productForm">
+                    <!-- 기본 정보 -->
+                    <fieldset class="form-section">
+                        <legend>기본 정보</legend>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="productName">상품명 *</label>
+                                <input type="text" id="productName" name="productName" required class="form-input">
+                            </div>
+                            <div class="form-group">
+                                <label for="productCode">상품코드</label>
+                                <input type="text" id="productCode" name="productCode" class="form-input">
+                                <button type="button" class="btn btn-sm" id="generateCodeBtn">자동생성</button>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="brand">브랜드</label>
+                                <input type="text" id="brand" name="brand" class="form-input">
+                            </div>
+                            <div class="form-group">
+                                <label for="manufacturer">제조사</label>
+                                <input type="text" id="manufacturer" name="manufacturer" class="form-input">
+                            </div>
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="description">상품 설명</label>
+                            <textarea id="description" name="description" rows="4" class="form-textarea"></textarea>
+                        </div>
+                    </fieldset>
+
+                    <!-- 가격 정보 -->
+                    <fieldset class="form-section">
+                        <legend>가격 정보</legend>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="originalPrice">정가 *</label>
+                                <input type="number" id="originalPrice" name="originalPrice" required class="form-input" min="0">
+                            </div>
+                            <div class="form-group">
+                                <label for="salePrice">판매가</label>
+                                <input type="number" id="salePrice" name="salePrice" class="form-input" min="0">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="discount">할인율 (%)</label>
+                                <input type="number" id="discount" name="discount" class="form-input" min="0" max="100">
+                            </div>
+                            <div class="form-group">
+                                <label for="taxType">과세 구분</label>
+                                <select id="taxType" name="taxType" class="form-select">
+                                    <option value="taxable">과세</option>
+                                    <option value="tax-free">면세</option>
+                                    <option value="zero-rate">영세율</option>
+                                </select>
+                            </div>
+                        </div>
+                    </fieldset>
+
+                    <!-- 재고 정보 -->
+                    <fieldset class="form-section">
+                        <legend>재고 정보</legend>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="stockQuantity">재고 수량</label>
+                                <input type="number" id="stockQuantity" name="stockQuantity" class="form-input" min="0">
+                            </div>
+                            <div class="form-group">
+                                <label for="minStock">최소 재고</label>
+                                <input type="number" id="minStock" name="minStock" class="form-input" min="0">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="stockStatus">재고 상태</label>
+                                <select id="stockStatus" name="stockStatus" class="form-select">
+                                    <option value="in-stock">재고 있음</option>
+                                    <option value="low-stock">재고 부족</option>
+                                    <option value="out-of-stock">품절</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="trackStock">재고 추적</label>
+                                <input type="checkbox" id="trackStock" name="trackStock" class="form-checkbox">
+                            </div>
+                        </div>
+                    </fieldset>
+
+                    <!-- 동적 속성 필드 -->
+                    <fieldset class="form-section" id="dynamicFields">
+                        <legend>카테고리별 속성</legend>
+                        <div id="categorySpecificFields" class="category-fields">
+                            <!-- 카테고리 선택에 따라 동적으로 생성됨 -->
+                        </div>
+                    </fieldset>
+
+                    <!-- 이미지 업로드 -->
+                    <fieldset class="form-section">
+                        <legend>상품 이미지</legend>
+                        <div class="image-upload-area">
+                            <div class="upload-zone" id="imageUploadZone">
+                                <div class="upload-content">
+                                    <div class="upload-icon">📷</div>
+                                    <p>이미지를 드래그하거나 클릭하여 업로드</p>
+                                    <input type="file" id="imageUpload" multiple accept="image/*" hidden>
+                                </div>
+                            </div>
+                            <div class="image-preview-container" id="imagePreviewContainer">
+                                <!-- 업로드된 이미지 미리보기 -->
+                            </div>
+                        </div>
+                    </fieldset>
+
+                    <!-- 폼 액션 -->
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="cancelBtn">취소</button>
+                        <button type="button" class="btn btn-success" id="saveAsDraftBtn">임시저장</button>
+                        <button type="submit" class="btn btn-primary">상품 등록</button>
+                    </div>
+                </form>
+            </section>
+
+            <!-- 상품 목록 -->
+            <section class="product-list-section" id="productListSection" style="display: none;">
+                <div class="list-header">
+                    <h2>등록된 상품</h2>
+                    <div class="list-controls">
+                        <input type="text" id="searchInput" placeholder="상품명, 브랜드, 코드로 검색..." class="form-input">
+                        <select id="categoryFilter" class="form-select">
+                            <option value="">전체 카테고리</option>
+                        </select>
+                        <select id="statusFilter" class="form-select">
+                            <option value="">전체 상태</option>
+                            <option value="active">활성</option>
+                            <option value="draft">임시저장</option>
+                            <option value="inactive">비활성</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="product-table-container">
+                    <table class="product-table" id="productTable">
+                        <thead>
+                            <tr>
+                                <th>이미지</th>
+                                <th>상품명</th>
+                                <th>카테고리</th>
+                                <th>브랜드</th>
+                                <th>정가</th>
+                                <th>판매가</th>
+                                <th>재고</th>
+                                <th>상태</th>
+                                <th>등록일</th>
+                                <th>관리</th>
+                            </tr>
+                        </thead>
+                        <tbody id="productTableBody">
+                            <!-- 상품 목록이 동적으로 생성됨 -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- 모달창들 -->
+    <div class="modal" id="categoryModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>새 카테고리 추가</h3>
+                <button class="modal-close" id="closeCategoryModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="newCategoryName">카테고리명</label>
+                    <input type="text" id="newCategoryName" class="form-input">
+                </div>
+                <div class="form-group">
+                    <label for="newCategoryCode">카테고리 코드</label>
+                    <input type="text" id="newCategoryCode" class="form-input">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelCategoryBtn">취소</button>
+                <button class="btn btn-primary" id="saveCategoryBtn">추가</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
