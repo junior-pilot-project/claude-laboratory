@@ -12,7 +12,10 @@
             <h1>상품 관리 시스템</h1>
             <div class="header-actions">
                 <button class="btn btn-primary" id="addProductBtn">새 상품 등록</button>
+                <button class="btn btn-success" id="bulkImportBtn">일괄 등록</button>
                 <button class="btn btn-secondary" id="viewProductsBtn">상품 목록</button>
+                <button class="btn btn-secondary" id="viewDashboardBtn">대시보드</button>
+                <button class="btn btn-secondary" id="exportDataBtn">데이터 내보내기</button>
             </div>
         </header>
 
@@ -63,8 +66,76 @@
                             </div>
                         </div>
                         <div class="form-group full-width">
-                            <label for="description">상품 설명</label>
-                            <textarea id="description" name="description" rows="4" class="form-textarea"></textarea>
+                            <label for="description">간단 설명</label>
+                            <textarea id="description" name="description" rows="4" class="form-textarea" placeholder="상품의 핵심 특징을 간단히 설명해주세요"></textarea>
+                        </div>
+                    </fieldset>
+
+                    <!-- 상품 상세 콘텐츠 -->
+                    <fieldset class="form-section">
+                        <legend>상품 상세 콘텐츠</legend>
+
+                        <!-- 상세 설명 -->
+                        <div class="form-group full-width">
+                            <label for="detailedDescription">상세 설명</label>
+                            <div class="rich-editor-container">
+                                <div class="editor-toolbar">
+                                    <button type="button" class="editor-btn" data-command="bold" title="굵게">B</button>
+                                    <button type="button" class="editor-btn" data-command="italic" title="기울임">I</button>
+                                    <button type="button" class="editor-btn" data-command="underline" title="밑줄">U</button>
+                                    <div class="editor-separator"></div>
+                                    <select class="editor-select" data-command="formatBlock">
+                                        <option value="">스타일</option>
+                                        <option value="h2">제목 1</option>
+                                        <option value="h3">제목 2</option>
+                                        <option value="h4">제목 3</option>
+                                        <option value="p">본문</option>
+                                    </select>
+                                    <div class="editor-separator"></div>
+                                    <button type="button" class="editor-btn" data-command="insertUnorderedList" title="목록">•</button>
+                                    <button type="button" class="editor-btn" data-command="insertOrderedList" title="번호 목록">1.</button>
+                                    <div class="editor-separator"></div>
+                                    <button type="button" class="editor-btn" data-command="createLink" title="링크">🔗</button>
+                                    <button type="button" class="editor-btn" data-command="insertImage" title="이미지">🖼️</button>
+                                </div>
+                                <div class="editor-content" contenteditable="true" id="detailedDescription" placeholder="상품에 대한 자세한 설명을 작성해주세요. 특징, 장점, 사용법 등을 포함할 수 있습니다."></div>
+                            </div>
+                        </div>
+
+                        <!-- 사용법 가이드 -->
+                        <div class="form-group full-width">
+                            <label for="usageGuide">사용법 가이드</label>
+                            <div class="editor-content" contenteditable="true" id="usageGuide" placeholder="제품 사용법을 단계별로 설명해주세요."></div>
+                        </div>
+
+                        <!-- 주의사항 -->
+                        <div class="form-group full-width">
+                            <label for="importantNotices">주의사항</label>
+                            <div class="editor-content" contenteditable="true" id="importantNotices" placeholder="제품 사용 시 주의해야 할 사항들을 작성해주세요."></div>
+                        </div>
+
+                        <!-- 배송/교환 정보 -->
+                        <div class="form-group full-width">
+                            <label for="deliveryInfo">배송/교환 정보</label>
+                            <div class="editor-content" contenteditable="true" id="deliveryInfo" placeholder="배송 정보, 교환/반품 정책을 작성해주세요."></div>
+                        </div>
+
+                        <!-- 추가 이미지 업로드 -->
+                        <div class="form-group full-width">
+                            <label for="additionalImages">상세 설명용 이미지</label>
+                            <div class="additional-image-upload">
+                                <div class="upload-zone" id="additionalImageUploadZone">
+                                    <div class="upload-content">
+                                        <div class="upload-icon">🖼️</div>
+                                        <p>상세 설명용 이미지를 업로드하세요</p>
+                                        <small>사용법, 구성품, 크기 비교 등</small>
+                                        <input type="file" id="additionalImageUpload" multiple accept="image/*" hidden>
+                                    </div>
+                                </div>
+                                <div class="additional-image-preview" id="additionalImagePreview">
+                                    <!-- 추가 이미지 미리보기 -->
+                                </div>
+                            </div>
                         </div>
                     </fieldset>
 
@@ -160,6 +231,110 @@
                 </form>
             </section>
 
+            <!-- 비즈니스 대시보드 -->
+            <section class="dashboard-section" id="dashboardSection" style="display: none;">
+                <div class="dashboard-header">
+                    <h2>비즈니스 대시보드</h2>
+                    <div class="dashboard-period">
+                        <select id="dashboardPeriod" class="form-select">
+                            <option value="7">최근 7일</option>
+                            <option value="30" selected>최근 30일</option>
+                            <option value="90">최근 90일</option>
+                            <option value="365">최근 1년</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- KPI 카드 -->
+                <div class="kpi-cards">
+                    <div class="kpi-card">
+                        <div class="kpi-icon">📦</div>
+                        <div class="kpi-content">
+                            <div class="kpi-value" id="totalProducts">0</div>
+                            <div class="kpi-label">총 상품 수</div>
+                            <div class="kpi-change positive" id="productsChange">+0%</div>
+                        </div>
+                    </div>
+
+                    <div class="kpi-card">
+                        <div class="kpi-icon">💰</div>
+                        <div class="kpi-content">
+                            <div class="kpi-value" id="totalValue">₩0</div>
+                            <div class="kpi-label">총 재고 가치</div>
+                            <div class="kpi-change positive" id="valueChange">+0%</div>
+                        </div>
+                    </div>
+
+                    <div class="kpi-card">
+                        <div class="kpi-icon">⚠️</div>
+                        <div class="kpi-content">
+                            <div class="kpi-value" id="lowStockItems">0</div>
+                            <div class="kpi-label">재고 부족 상품</div>
+                            <div class="kpi-change negative" id="lowStockChange">0</div>
+                        </div>
+                    </div>
+
+                    <div class="kpi-card">
+                        <div class="kpi-icon">📊</div>
+                        <div class="kpi-content">
+                            <div class="kpi-value" id="avgMargin">0%</div>
+                            <div class="kpi-label">평균 마진율</div>
+                            <div class="kpi-change positive" id="marginChange">+0%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 차트 영역 -->
+                <div class="dashboard-charts">
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <h3>카테고리별 상품 분포</h3>
+                        </div>
+                        <div class="chart-content" id="categoryChart">
+                            <!-- 카테고리 차트가 여기에 렌더링 -->
+                        </div>
+                    </div>
+
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <h3>가격대별 분포</h3>
+                        </div>
+                        <div class="chart-content" id="priceDistributionChart">
+                            <!-- 가격 분포 차트가 여기에 렌더링 -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 인사이트 테이블 -->
+                <div class="insights-section">
+                    <div class="insights-header">
+                        <h3>비즈니스 인사이트</h3>
+                    </div>
+                    <div class="insights-grid">
+                        <div class="insight-card">
+                            <h4>재고 최적화 기회</h4>
+                            <div id="stockOptimization" class="insight-content">
+                                <!-- 재고 최적화 인사이트 -->
+                            </div>
+                        </div>
+
+                        <div class="insight-card">
+                            <h4>가격 경쟁력 분석</h4>
+                            <div id="priceAnalysis" class="insight-content">
+                                <!-- 가격 분석 인사이트 -->
+                            </div>
+                        </div>
+
+                        <div class="insight-card">
+                            <h4>카테고리 성과</h4>
+                            <div id="categoryPerformance" class="insight-content">
+                                <!-- 카테고리 성과 인사이트 -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
             <!-- 상품 목록 -->
             <section class="product-list-section" id="productListSection" style="display: none;">
                 <div class="list-header">
@@ -175,12 +350,71 @@
                             <option value="draft">임시저장</option>
                             <option value="inactive">비활성</option>
                         </select>
+                        <button class="btn btn-sm btn-secondary" id="advancedFilterBtn">고급 필터</button>
+                        <select id="sortBy" class="form-select">
+                            <option value="createdAt-desc">등록일 (최신순)</option>
+                            <option value="createdAt-asc">등록일 (오래된순)</option>
+                            <option value="productName-asc">상품명 (가나다순)</option>
+                            <option value="originalPrice-desc">가격 (높은순)</option>
+                            <option value="originalPrice-asc">가격 (낮은순)</option>
+                            <option value="stockQuantity-desc">재고 (많은순)</option>
+                        </select>
+                    </div>
+
+                    <!-- 고급 필터 패널 -->
+                    <div class="advanced-filters" id="advancedFilters" style="display: none;">
+                        <div class="filter-row">
+                            <div class="filter-group">
+                                <label>가격 범위</label>
+                                <div class="range-inputs">
+                                    <input type="number" id="priceRangeMin" placeholder="최소 가격" class="form-input">
+                                    <span>~</span>
+                                    <input type="number" id="priceRangeMax" placeholder="최대 가격" class="form-input">
+                                </div>
+                            </div>
+                            <div class="filter-group">
+                                <label>재고 상태</label>
+                                <select id="stockFilter" class="form-select">
+                                    <option value="">전체</option>
+                                    <option value="in-stock">재고 있음</option>
+                                    <option value="low-stock">재고 부족</option>
+                                    <option value="out-of-stock">품절</option>
+                                </select>
+                            </div>
+                            <div class="filter-group">
+                                <label>등록 기간</label>
+                                <div class="date-inputs">
+                                    <input type="date" id="dateFrom" class="form-input">
+                                    <span>~</span>
+                                    <input type="date" id="dateTo" class="form-input">
+                                </div>
+                            </div>
+                            <div class="filter-actions">
+                                <button class="btn btn-sm btn-secondary" id="clearFiltersBtn">초기화</button>
+                                <button class="btn btn-sm btn-primary" id="applyFiltersBtn">적용</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="product-table-container">
+                    <!-- 벌크 액션 툴바 -->
+                    <div class="bulk-actions" id="bulkActions" style="display: none;">
+                        <div class="bulk-info">
+                            <span id="selectedCount">0</span>개 항목 선택됨
+                        </div>
+                        <div class="bulk-buttons">
+                            <button class="btn btn-sm btn-secondary" onclick="productManager.bulkUpdateStatus('active')">활성화</button>
+                            <button class="btn btn-sm btn-secondary" onclick="productManager.bulkUpdateStatus('inactive')">비활성화</button>
+                            <button class="btn btn-sm btn-danger" onclick="productManager.bulkDelete()">삭제</button>
+                        </div>
+                    </div>
+
                     <table class="product-table" id="productTable">
                         <thead>
                             <tr>
+                                <th>
+                                    <input type="checkbox" id="selectAllProducts" onchange="productManager.toggleSelectAll()">
+                                </th>
                                 <th>이미지</th>
                                 <th>상품명</th>
                                 <th>카테고리</th>
@@ -197,6 +431,216 @@
                             <!-- 상품 목록이 동적으로 생성됨 -->
                         </tbody>
                     </table>
+                </div>
+            </section>
+
+            <!-- 상품 상세페이지 -->
+            <section class="product-detail-section" id="productDetailSection" style="display: none;">
+                <div class="detail-header">
+                    <button class="btn btn-secondary back-btn" id="backToListBtn">← 목록으로</button>
+                    <div class="detail-actions">
+                        <button class="btn btn-primary" id="editProductFromDetailBtn">수정</button>
+                        <button class="btn btn-secondary" id="duplicateFromDetailBtn">복제</button>
+                        <button class="btn btn-danger" id="deleteFromDetailBtn">삭제</button>
+                    </div>
+                </div>
+
+                <div class="product-detail-container">
+                    <!-- 상품 이미지 갤러리 -->
+                    <div class="product-gallery">
+                        <div class="main-image-container">
+                            <img id="detailMainImage" src="" alt="" class="main-image">
+                            <button class="zoom-btn" id="zoomImageBtn">🔍</button>
+                            <div class="image-navigation">
+                                <button class="nav-btn prev-btn" id="prevImageBtn">❮</button>
+                                <button class="nav-btn next-btn" id="nextImageBtn">❯</button>
+                            </div>
+                        </div>
+                        <div class="thumbnail-container" id="thumbnailContainer">
+                            <!-- 이미지 섬네일들이 동적으로 생성됨 -->
+                        </div>
+                    </div>
+
+                    <!-- 상품 정보 -->
+                    <div class="product-info">
+                        <div class="product-header">
+                            <div class="product-category" id="detailCategory"></div>
+                            <h1 class="product-title" id="detailTitle"></h1>
+                            <div class="product-brand" id="detailBrand"></div>
+                            <div class="product-code" id="detailCode"></div>
+                        </div>
+
+                        <div class="price-section">
+                            <div class="price-info">
+                                <span class="original-price" id="detailOriginalPrice"></span>
+                                <span class="sale-price" id="detailSalePrice"></span>
+                                <span class="discount-rate" id="detailDiscountRate"></span>
+                            </div>
+                            <div class="savings" id="detailSavings"></div>
+                        </div>
+
+                        <div class="stock-section">
+                            <div class="stock-info">
+                                <span class="stock-status" id="detailStockStatus"></span>
+                                <span class="stock-quantity" id="detailStockQuantity"></span>
+                            </div>
+                            <div class="delivery-info">
+                                <span class="delivery-text">무료배송</span>
+                            </div>
+                        </div>
+
+                        <!-- 카테고리별 상세 정보 -->
+                        <div class="product-specs" id="detailSpecs">
+                            <h3>상품 사양</h3>
+                            <div class="specs-grid" id="specsGrid">
+                                <!-- 카테고리별 사양이 동적으로 생성됨 -->
+                            </div>
+                        </div>
+
+                        <!-- 상품 설명 -->
+                        <div class="product-description">
+                            <h3>상품 설명</h3>
+                            <div class="description-content" id="detailDescription">
+                                <!-- 상품 설명이 동적으로 생성됨 -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 상품 상세 콘텐츠 탭 -->
+                    <div class="product-detail-tabs">
+                        <div class="tab-navigation">
+                            <button class="tab-btn active" data-tab="description">상품 상세</button>
+                            <button class="tab-btn" data-tab="specifications">사양 정보</button>
+                            <button class="tab-btn" data-tab="guide">사용법</button>
+                            <button class="tab-btn" data-tab="notice">주의사항</button>
+                            <button class="tab-btn" data-tab="delivery">배송/교환</button>
+                            <button class="tab-btn" data-tab="reviews">리뷰</button>
+                        </div>
+
+                        <div class="tab-content">
+                            <!-- 상품 상세 설명 탭 -->
+                            <div class="tab-panel active" id="descriptionTab">
+                                <div class="detailed-description">
+                                    <div class="content-toc" id="contentToc" style="display: none;">
+                                        <h4>목차</h4>
+                                        <ul id="tocList"></ul>
+                                    </div>
+                                    <div class="rich-content" id="detailRichContent">
+                                        <!-- 리치 콘텐츠가 동적으로 생성됨 -->
+                                    </div>
+                                    <div class="additional-images" id="additionalImages">
+                                        <!-- 추가 이미지들이 동적으로 생성됨 -->
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 사양 정보 탭 -->
+                            <div class="tab-panel" id="specificationsTab">
+                                <div class="specifications-detailed" id="specificationsDetailed">
+                                    <!-- 상세 사양이 동적으로 생성됨 -->
+                                </div>
+                            </div>
+
+                            <!-- 사용법 탭 -->
+                            <div class="tab-panel" id="guideTab">
+                                <div class="usage-guide" id="usageGuide">
+                                    <!-- 사용법 가이드가 동적으로 생성됨 -->
+                                </div>
+                            </div>
+
+                            <!-- 주의사항 탭 -->
+                            <div class="tab-panel" id="noticeTab">
+                                <div class="important-notices" id="importantNotices">
+                                    <!-- 주의사항이 동적으로 생성됨 -->
+                                </div>
+                            </div>
+
+                            <!-- 배송/교환 탭 -->
+                            <div class="tab-panel" id="deliveryTab">
+                                <div class="delivery-info-detailed" id="deliveryInfoDetailed">
+                                    <!-- 배송 정보가 동적으로 생성됨 -->
+                                </div>
+                            </div>
+
+                            <!-- 리뷰 탭 -->
+                            <div class="tab-panel" id="reviewsTab">
+                                <div class="customer-reviews" id="customerReviews">
+                                    <div class="reviews-summary">
+                                        <div class="rating-overview">
+                                            <div class="average-rating">
+                                                <span class="rating-score" id="averageRating">4.5</span>
+                                                <div class="rating-stars" id="ratingStars"></div>
+                                                <span class="review-count">(<span id="reviewCount">0</span>개 리뷰)</span>
+                                            </div>
+                                            <div class="rating-distribution" id="ratingDistribution">
+                                                <!-- 평점 분포가 동적으로 생성됨 -->
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="reviews-list" id="reviewsList">
+                                        <!-- 리뷰 목록이 동적으로 생성됨 -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 상품 액션 버튼 영역 -->
+                <div class="product-actions-section">
+                    <div class="action-buttons">
+                        <button class="btn btn-secondary btn-large" id="addToWishlistBtn">
+                            <span class="btn-icon">❤️</span>
+                            찜하기
+                        </button>
+                        <button class="btn btn-secondary btn-large" id="shareProductBtn">
+                            <span class="btn-icon">📤</span>
+                            공유하기
+                        </button>
+                        <button class="btn btn-primary btn-large" id="addToCartBtn">
+                            <span class="btn-icon">🛒</span>
+                            장바구니 담기
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 소셜 공유 모달 -->
+                <div class="share-modal" id="shareModal" style="display: none;">
+                    <div class="share-modal-content">
+                        <div class="share-header">
+                            <h4>상품 공유하기</h4>
+                            <button class="share-close" id="shareCloseBtn">&times;</button>
+                        </div>
+                        <div class="share-options">
+                            <button class="share-btn" data-platform="kakao">카카오톡</button>
+                            <button class="share-btn" data-platform="facebook">페이스북</button>
+                            <button class="share-btn" data-platform="twitter">트위터</button>
+                            <button class="share-btn" data-platform="copy">링크 복사</button>
+                        </div>
+                    </div>
+
+                <!-- 관리 정보 -->
+                <div class="management-info">
+                    <div class="info-row">
+                        <span class="label">등록일:</span>
+                        <span class="value" id="detailCreatedAt"></span>
+                    </div>
+                    <div class="info-row" id="detailUpdatedAtRow" style="display: none;">
+                        <span class="label">수정일:</span>
+                        <span class="value" id="detailUpdatedAt"></span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label">조회수:</span>
+                        <span class="value" id="detailViewCount">0회</span>
+                    </div>
+                </div>
+
+                <!-- 관련 상품 -->
+                <div class="related-products">
+                    <h3>이 상품과 비슷한 상품</h3>
+                    <div class="related-products-grid" id="relatedProductsGrid">
+                        <!-- 관련 상품들이 동적으로 생성됨 -->
+                    </div>
                 </div>
             </section>
         </main>
@@ -222,6 +666,97 @@
             <div class="modal-footer">
                 <button class="btn btn-secondary" id="cancelCategoryBtn">취소</button>
                 <button class="btn btn-primary" id="saveCategoryBtn">추가</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 일괄 등록 모달 -->
+    <div class="modal" id="bulkImportModal">
+        <div class="modal-content large-modal">
+            <div class="modal-header">
+                <h3>상품 일괄 등록</h3>
+                <button class="modal-close" id="closeBulkImportModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="import-steps">
+                    <div class="step">
+                        <h4>1단계: 템플릿 다운로드</h4>
+                        <p>CSV 템플릿을 다운로드하여 상품 정보를 입력하세요.</p>
+                        <button class="btn btn-secondary" id="downloadTemplateBtn">템플릿 다운로드</button>
+                    </div>
+
+                    <div class="step">
+                        <h4>2단계: 파일 업로드</h4>
+                        <p>작성한 CSV 파일을 업로드하세요. (CSV, Excel 파일 지원)</p>
+                        <div class="file-upload-area">
+                            <div class="upload-zone" id="bulkUploadZone">
+                                <div class="upload-content">
+                                    <div class="upload-icon">📄</div>
+                                    <p>CSV 또는 Excel 파일을 드래그하거나 클릭하여 업로드</p>
+                                    <input type="file" id="bulkFileInput" accept=".csv,.xlsx,.xls" hidden>
+                                </div>
+                            </div>
+                            <div class="file-info" id="bulkFileInfo" style="display: none;">
+                                <span class="file-name" id="bulkFileName"></span>
+                                <span class="file-size" id="bulkFileSize"></span>
+                                <button class="btn btn-sm btn-danger" id="removeBulkFile">제거</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step">
+                        <h4>3단계: 데이터 미리보기</h4>
+                        <div class="preview-container" id="bulkPreviewContainer" style="display: none;">
+                            <div class="preview-summary">
+                                <span>총 <strong id="previewCount">0</strong>개 상품이 감지되었습니다.</span>
+                                <div class="preview-stats">
+                                    <span class="valid-count">유효: <span id="validCount">0</span>개</span>
+                                    <span class="error-count">오류: <span id="errorCount">0</span>개</span>
+                                </div>
+                            </div>
+                            <div class="preview-table-container">
+                                <table class="preview-table" id="bulkPreviewTable">
+                                    <thead>
+                                        <tr>
+                                            <th>상태</th>
+                                            <th>상품명</th>
+                                            <th>카테고리</th>
+                                            <th>브랜드</th>
+                                            <th>정가</th>
+                                            <th>오류 메시지</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="bulkPreviewTableBody">
+                                        <!-- 미리보기 데이터가 동적으로 생성됨 -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelBulkImportBtn">취소</button>
+                <button class="btn btn-primary" id="processBulkImportBtn" disabled>일괄 등록 실행</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 이미지 확대보기 모달 -->
+    <div class="modal image-modal" id="imageZoomModal">
+        <div class="image-modal-content">
+            <button class="modal-close image-modal-close" id="closeImageZoomModal">&times;</button>
+            <div class="zoom-container">
+                <img id="zoomedImage" src="" alt="" class="zoomed-image">
+                <div class="zoom-navigation">
+                    <button class="zoom-nav-btn zoom-prev" id="zoomPrevBtn">❮</button>
+                    <button class="zoom-nav-btn zoom-next" id="zoomNextBtn">❯</button>
+                </div>
+            </div>
+            <div class="zoom-controls">
+                <button class="zoom-control-btn" id="zoomInBtn">+</button>
+                <button class="zoom-control-btn" id="zoomOutBtn">-</button>
+                <button class="zoom-control-btn" id="zoomResetBtn">원본</button>
             </div>
         </div>
     </div>
