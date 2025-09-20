@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>쥐뢰찾기</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="game-container">
+        <header class="game-header">
+            <h1>쥐뢰찾기</h1>
+            <div class="game-info">
+                <div class="mine-counter">
+                    <span>지뢰: </span>
+                    <span id="mine-count">10</span>
+                </div>
+                <button id="reset-btn" class="reset-button">🙂</button>
+                <div class="timer">
+                    <span>시간: </span>
+                    <span id="timer-display">000</span>
+                </div>
+            </div>
+        </header>
+
+        <main class="game-main">
+            <div id="game-board" class="game-board"></div>
+        </main>
+
+        <div id="game-message" class="game-message hidden"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
