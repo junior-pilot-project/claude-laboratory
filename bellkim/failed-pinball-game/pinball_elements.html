@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>핀볼 게임 요소들</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #f0f0f0;
+            font-family: Arial, sans-serif;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 20px;
+        }
+
+        .element {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            padding: 15px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .element-title {
+            font-size: 12px;
+            font-weight: bold;
+            color: #666;
+            text-align: center;
+        }
+
+        /* 온도계 형태 스코어 */
+        .thermometer {
+            width: 20px;
+            height: 100px;
+            background: #e0e0e0;
+            border: 3px solid #333;
+            border-radius: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .thermometer-fill {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 40%;
+            background: linear-gradient(to top, #ff4444, #ff8888);
+            border-radius: 0 0 7px 7px;
+        }
+
+        .thermometer-bulb {
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 16px;
+            height: 16px;
+            background: #ff4444;
+            border-radius: 50%;
+            border: 3px solid #333;
+        }
+
+        /* 노란색 막대 */
+        .yellow-bar {
+            width: 8px;
+            height: 60px;
+            background: #ffd700;
+            border: 2px solid #333;
+            border-radius: 4px;
+        }
+
+        /* 원형 타겟들 */
+        .circle-target {
+            border-radius: 50%;
+            border: 3px solid #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+
+        .pink-circle {
+            width: 50px;
+            height: 50px;
+            background: #ff69b4;
+        }
+
+        .yellow-100 {
+            width: 60px;
+            height: 60px;
+            background: #ffd700;
+            color: #333;
+            text-shadow: none;
+        }
+
+        .pink-50 {
+            width: 50px;
+            height: 50px;
+            background: #ff1493;
+        }
+
+        .green-25 {
+            width: 50px;
+            height: 50px;
+            background: #32cd32;
+        }
+
+        /* 삼각형 범퍼 */
+        .triangle-bumper {
+            width: 0;
+            height: 0;
+            border-left: 30px solid transparent;
+            border-right: 30px solid transparent;
+            border-bottom: 50px solid #6a5acd;
+            position: relative;
+        }
+
+        .triangle-bumper::after {
+            content: '';
+            position: absolute;
+            top: 5px;
+            left: -25px;
+            width: 0;
+            height: 0;
+            border-left: 25px solid transparent;
+            border-right: 25px solid transparent;
+            border-bottom: 40px solid #8470ff;
+        }
+
+        /* PINBALL 로고 */
+        .pinball-logo {
+            width: 120px;
+            height: 50px;
+            background: linear-gradient(135deg, #32cd32, #228b22);
+            border: 3px solid #333;
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+            position: relative;
+        }
+
+        .pinball-logo::before,
+        .pinball-logo::after {
+            content: '';
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: #666;
+            border-radius: 50%;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .pinball-logo::before { left: 8px; }
+        .pinball-logo::after { right: 8px; }
+
+        /* 곡선 플리퍼 */
+        .curved-flipper {
+            width: 80px;
+            height: 80px;
+            background: #6a5acd;
+            border: 3px solid #333;
+            border-radius: 0 0 80px 80px;
+            position: relative;
+        }
+
+        .curved-flipper::after {
+            content: '';
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            bottom: 10px;
+            background: #8470ff;
+            border-radius: 0 0 60px 60px;
+        }
+
+        /* 별 모양 스위치 */
+        .star-switch {
+            width: 40px;
+            height: 40px;
+            background: #ff4444;
+            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+            border: 2px solid #333;
+            position: relative;
+        }
+
+        /* U자형 킥커 */
+        .u-kicker {
+            width: 40px;
+            height: 30px;
+            border: 4px solid #ff4444;
+            border-top: none;
+            border-radius: 0 0 20px 20px;
+            background: transparent;
+        }
+
+        /* 화살표들 */
+        .arrow {
+            width: 0;
+            height: 0;
+            margin: 5px;
+        }
+
+        .green-arrow {
+            border-left: 15px solid transparent;
+            border-right: 15px solid transparent;
+            border-bottom: 25px solid #32cd32;
+        }
+
+        .yellow-arrow {
+            border-left: 12px solid transparent;
+            border-right: 12px solid transparent;
+            border-bottom: 20px solid #ffd700;
+        }
+
+        /* 클립 */
+        .paper-clip {
+            width: 60px;
+            height: 20px;
+            border: 3px solid #ff4444;
+            border-radius: 10px;
+            background: transparent;
+            position: relative;
+        }
+
+        .paper-clip::before {
+            content: '';
+            position: absolute;
+            left: -5px;
+            top: -3px;
+            width: 8px;
+            height: 8px;
+            border: 3px solid #ff4444;
+            border-radius: 50%;
+            background: transparent;
+        }
+
+        /* 파란색 막대 */
+        .blue-bar {
+            width: 50px;
+            height: 12px;
+            background: #4169e1;
+            border: 2px solid #333;
+            border-radius: 6px;
+        }
+
+        /* 별 배지 */
+        .star-badge {
+            width: 50px;
+            height: 50px;
+            background: #87ceeb;
+            border: 3px solid #333;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .star-badge::before {
+            content: '★';
+            color: #ffd700;
+            font-size: 20px;
+        }
+
+        /* SHOOT AGAIN 버튼 */
+        .shoot-again {
+            width: 60px;
+            height: 60px;
+            background: #ff4444;
+            border: 3px solid #333;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 10px;
+            font-weight: bold;
+            text-align: center;
+            line-height: 1.2;
+        }
+
+        /* 금속 볼 */
+        .metal-ball {
+            width: 20px;
+            height: 20px;
+            background: radial-gradient(circle at 30% 30%, #ffffff, #c0c0c0, #808080);
+            border-radius: 50%;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+        }
+
+        /* 작은 원들 */
+        .small-circle {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            border: 2px solid #333;
+        }
+
+        .green-small { background: #32cd32; }
+        .yellow-small { background: #ffd700; }
+
+        /* 세로 막대들 */
+        .vertical-bar {
+            width: 8px;
+            height: 40px;
+            border: 2px solid #333;
+            border-radius: 4px;
+        }
+
+        .gray-bar { background: #808080; }
+        .yellow-bar { background: #ffd700; }
+        .white-bar { background: #f0f0f0; }
+    </style>
+</head>
+<body>
+    <div class="element">
+        <div class="thermometer">
+            <div class="thermometer-fill"></div>
+            <div class="thermometer-bulb"></div>
+        </div>
+        <div class="element-title">온도계 스코어</div>
+    </div>
+
+    <div class="element">
+        <div class="yellow-bar"></div>
+        <div class="element-title">노란 막대</div>
+    </div>
+
+    <div class="element">
+        <div class="circle-target pink-circle"></div>
+        <div class="element-title">핑크 타겟</div>
+    </div>
+
+    <div class="element">
+        <div class="triangle-bumper"></div>
+        <div class="element-title">삼각 범퍼</div>
+    </div>
+
+    <div class="element">
+        <div class="pinball-logo">PINBALL</div>
+        <div class="element-title">핀볼 로고</div>
+    </div>
+
+    <div class="element">
+        <div class="curved-flipper"></div>
+        <div class="element-title">곡선 플리퍼</div>
+    </div>
+
+    <div class="element">
+        <div class="circle-target yellow-100">100</div>
+        <div class="element-title">100점 타겟</div>
+    </div>
+
+    <div class="element">
+        <div class="star-switch"></div>
+        <div class="element-title">별 스위치</div>
+    </div>
+
+    <div class="element">
+        <div class="u-kicker"></div>
+        <div class="element-title">U자 킥커</div>
+    </div>
+
+    <div class="element">
+        <div class="circle-target pink-50">50</div>
+        <div class="element-title">50점 타겟</div>
+    </div>
+
+    <div class="element">
+        <div class="green-arrow arrow"></div>
+        <div class="green-arrow arrow"></div>
+        <div class="element-title">초록 화살표</div>
+    </div>
+
+    <div class="element">
+        <div class="yellow-arrow arrow"></div>
+        <div class="yellow-arrow arrow"></div>
+        <div class="yellow-arrow arrow"></div>
+        <div class="element-title">노란 화살표</div>
+    </div>
+
+    <div class="element">
+        <div class="paper-clip"></div>
+        <div class="element-title">클립</div>
+    </div>
+
+    <div class="element">
+        <div class="blue-bar"></div>
+        <div class="element-title">파란 막대</div>
+    </div>
+
+    <div class="element">
+        <div class="star-badge"></div>
+        <div class="element-title">별 배지</div>
+    </div>
+
+    <div class="element">
+        <div class="shoot-again">SHOOT<br>AGAIN</div>
+        <div class="element-title">다시 쏘기</div>
+    </div>
+
+    <div class="element">
+        <div class="circle-target green-25">25</div>
+        <div class="element-title">25점 타겟</div>
+    </div>
+
+    <div class="element">
+        <div class="metal-ball"></div>
+        <div class="element-title">핀볼</div>
+    </div>
+
+    <div class="element">
+        <div class="small-circle green-small"></div>
+        <div class="element-title">초록 점</div>
+    </div>
+
+    <div class="element">
+        <div class="small-circle yellow-small"></div>
+        <div class="element-title">노란 점</div>
+    </div>
+
+    <div class="element">
+        <div class="vertical-bar gray-bar"></div>
+        <div class="element-title">회색 막대</div>
+    </div>
+
+    <div class="element">
+        <div class="vertical-bar yellow-bar"></div>
+        <div class="element-title">노란 세로막대</div>
+    </div>
+
+    <div class="element">
+        <div class="vertical-bar white-bar"></div>
+        <div class="element-title">흰색 막대</div>
+    </div>
+</body>
+</html>

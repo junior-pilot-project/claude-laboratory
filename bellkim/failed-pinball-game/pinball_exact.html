@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>핀볼 기본 레이아웃</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: Arial, sans-serif;
+        }
+
+        .pinball-machine {
+            width: 300px;
+            height: 400px;
+            background: #f5f5f5;
+            border: 8px solid #000;
+            border-radius: 12px 12px 0 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* 좌측 상단 모서리 컷 */
+        .corner-cut-left {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 30px;
+            height: 30px;
+            background: #000;
+            clip-path: polygon(0 0, 100% 0, 0 100%);
+        }
+
+        /* 우측 상단 곡선 */
+        .corner-curve-right {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 60px;
+            height: 80px;
+            border: 4px solid #000;
+            border-top: none;
+            border-right: none;
+            border-radius: 0 0 0 40px;
+        }
+
+        /* 좌측 상단 원형 범퍼 */
+        .main-bumper {
+            position: absolute;
+            top: 60px;
+            left: 60px;
+            width: 40px;
+            height: 40px;
+            background: #fff;
+            border: 4px solid #000;
+            border-radius: 50%;
+        }
+
+        /* 별 모양 (우측 상단) */
+        .star {
+            position: absolute;
+            top: 70px;
+            right: 80px;
+            width: 30px;
+            height: 30px;
+            background: #000;
+            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+        }
+
+        /* 삼각형 킥커 (좌측 중하단) */
+        .triangle-kicker {
+            position: absolute;
+            bottom: 120px;
+            left: 40px;
+            width: 0;
+            height: 0;
+            border-left: 20px solid transparent;
+            border-right: 20px solid transparent;
+            border-bottom: 35px solid #000;
+        }
+
+        /* 중앙 세로 포스트 */
+        .center-post {
+            position: absolute;
+            top: 180px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 8px;
+            height: 60px;
+            background: #000;
+            border-radius: 4px;
+        }
+
+        /* 우측 세로 스코어 영역 */
+        .right-score-lane {
+            position: absolute;
+            right: 20px;
+            top: 120px;
+            width: 20px;
+            height: 140px;
+            border: 3px solid #000;
+            background: #fff;
+        }
+
+        /* 우측 스코어 점들 */
+        .score-dot {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: #000;
+            border-radius: 50%;
+            right: 27px;
+        }
+
+        .dot1 { top: 140px; }
+        .dot2 { top: 160px; }
+        .dot3 { top: 180px; }
+        .dot4 { top: 200px; }
+        .dot5 { top: 220px; }
+
+        /* 좌측 플리퍼 */
+        .flipper-left {
+            position: absolute;
+            bottom: 40px;
+            left: 60px;
+            width: 50px;
+            height: 8px;
+            background: #000;
+            border-radius: 4px;
+            transform-origin: left center;
+            transform: rotate(25deg);
+        }
+
+        /* 우측 플리퍼 */
+        .flipper-right {
+            position: absolute;
+            bottom: 40px;
+            right: 60px;
+            width: 50px;
+            height: 8px;
+            background: #000;
+            border-radius: 4px;
+            transform-origin: right center;
+            transform: rotate(-25deg);
+        }
+
+        /* 하단 배수구 */
+        .drain {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 15px;
+            background: #000;
+        }
+
+        /* 하단 좌측 곡선 */
+        .bottom-curve-left {
+            position: absolute;
+            bottom: 15px;
+            left: 20px;
+            width: 40px;
+            height: 40px;
+            border: 3px solid #000;
+            border-bottom: none;
+            border-left: none;
+            border-radius: 0 25px 0 0;
+        }
+
+        /* 하단 우측 곡선 */
+        .bottom-curve-right {
+            position: absolute;
+            bottom: 15px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            border: 3px solid #000;
+            border-bottom: none;
+            border-right: none;
+            border-radius: 25px 0 0 0;
+        }
+
+        /* 좌측 경계선 */
+        .left-border {
+            position: absolute;
+            left: 0;
+            top: 30px;
+            bottom: 0;
+            width: 3px;
+            background: #000;
+        }
+
+        /* 우측 경계선 (상단 곡선 아래부터) */
+        .right-border {
+            position: absolute;
+            right: 0;
+            top: 80px;
+            bottom: 0;
+            width: 3px;
+            background: #000;
+        }
+    </style>
+</head>
+<body>
+    <div class="pinball-machine">
+        <!-- 좌측 상단 모서리 컷 -->
+        <div class="corner-cut-left"></div>
+
+        <!-- 우측 상단 곡선 -->
+        <div class="corner-curve-right"></div>
+
+        <!-- 메인 원형 범퍼 -->
+        <div class="main-bumper"></div>
+
+        <!-- 별 모양 -->
+        <div class="star"></div>
+
+        <!-- 삼각형 킥커 -->
+        <div class="triangle-kicker"></div>
+
+        <!-- 중앙 세로 포스트 -->
+        <div class="center-post"></div>
+
+        <!-- 우측 스코어 레인 -->
+        <div class="right-score-lane"></div>
+
+        <!-- 우측 스코어 점들 -->
+        <div class="score-dot dot1"></div>
+        <div class="score-dot dot2"></div>
+        <div class="score-dot dot3"></div>
+        <div class="score-dot dot4"></div>
+        <div class="score-dot dot5"></div>
+
+        <!-- 플리퍼들 */
+        <div class="flipper-left"></div>
+        <div class="flipper-right"></div>
+
+        <!-- 하단 배수구 -->
+        <div class="drain"></div>
+
+        <!-- 하단 곡선들 */
+        <div class="bottom-curve-left"></div>
+        <div class="bottom-curve-right"></div>
+
+        <!-- 경계선들 -->
+        <div class="left-border"></div>
+        <div class="right-border"></div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>핀볼 게임</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: #222;
+            font-family: Arial, sans-serif;
+        }
+
+        .game-container {
+            background: #333;
+            border: 10px solid #666;
+            border-radius: 20px;
+            position: relative;
+            box-shadow: 0 0 30px rgba(0,0,0,0.8);
+        }
+
+        #gameCanvas {
+            background: linear-gradient(135deg, #4A4A8A, #2A2A5A);
+            border-radius: 15px;
+            border: 5px solid #888;
+        }
+
+        .score-display {
+            position: absolute;
+            top: -50px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #fff;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .controls {
+            position: absolute;
+            bottom: -60px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #fff;
+            text-align: center;
+        }
+
+        .flipper-controls {
+            margin-top: 10px;
+        }
+
+        .flipper-btn {
+            background: #555;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            margin: 0 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .flipper-btn:hover {
+            background: #777;
+        }
+
+        .flipper-btn:active {
+            background: #999;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="score-display">점수: <span id="score">0</span></div>
+        <canvas id="gameCanvas" width="400" height="600"></canvas>
+        <div class="controls">
+            <div>스페이스바: 볼 발사 | Z/슬래시: 플리퍼</div>
+            <div class="flipper-controls">
+                <button class="flipper-btn" id="leftFlipper">왼쪽 플리퍼 (Z)</button>
+                <button class="flipper-btn" id="rightFlipper">오른쪽 플리퍼 (/)</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const scoreElement = document.getElementById('score');
+
+        let score = 0;
+        let gameStarted = false;
+
+        // 볼 객체
+        class Ball {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.vx = 0;
+                this.vy = 0;
+                this.radius = 8;
+                this.gravity = 0.3;
+                this.bounce = 0.8;
+            }
+
+            update() {
+                this.vy += this.gravity;
+                this.x += this.vx;
+                this.y += this.vy;
+
+                // 벽과의 충돌
+                if (this.x - this.radius <= 0 || this.x + this.radius >= canvas.width) {
+                    this.vx *= -this.bounce;
+                    this.x = this.x < canvas.width/2 ? this.radius : canvas.width - this.radius;
+                }
+
+                if (this.y - this.radius <= 0) {
+                    this.vy *= -this.bounce;
+                    this.y = this.radius;
+                }
+
+                // 바닥에 떨어지면 리셋
+                if (this.y > canvas.height + 50) {
+                    this.reset();
+                }
+
+                // 마찰
+                this.vx *= 0.99;
+                this.vy *= 0.999;
+            }
+
+            reset() {
+                this.x = canvas.width - 30;
+                this.y = canvas.height - 100;
+                this.vx = 0;
+                this.vy = 0;
+                gameStarted = false;
+            }
+
+            launch() {
+                if (!gameStarted) {
+                    this.vx = -Math.random() * 3 - 2;
+                    this.vy = -Math.random() * 5 - 10;
+                    gameStarted = true;
+                }
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = '#ff4444';
+                ctx.fill();
+                ctx.strokeStyle = '#fff';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            }
+        }
+
+        // 플리퍼 객체
+        class Flipper {
+            constructor(x, y, isLeft) {
+                this.x = x;
+                this.y = y;
+                this.isLeft = isLeft;
+                this.angle = isLeft ? -0.3 : 0.3;
+                this.targetAngle = this.angle;
+                this.width = 60;
+                this.height = 8;
+                this.isActive = false;
+            }
+
+            activate() {
+                this.isActive = true;
+                this.targetAngle = this.isLeft ? 0.3 : -0.3;
+            }
+
+            deactivate() {
+                this.isActive = false;
+                this.targetAngle = this.isLeft ? -0.3 : 0.3;
+            }
+
+            update() {
+                this.angle += (this.targetAngle - this.angle) * 0.3;
+            }
+
+            draw() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.angle);
+                ctx.fillStyle = '#ffff44';
+                ctx.fillRect(-this.width/2, -this.height/2, this.width, this.height);
+                ctx.strokeStyle = '#fff';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(-this.width/2, -this.height/2, this.width, this.height);
+                ctx.restore();
+            }
+
+            checkCollision(ball) {
+                const dx = ball.x - this.x;
+                const dy = ball.y - this.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+
+                if (distance < ball.radius + this.width/2) {
+                    const force = this.isActive ? 9.6 : 4.8;
+                    ball.vx = dx * force / distance;
+                    ball.vy = dy * force / distance - 2;
+
+                    if (this.isActive) {
+                        score += 10;
+                        scoreElement.textContent = score;
+                    }
+                }
+            }
+        }
+
+        // 범퍼 객체
+        class Bumper {
+            constructor(x, y, color, points = 50) {
+                this.x = x;
+                this.y = y;
+                this.radius = 20;
+                this.color = color;
+                this.points = points;
+                this.active = false;
+            }
+
+            checkCollision(ball) {
+                const dx = ball.x - this.x;
+                const dy = ball.y - this.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+
+                if (distance < ball.radius + this.radius) {
+                    const force = 6;
+                    ball.vx = dx * force / distance;
+                    ball.vy = dy * force / distance;
+                    this.active = true;
+                    setTimeout(() => this.active = false, 200);
+
+                    score += this.points;
+                    scoreElement.textContent = score;
+                }
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = this.active ? '#fff' : this.color;
+                ctx.fill();
+                ctx.strokeStyle = '#333';
+                ctx.lineWidth = 3;
+                ctx.stroke();
+
+                // 점수 표시
+                if (this.points !== 50) {
+                    ctx.fillStyle = this.color === '#ffd700' ? '#333' : '#fff';
+                    ctx.font = 'bold 12px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(this.points.toString(), this.x, this.y + 4);
+                }
+            }
+        }
+
+        // 별 스위치 객체
+        class StarSwitch {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.radius = 15;
+                this.active = false;
+            }
+
+            checkCollision(ball) {
+                const dx = ball.x - this.x;
+                const dy = ball.y - this.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+
+                if (distance < ball.radius + this.radius) {
+                    this.active = !this.active;
+                    score += 25;
+                    scoreElement.textContent = score;
+
+                    // 볼 방향 조정
+                    ball.vx += (Math.random() - 0.5) * 2;
+                    ball.vy += (Math.random() - 0.5) * 2;
+                }
+            }
+
+            draw() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+
+                // 별 모양 그리기
+                ctx.beginPath();
+                for (let i = 0; i < 5; i++) {
+                    const angle = (i * 4 * Math.PI) / 5;
+                    const x = Math.cos(angle) * this.radius;
+                    const y = Math.sin(angle) * this.radius;
+                    if (i === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                }
+                ctx.closePath();
+                ctx.fillStyle = this.active ? '#ffff00' : '#ff4444';
+                ctx.fill();
+                ctx.strokeStyle = '#333';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                ctx.restore();
+            }
+        }
+
+        // 삼각형 범퍼 객체
+        class TriangleBumper {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.size = 25;
+                this.active = false;
+            }
+
+            checkCollision(ball) {
+                const dx = ball.x - this.x;
+                const dy = ball.y - this.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+
+                if (distance < ball.radius + this.size) {
+                    const force = 7;
+                    ball.vx = dx * force / distance;
+                    ball.vy = dy * force / distance;
+                    this.active = true;
+                    setTimeout(() => this.active = false, 300);
+
+                    score += 75;
+                    scoreElement.textContent = score;
+                }
+            }
+
+            draw() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+
+                ctx.beginPath();
+                ctx.moveTo(0, -this.size);
+                ctx.lineTo(-this.size, this.size);
+                ctx.lineTo(this.size, this.size);
+                ctx.closePath();
+
+                ctx.fillStyle = this.active ? '#fff' : '#6a5acd';
+                ctx.fill();
+                ctx.strokeStyle = '#333';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                ctx.restore();
+            }
+        }
+
+        // 게임 객체들 생성
+        const ball = new Ball(canvas.width - 30, canvas.height - 100);
+        const leftFlipper = new Flipper(120, canvas.height - 80, true);
+        const rightFlipper = new Flipper(280, canvas.height - 80, false);
+
+        const bumpers = [
+            new Bumper(150, 200, '#32cd32', 25),  // 25점 녹색 타겟
+            new Bumper(250, 180, '#ff1493', 50),  // 50점 핑크 타겟
+            new Bumper(200, 120, '#ffd700', 100), // 100점 노란 타겟
+            new Bumper(100, 300, '#44ffff', 50),
+            new Bumper(300, 320, '#ff8844', 50)
+        ];
+
+        // 별 스위치들
+        const starSwitches = [
+            new StarSwitch(80, 250),
+            new StarSwitch(320, 270),
+            new StarSwitch(200, 350)
+        ];
+
+        // 삼각형 범퍼들
+        const triangleBumpers = [
+            new TriangleBumper(120, 150),
+            new TriangleBumper(280, 160)
+        ];
+
+        // 장애물 그리기
+        function drawObstacles() {
+            // 상단 범퍼들 (노란 막대들)
+            ctx.fillStyle = '#ffd700';
+            ctx.strokeStyle = '#333';
+            ctx.lineWidth = 2;
+
+            ctx.fillRect(50, 50, 8, 60);
+            ctx.strokeRect(50, 50, 8, 60);
+
+            ctx.fillRect(330, 50, 8, 60);
+            ctx.strokeRect(330, 50, 8, 60);
+
+            // PINBALL 로고
+            ctx.fillStyle = '#32cd32';
+            ctx.fillRect(155, 30, 90, 30);
+            ctx.strokeStyle = '#333';
+            ctx.lineWidth = 3;
+            ctx.strokeRect(155, 30, 90, 30);
+
+            ctx.fillStyle = '#fff';
+            ctx.font = 'bold 12px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('PINBALL', 200, 50);
+
+            // 측면 가이드 (파란 막대들)
+            ctx.fillStyle = '#4169e1';
+            ctx.fillRect(0, 400, 50, 200);
+            ctx.strokeRect(0, 400, 50, 200);
+            ctx.fillRect(350, 400, 50, 200);
+            ctx.strokeRect(350, 400, 50, 200);
+
+            // 하단 삼각형 가이드
+            ctx.fillStyle = '#666';
+            ctx.beginPath();
+            ctx.moveTo(200, canvas.height - 40);
+            ctx.lineTo(150, canvas.height);
+            ctx.lineTo(250, canvas.height);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+        }
+
+        // 게임 루프
+        function gameLoop() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // 배경 그라데이션
+            const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+            gradient.addColorStop(0, '#4A4A8A');
+            gradient.addColorStop(1, '#2A2A5A');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            drawObstacles();
+
+            ball.update();
+            leftFlipper.update();
+            rightFlipper.update();
+
+            leftFlipper.checkCollision(ball);
+            rightFlipper.checkCollision(ball);
+
+            // 범퍼들 업데이트
+            bumpers.forEach(bumper => {
+                bumper.checkCollision(ball);
+                bumper.draw();
+            });
+
+            // 별 스위치들 업데이트
+            starSwitches.forEach(starSwitch => {
+                starSwitch.checkCollision(ball);
+                starSwitch.draw();
+            });
+
+            // 삼각형 범퍼들 업데이트
+            triangleBumpers.forEach(triangleBumper => {
+                triangleBumper.checkCollision(ball);
+                triangleBumper.draw();
+            });
+
+            ball.draw();
+            leftFlipper.draw();
+            rightFlipper.draw();
+
+            requestAnimationFrame(gameLoop);
+        }
+
+        // 키보드 이벤트
+        const keys = {};
+
+        document.addEventListener('keydown', (e) => {
+            keys[e.key.toLowerCase()] = true;
+
+            if (e.key === ' ') {
+                e.preventDefault();
+                ball.launch();
+            }
+
+            if (e.key.toLowerCase() === 'z') {
+                leftFlipper.activate();
+            }
+
+            if (e.key === '/') {
+                rightFlipper.activate();
+            }
+        });
+
+        document.addEventListener('keyup', (e) => {
+            keys[e.key.toLowerCase()] = false;
+
+            if (e.key.toLowerCase() === 'z') {
+                leftFlipper.deactivate();
+            }
+
+            if (e.key === '/') {
+                rightFlipper.deactivate();
+            }
+        });
+
+        // 버튼 이벤트
+        document.getElementById('leftFlipper').addEventListener('mousedown', () => {
+            leftFlipper.activate();
+        });
+
+        document.getElementById('leftFlipper').addEventListener('mouseup', () => {
+            leftFlipper.deactivate();
+        });
+
+        document.getElementById('rightFlipper').addEventListener('mousedown', () => {
+            rightFlipper.activate();
+        });
+
+        document.getElementById('rightFlipper').addEventListener('mouseup', () => {
+            rightFlipper.deactivate();
+        });
+
+        // 게임 시작
+        gameLoop();
+    </script>
+</body>
+</html>
