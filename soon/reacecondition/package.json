@@ -1,0 +1,14 @@
+{
+  "name": "race-condition-demo",
+  "version": "1.0.0",
+  "description": "5명이 2개 쿠폰을 놓고 벌이는 경쟁 - Race Condition 데모",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": ["race-condition", "demo", "coupon", "javascript", "nodejs"],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {}
+}

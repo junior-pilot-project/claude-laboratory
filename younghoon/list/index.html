@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Socket Message</title>
+    <link rel="stylesheet" href="chat.css">
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <h1>Socket Message</h1>
+            <div class="user-info">
+                <span id="username">사용자</span>
+                <span class="status online"></span>
+            </div>
+        </div>
+
+        <div class="chat-messages" id="chatMessages">
+            <!-- 메시지들이 여기에 동적으로 추가됩니다 -->
+        </div>
+
+        <div class="chat-input-container">
+            <div class="input-wrapper">
+                <input type="text" id="messageInput" placeholder="메시지를 입력하세요..." maxlength="500">
+                <button id="sendButton" type="button">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="22" y1="2" x2="11" y2="13"></line>
+                        <polygon points="22,2 15,22 11,13 2,9"></polygon>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="chat.js"></script>
+</body>
+</html>

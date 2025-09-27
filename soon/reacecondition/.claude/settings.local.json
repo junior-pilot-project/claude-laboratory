@@ -1,0 +1,34 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python:*)",
+      "Bash(node:*)",
+      "Bash(npm start)",
+      "Bash(curl:*)",
+      "Bash(chmod:*)",
+      "Bash(java:*)",
+      "Bash(mvn clean:*)",
+      "Bash(where java)",
+      "Bash(powershell:*)",
+      "Bash(where gradle)",
+      "Bash(gradlew.bat:*)",
+      "Bash(./gradlew.bat:*)",
+      "Bash(set JAVA_HOME=C:Program FilesJavajdk1.8.0_192)",
+      "Bash(set PATH=%JAVA_HOME%bin)",
+      "Bash(%PATH%)",
+      "Bash(cmd /c:*)",
+      "Bash(mvn:*)",
+      "Bash(./mvnw:*)",
+      "Bash(javac:*)",
+      "Bash(findstr:*)",
+      "Bash(taskkill:*)",
+      "Bash(tasklist)",
+      "Bash(del RaceConditionDemo.java SimpleRaceServer.java)",
+      "Bash(for i in {1..3})",
+      "Bash(do echo \"=== Test $i ===\")",
+      "Bash(done)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
