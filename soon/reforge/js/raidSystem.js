@@ -37,7 +37,7 @@ const RaidSystem = (() => {
         playerDmg,
       });
 
-      if (bossHp <= 0) break;
+      if (bossHp <= 0 || playerHp <= 0) break;
     }
 
     return { cleared: bossHp <= 0, rounds };

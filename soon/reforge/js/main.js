@@ -335,6 +335,7 @@ window.handleRaidSelectStage = function(stageId) {
 
 window.handleRaidStart = function() {
   if (isRaiding) return;
+  soundManager.init();
   const stageId = UIManager.getSelectedRaidStage();
   if (!stageId) return;
 
@@ -343,6 +344,7 @@ window.handleRaidStart = function() {
 
   isRaiding = true;
   window.isRaidingActive = true;
+  RaidCanvas.reset();
 
   const btn = document.getElementById('btn-raid-start');
   if (btn) btn.disabled = true;
@@ -367,10 +369,12 @@ window.handleRaidStart = function() {
         const res = document.getElementById('raid-result');
         if (res) res.innerHTML = `<div class="raid-clear">🏆 클리어! +${stage.reward.toLocaleString()}G</div>`;
         RaidCanvas.animateVictory();
+        soundManager.playRaidVictory();
       } else {
         const res = document.getElementById('raid-result');
         if (res) res.innerHTML = `<div class="raid-fail">💀 전투 실패...</div>`;
         RaidCanvas.animateDefeat();
+        soundManager.playRaidDefeat();
       }
 
       isRaiding = false;
@@ -404,6 +408,12 @@ window.handleRaidStart = function() {
     }
 
     RaidCanvas.animateRound();
+    soundManager.playRaidAttack();
+    setTimeout(() => soundManager.playRaidBossHit(), 150);
+    if (r.bossDmg > 0) {
+      setTimeout(() => soundManager.playRaidBossAttack(), 280);
+      setTimeout(() => soundManager.playRaidPlayerHit(), 380);
+    }
     roundIdx++;
   }, 500);
 };

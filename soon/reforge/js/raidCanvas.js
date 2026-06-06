@@ -2,12 +2,22 @@ const RaidCanvas = (() => {
   let canvas, ctx, rafId, idleT = 0;
   let currentStage = null, currentState = null;
 
-  let _px = 0, _py = 0, _bx = 0;
+  let _px = 0, _py = 0, _bx = 0, _by = 0;
   let _bossFlash = false, _playerFlash = false;
   let _defeatAlpha = 0, _defeated = false, _victory = false;
   let _queue = [], _cur = null;
 
+  let _swordAngle = 0;
+  let _slashAlpha = 0;
+  let _impacts = [];
+  let _proj = null;
+  let _screenShakePower = 0, _shakeX = 0, _shakeY = 0;
+  let _bossAtkAngle = 0;
+
   const ease = t => t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+
+  function getGY() { return canvas ? Math.floor(canvas.height * 0.75) : 195; }
+  function getBossOff() { return currentStage?.id === 'hard' ? 76 : currentStage?.id === 'normal' ? 68 : 50; }
 
   function init(canvasId, stage, state) {
     if (rafId) cancelAnimationFrame(rafId);
@@ -16,10 +26,14 @@ const RaidCanvas = (() => {
     ctx = canvas.getContext('2d');
     currentStage = stage;
     currentState = state;
-    _px = _py = _bx = 0;
+    _px = _py = _bx = _by = 0;
     _bossFlash = _playerFlash = _defeated = _victory = false;
     _defeatAlpha = 0;
     _queue = []; _cur = null;
+    _swordAngle = 0; _slashAlpha = 0;
+    _impacts = []; _proj = null;
+    _screenShakePower = _shakeX = _shakeY = 0;
+    _bossAtkAngle = 0;
     rafId = requestAnimationFrame(loop);
   }
 
@@ -30,6 +44,8 @@ const RaidCanvas = (() => {
   function loop(ts) {
     idleT = ts * 0.001;
     tick();
+    updateImpacts();
+    updateShake();
     draw();
     rafId = requestAnimationFrame(loop);
   }
@@ -46,6 +62,35 @@ const RaidCanvas = (() => {
 
   function qa(dur, fn, end) { _queue.push({ dur, fn, end }); }
 
+  function updateImpacts() {
+    for (let i = _impacts.length - 1; i >= 0; i--) {
+      const p = _impacts[i];
+      p.x += p.vx; p.y += p.vy;
+      p.vy += 0.28;
+      p.vx *= 0.9;
+      p.life -= 0.055;
+      if (p.life <= 0) _impacts.splice(i, 1);
+    }
+  }
+
+  function updateShake() {
+    if (_screenShakePower > 0.3) {
+      _shakeX = (Math.random() - 0.5) * _screenShakePower * 2;
+      _shakeY = (Math.random() - 0.5) * _screenShakePower * 1.2;
+      _screenShakePower *= 0.70;
+    } else {
+      _screenShakePower = 0; _shakeX = _shakeY = 0;
+    }
+  }
+
+  function spawnImpact(x, y, count, col) {
+    for (let i = 0; i < count; i++) {
+      const angle = (Math.PI * 2 * i / count) + (Math.random() - 0.5) * 0.9;
+      const spd = 2 + Math.random() * 5;
+      _impacts.push({ x, y, vx: Math.cos(angle) * spd, vy: Math.sin(angle) * spd - 2, life: 1, col });
+    }
+  }
+
   // ── grade colors ──
   function gc(grade) {
     if (grade === 'high') return { b: '#d4a520', d: '#8b6914', s: '#fff8a0' };
@@ -57,17 +102,22 @@ const RaidCanvas = (() => {
   function draw() {
     if (!canvas || !ctx) return;
     const W = canvas.width, H = canvas.height;
-    const GY = Math.floor(H * 0.75);
+    const GY = getGY();
     ctx.clearRect(0, 0, W, H);
+
+    ctx.save();
+    ctx.translate(_shakeX, _shakeY);
     drawBg(W, H, GY);
 
     const cx = 80 + _px, cy = GY - 44 + _py;
-    const bossOff = currentStage?.id === 'hard' ? 76 : currentStage?.id === 'normal' ? 68 : 50;
-    const bx = 310 + _bx, by = GY - bossOff;
+    const bx = 310 + _bx, by = GY - getBossOff() + _by;
     const bob = Math.sin(idleT * 2) * 2;
 
+    drawSlashTrail(cx, cy, bob);
     drawKnight(cx, cy, bob, _playerFlash, _defeated);
     drawBoss(bx, by, bob * -0.8, _bossFlash);
+    drawProjectile();
+    drawImpacts();
 
     if (_victory) {
       ctx.globalAlpha = 0.45 + 0.35 * Math.sin(idleT * 8);
@@ -77,6 +127,8 @@ const RaidCanvas = (() => {
       ctx.fillRect(cx - 52, cy - 80, 104, 80);
       ctx.globalAlpha = 1;
     }
+    ctx.restore();
+
     if (_defeatAlpha > 0) {
       ctx.globalAlpha = _defeatAlpha;
       ctx.fillStyle = '#500000';
@@ -97,6 +149,57 @@ const RaidCanvas = (() => {
       ctx.fillStyle = '#fff'; ctx.fillRect(sx, sy, 1.5, 1.5);
     });
     ctx.globalAlpha = 1;
+  }
+
+  // 슬래시 궤적: 칼이 지나간 자리에 잔상 그리기
+  function drawSlashTrail(x, y, bob) {
+    if (_slashAlpha <= 0) return;
+    const sg = currentState?.equippedSword?.grade;
+    const c = sg === 'high' ? '#ffd700' : sg === 'mid' ? '#8888ff' : '#d0d0d0';
+    ctx.save();
+    ctx.translate(x + 15, y + bob + 10);  // 손 피벗
+    for (let i = 1; i <= 4; i++) {
+      const ta = _swordAngle - i * 0.32;
+      const len = 30 - i * 2;
+      ctx.globalAlpha = _slashAlpha * (5 - i) / 4 * 0.55;
+      ctx.strokeStyle = i === 1 ? 'rgba(255,255,255,0.9)' : c;
+      ctx.lineWidth = 5 - i;
+      ctx.lineCap = 'round';
+      ctx.beginPath();
+      ctx.moveTo(0, 0);
+      ctx.lineTo(Math.sin(ta) * len, -Math.cos(ta) * len);
+      ctx.stroke();
+    }
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+
+  function drawImpacts() {
+    _impacts.forEach(p => {
+      ctx.globalAlpha = Math.max(0, p.life) * 0.85;
+      ctx.fillStyle = p.col;
+      ctx.beginPath(); ctx.arc(p.x, p.y, p.life * 2.5, 0, Math.PI * 2); ctx.fill();
+      ctx.strokeStyle = p.col; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(p.x - p.vx * 1.8, p.y - p.vy * 1.8); ctx.stroke();
+    });
+    ctx.globalAlpha = 1;
+  }
+
+  function drawProjectile() {
+    if (!_proj) return;
+    ctx.save();
+    ctx.shadowBlur = 20; ctx.shadowColor = _proj.col;
+    ctx.fillStyle = _proj.col; ctx.globalAlpha = 0.9;
+    ctx.beginPath(); ctx.arc(_proj.x, _proj.y, _proj.size, 0, Math.PI * 2); ctx.fill();
+    // inner core
+    ctx.shadowBlur = 6; ctx.fillStyle = 'rgba(255,255,255,0.9)';
+    ctx.beginPath(); ctx.arc(_proj.x - 1.5, _proj.y - 1.5, 2.5, 0, Math.PI * 2); ctx.fill();
+    // trail
+    ctx.shadowBlur = 0; ctx.strokeStyle = _proj.col; ctx.lineWidth = 2;
+    ctx.globalAlpha = 0.35;
+    ctx.beginPath(); ctx.moveTo(_proj.x, _proj.y); ctx.lineTo(_proj.x - _proj.dx * 14, _proj.y - _proj.dy * 14); ctx.stroke();
+    ctx.shadowBlur = 0; ctx.globalAlpha = 1;
+    ctx.restore();
   }
 
   function drawKnight(x, y, bob, flash, defeated) {
@@ -123,7 +226,7 @@ const RaidCanvas = (() => {
     ctx.fillStyle = ac.b; ctx.fillRect(-13, -6, 26, 26);
     ctx.fillStyle = ac.d; ctx.fillRect(-13, 6, 26, 3); ctx.fillRect(-1, -6, 2, 26);
 
-    // shield
+    // shield (왼팔, 고정)
     if (hg) {
       const sc = gc(hg);
       ctx.fillStyle = sc.b; ctx.fillRect(-26, -8, 14, 22);
@@ -133,16 +236,20 @@ const RaidCanvas = (() => {
       ctx.fillStyle = '#9a6a3a'; ctx.fillRect(-21, 0, 8, 16);
     }
 
-    // sword
+    // 칼 (오른팔, 스윙 각도 적용)
+    ctx.save();
+    ctx.translate(15, 10);   // 손 피벗 위치
+    ctx.rotate(_swordAngle); // 스윙 각도
     if (sg) {
       const wc = gc(sg);
-      ctx.fillStyle = '#4a2a10'; ctx.fillRect(13, 6, 5, 14);
-      ctx.fillStyle = wc.d; ctx.fillRect(9, 6, 13, 4);
-      ctx.fillStyle = wc.s; ctx.fillRect(16, -22, 4, 28);
-      ctx.fillStyle = 'rgba(255,255,255,0.65)'; ctx.fillRect(17, -22, 1, 28);
+      ctx.fillStyle = '#4a2a10'; ctx.fillRect(-2, -4, 5, 14);           // 손잡이
+      ctx.fillStyle = wc.d;     ctx.fillRect(-6, -4, 13, 4);            // 가드
+      ctx.fillStyle = wc.s;     ctx.fillRect(1, -32, 3, 28);            // 날
+      ctx.fillStyle = 'rgba(255,255,255,0.65)'; ctx.fillRect(1.5, -32, 1, 28); // 날 광택
     } else {
-      ctx.fillStyle = '#9a6a3a'; ctx.fillRect(13, 0, 8, 16);
+      ctx.fillStyle = '#9a6a3a'; ctx.fillRect(-4, -6, 8, 20);
     }
+    ctx.restore();
 
     // neck
     ctx.fillStyle = '#c8a070'; ctx.fillRect(-4, -11, 8, 7);
@@ -175,11 +282,21 @@ const RaidCanvas = (() => {
     ctx.fillStyle = '#3d6b28'; ctx.fillRect(-18, -10, 36, 30);
     ctx.fillStyle = '#5a3a1a'; ctx.fillRect(-18, 15, 36, 6);
     ctx.fillStyle = '#c8a832'; ctx.fillRect(-4, 15, 8, 6);
+    // right arm (static)
     ctx.fillStyle = '#3d6b28';
-    ctx.fillRect(-32, -8, 15, 20); ctx.fillRect(17, -8, 15, 20);
+    ctx.fillRect(17, -8, 15, 20);
     ctx.fillStyle = '#c8a832';
-    [-32,-27,-22].forEach(cx2 => ctx.fillRect(cx2, 10, 3, 7));
     [17,22,27].forEach(cx2 => ctx.fillRect(cx2+12, 10, 3, 7));
+
+    // left arm + claws (공격 모션: 왼쪽 어깨 피벗)
+    ctx.save();
+    ctx.translate(-32, -8);
+    ctx.rotate(_bossAtkAngle);
+    ctx.fillStyle = '#3d6b28';
+    ctx.fillRect(0, 0, 15, 20);
+    ctx.fillStyle = '#c8a832';
+    [0, 5, 10].forEach(ox => ctx.fillRect(ox, 18, 3, 7));
+    ctx.restore();
 
     ctx.fillStyle = '#3d6b28'; ctx.fillRect(-5, -17, 10, 9);
     ctx.fillStyle = '#4d8a34';
@@ -222,15 +339,24 @@ const RaidCanvas = (() => {
     ctx.fillStyle = '#555';
     ctx.beginPath(); ctx.arc(-28,-10,13,0,Math.PI*2); ctx.fill();
     ctx.beginPath(); ctx.arc(28,-10,13,0,Math.PI*2); ctx.fill();
+    // right arm (static)
     ctx.fillStyle = '#6b8e23';
-    ctx.fillRect(-46,-14,20,34); ctx.fillRect(26,-14,20,34);
+    ctx.fillRect(26,-14,20,34);
     ctx.fillStyle = '#556b2f';
-    ctx.fillRect(-48,18,22,15); ctx.fillRect(26,18,22,15);
+    ctx.fillRect(26,18,22,15);
 
-    // axe
-    ctx.fillStyle = '#4a2a10'; ctx.fillRect(-58,-10,8,38);
+    // left arm + forearm + axe (공격 모션: 왼쪽 어깨 피벗)
+    ctx.save();
+    ctx.translate(-46, -14);
+    ctx.rotate(_bossAtkAngle);
+    ctx.fillStyle = '#6b8e23';
+    ctx.fillRect(0, 0, 20, 34);        // left arm
+    ctx.fillStyle = '#556b2f';
+    ctx.fillRect(-2, 32, 22, 15);      // left forearm
+    ctx.fillStyle = '#4a2a10'; ctx.fillRect(-12, 4, 8, 38);
     ctx.fillStyle = '#777';
-    ctx.beginPath(); ctx.moveTo(-66,-22); ctx.lineTo(-50,-10); ctx.lineTo(-50,8); ctx.lineTo(-66,4); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(-20,-8); ctx.lineTo(-4,4); ctx.lineTo(-4,22); ctx.lineTo(-20,18); ctx.fill();
+    ctx.restore();
 
     ctx.fillStyle = '#6b8e23'; ctx.fillRect(-9,-24,18,10);
     ctx.fillStyle = '#7a9e2a';
@@ -335,21 +461,100 @@ const RaidCanvas = (() => {
   // ── animations ──
   function animateRound() {
     _queue = []; _cur = null;
+    _px = _bx = _by = 0; _swordAngle = 0; _slashAlpha = 0;
+    _bossFlash = false; _playerFlash = false;
+    _proj = null; _impacts = [];
+    _bossAtkAngle = 0;
 
-    // player lunges → boss flashes
-    qa(140, t => {
-      _px = Math.sin(ease(t) * Math.PI) * 22;
-      _bossFlash = t > 0.5;
-    }, () => { _px = 0; _bossFlash = false; });
+    const GY = getGY();
+    const bo = getBossOff();
+    const sg = currentState?.equippedSword?.grade;
+    const swordCol = gc(sg || 'low').s;
+    const ibx = 295, iby = GY - bo + 10;
+    const ipx = 88, ipy = GY - 26;
 
-    // brief gap
+    // ① 플레이어 와인드업 (90ms)
+    qa(90, t => {
+      _px = -ease(t) * 7;
+      _swordAngle = -ease(t) * Math.PI * 0.62;
+    }, null);
+
+    // ② 플레이어 공격 (110ms) — 여기까지 200ms
+    qa(110, t => {
+      _px = -7 + ease(t) * 33;
+      _swordAngle = -Math.PI * 0.62 + ease(t) * Math.PI * 1.55;
+      _slashAlpha = t < 0.5 ? t * 2 : (1 - t) * 2;
+      if (t > 0.45 && !_bossFlash) {
+        _bossFlash = true;
+        spawnImpact(ibx, iby, 9, swordCol);
+        _screenShakePower = 5;
+      }
+    }, () => { _px = 0; _swordAngle = 0; _slashAlpha = 0; _bossFlash = false; });
+
+    // ③ 간격 (40ms)
     qa(40, () => {}, null);
 
-    // boss retaliates → player flashes
-    qa(140, t => {
-      _bx = -Math.sin(ease(t) * Math.PI) * 18;
-      _playerFlash = t > 0.5;
-    }, () => { _bx = 0; _playerFlash = false; });
+    // ④ 보스 반격 — 원본과 동일한 단일 페이즈, 크기만 키움 (140ms)
+    // 총합: 90+110+40+140 = 380ms < 500ms 인터벌
+    const id = currentStage?.id;
+    const atkCol = id === 'hard' ? '#dd44ff' : id === 'normal' ? '#c8a832' : '#7dcc5a';
+    const atkShake = id === 'normal' ? 9 : id === 'hard' ? 7 : 4;
+    let hitDone = false;
+
+    if (id === 'hard') {
+      // 데몬: 투사체 발사
+      qa(140, t => {
+        _bx = -Math.sin(ease(t) * Math.PI) * 15;
+        const pt = Math.min(t / 0.85, 1);
+        _proj = {
+          x: 310 - ease(pt) * 238,
+          y: (GY - bo - 10) - Math.sin(pt * Math.PI) * 18,
+          col: '#cc00ff', size: 7, dx: -1, dy: 0.2
+        };
+        _playerFlash = t > 0.5;
+        if (t > 0.5 && !hitDone) {
+          hitDone = true;
+          spawnImpact(ipx, ipy, 9, atkCol);
+          _screenShakePower = atkShake;
+        }
+      }, () => { _bx = 0; _by = 0; _playerFlash = false; _proj = null; });
+
+    } else if (id === 'normal') {
+      // 오크: 도끼 와인드업 (50ms) → 돌진 타격 (90ms)
+      qa(50, t => {
+        _bx = ease(t) * 15;
+        _by = -ease(t) * 10;
+        _bossAtkAngle = ease(t) * Math.PI * 0.55;
+      }, null);
+      qa(90, t => {
+        _bx = 15 - ease(t) * 105;
+        _by = -10 + ease(t) * 10;
+        _bossAtkAngle = Math.PI * 0.55 - ease(t) * Math.PI * 1.35;
+        _playerFlash = t > 0.5;
+        if (t > 0.5 && !hitDone) {
+          hitDone = true;
+          spawnImpact(ipx, ipy, 8, atkCol);
+          _screenShakePower = atkShake;
+        }
+      }, () => { _bx = 0; _by = 0; _bossAtkAngle = 0; _playerFlash = false; });
+
+    } else {
+      // 고블린: 발톱 와인드업 (50ms) → 할퀴기 돌진 (90ms)
+      qa(50, t => {
+        _bx = ease(t) * 12;
+        _bossAtkAngle = -ease(t) * Math.PI * 0.55;
+      }, null);
+      qa(90, t => {
+        _bx = 12 - ease(t) * 82;
+        _bossAtkAngle = -Math.PI * 0.55 + ease(t) * Math.PI * 1.0;
+        _playerFlash = t > 0.55;
+        if (t > 0.55 && !hitDone) {
+          hitDone = true;
+          spawnImpact(ipx, ipy, 6, atkCol);
+          _screenShakePower = atkShake;
+        }
+      }, () => { _bx = 0; _by = 0; _bossAtkAngle = 0; _playerFlash = false; });
+    }
   }
 
   function animateVictory() {
@@ -362,5 +567,16 @@ const RaidCanvas = (() => {
     qa(800, t => { _defeatAlpha = t * 0.55; }, () => { _defeatAlpha = 0.55; });
   }
 
-  return { init, stop, animateRound, animateVictory, animateDefeat };
+  function reset() {
+    _px = _py = _bx = _by = 0;
+    _bossFlash = _playerFlash = _defeated = _victory = false;
+    _defeatAlpha = 0;
+    _queue = []; _cur = null;
+    _swordAngle = 0; _slashAlpha = 0;
+    _impacts = []; _proj = null;
+    _screenShakePower = _shakeX = _shakeY = 0;
+    _bossAtkAngle = 0;
+  }
+
+  return { init, stop, reset, animateRound, animateVictory, animateDefeat };
 })();

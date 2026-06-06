@@ -133,6 +133,37 @@ class SoundManager {
     this._playSlide(200, 400, 'sine', 0.1, 0.15);
   }
 
+  playRaidAttack() {
+    this._playSlide(440, 220, 'sawtooth', 0.07, 0.18);
+    setTimeout(() => this._playNoise(0.04, 0.1), 55);
+  }
+
+  playRaidBossHit() {
+    this._play(110, 'square', 0.13, 0.22);
+    setTimeout(() => this._playNoise(0.05, 0.12), 45);
+  }
+
+  playRaidBossAttack() {
+    this._playSlide(160, 70, 'sawtooth', 0.09, 0.28);
+  }
+
+  playRaidPlayerHit() {
+    this._playNoise(0.07, 0.18);
+    setTimeout(() => this._play(170, 'square', 0.1, 0.14), 55);
+  }
+
+  playRaidVictory() {
+    this._playSequence([
+      { freq: 392, dur: 0.12 }, { freq: 523, dur: 0.12 },
+      { freq: 659, dur: 0.12 }, { freq: 784, dur: 0.2 },
+    ], 0.13);
+  }
+
+  playRaidDefeat() {
+    this._playSlide(280, 70, 'sawtooth', 0.5, 0.22);
+    setTimeout(() => this._playNoise(0.3, 0.13), 180);
+  }
+
   toggle() {
     this.enabled = !this.enabled;
     return this.enabled;
