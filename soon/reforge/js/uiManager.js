@@ -2,6 +2,7 @@
 const UIManager = (() => {
   let _state = null;
   let _selectedSlotKey = null;
+  let _selectedRaidStage = null;
 
   function formatGold(n) {
     return n.toLocaleString('ko-KR') + '원';
@@ -152,6 +153,69 @@ const UIManager = (() => {
     });
   }
 
+  // 탭 4: 레이드 렌더링
+  function renderRaid(state) {
+    const playerStats = RaidSystem.getPlayerStats(state);
+
+    const statsBox = document.getElementById('raid-stats-box');
+    if (statsBox) {
+      statsBox.innerHTML = `
+        <div class="raid-stat-item">⚔️ ATK <strong>${playerStats.atk}</strong></div>
+        <div class="raid-stat-item">🛡️ DEF <strong>${playerStats.def}</strong></div>
+      `;
+    }
+
+    const stagesEl = document.getElementById('raid-stages');
+    if (stagesEl) {
+      stagesEl.innerHTML = CONFIG.RAID_STAGES.map(stage => {
+        const unlocked = RaidSystem.isStageUnlocked(stage, state);
+        const selected = _selectedRaidStage === stage.id;
+        const innerHtml = unlocked
+          ? `<div class="raid-stage-info">HP <b>${stage.bossHp}</b> / ATK <b>${stage.bossAtk}</b></div>
+             <div class="raid-stage-reward">💰 ${stage.reward.toLocaleString()}원</div>`
+          : `<div class="raid-lock-msg">🔒 강화합 ${stage.unlock} 필요</div>`;
+        return `
+          <div class="raid-stage-card ${unlocked ? 'unlocked' : 'locked'} ${selected ? 'selected' : ''}"
+               ${unlocked ? `onclick="window.handleRaidSelectStage('${stage.id}')"` : ''}>
+            <div class="raid-stage-label">${stage.label}</div>
+            ${innerHtml}
+          </div>
+        `;
+      }).join('');
+    }
+
+    const battleArea = document.getElementById('raid-battle-area');
+    if (!battleArea) return;
+    if (window.isRaidingActive) return;
+
+    if (_selectedRaidStage) {
+      const stage = CONFIG.RAID_STAGES.find(s => s.id === _selectedRaidStage);
+      battleArea.innerHTML = `
+        <div class="raid-hp-bars">
+          <div class="raid-hp-row">
+            <span class="raid-hp-label">👤 플레이어</span>
+            <div class="raid-hp-bar-wrap">
+              <div class="raid-hp-bar player-hp" id="raid-player-hp-bar" style="width:100%"></div>
+            </div>
+            <span id="raid-player-hp-text">${CONFIG.RAID_PLAYER_HP}</span>
+          </div>
+          <div class="raid-hp-row">
+            <span class="raid-hp-label">👹 보스</span>
+            <div class="raid-hp-bar-wrap">
+              <div class="raid-hp-bar boss-hp" id="raid-boss-hp-bar" style="width:100%"></div>
+            </div>
+            <span id="raid-boss-hp-text">${stage.bossHp}</span>
+          </div>
+        </div>
+        <div id="raid-log" class="raid-log"></div>
+        <div id="raid-result" class="raid-result"></div>
+        <button id="btn-raid-start" class="btn-primary btn-lg" onclick="window.handleRaidStart()">⚔️ 전투 시작</button>
+      `;
+    } else {
+      battleArea.innerHTML = '<p class="hint">스테이지를 선택하세요.</p>';
+    }
+  }
+
   // 강화 결과 메시지 표시
   function showEnhanceResult(result) {
     const el = document.getElementById('enhance-result');
@@ -269,6 +333,14 @@ const UIManager = (() => {
     return _selectedSlotKey;
   }
 
+  function selectRaidStage(stageId) {
+    _selectedRaidStage = stageId;
+  }
+
+  function getSelectedRaidStage() {
+    return _selectedRaidStage;
+  }
+
   // 전체 UI 갱신
   function render(state) {
     _state = state;
@@ -277,6 +349,7 @@ const UIManager = (() => {
     if (activeTab === 'equip') renderEquip(state);
     else if (activeTab === 'shop') renderShop(state);
     else if (activeTab === 'gambling') renderGambling();
+    else if (activeTab === 'raid') renderRaid(state);
   }
 
   return {
@@ -293,6 +366,9 @@ const UIManager = (() => {
     stopTimer,
     selectSlot,
     getSelectedSlot,
+    selectRaidStage,
+    getSelectedRaidStage,
+    renderRaid,
     formatGold,
     updateHeader,
   };

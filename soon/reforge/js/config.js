@@ -45,6 +45,22 @@ const CONFIG = {
 
   // 초기 골드
   INITIAL_GOLD: 0,
+
+  // 레이드: 등급별 스탯
+  ITEM_GRADE_STATS: {
+    low:  { atk: 5,  def: 3,  atkMult: 1, defMult: 1 },
+    mid:  { atk: 15, def: 10, atkMult: 2, defMult: 2 },
+    high: { atk: 30, def: 20, atkMult: 3, defMult: 3 },
+  },
+
+  // 레이드 스테이지
+  RAID_STAGES: [
+    { id: 'easy',   label: '하급', bossHp: 100, bossAtk: 12, reward: 30000,  unlock: 0  },
+    { id: 'normal', label: '중급', bossHp: 300, bossAtk: 35, reward: 100000, unlock: 10 },
+    { id: 'hard',   label: '상급', bossHp: 700, bossAtk: 80, reward: 300000, unlock: 20 },
+  ],
+  RAID_ROUNDS: 10,
+  RAID_PLAYER_HP: 100,
 };
 
 // 강화 확률 계산

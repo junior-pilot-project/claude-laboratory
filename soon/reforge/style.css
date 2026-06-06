@@ -773,3 +773,185 @@ body {
 .prob-table tr.hard-zone td {
   background: rgba(244, 67, 54, 0.06);
 }
+
+/* ===== 레이드 ===== */
+.raid-stats-box {
+  display: flex;
+  gap: 16px;
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin-bottom: 10px;
+}
+
+.raid-stat-item {
+  font-size: 1rem;
+  color: var(--text);
+}
+
+.raid-stat-item strong {
+  color: var(--gold);
+  margin-left: 6px;
+}
+
+.raid-stages {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.raid-stage-card {
+  background: var(--bg-card);
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 8px;
+  text-align: center;
+  transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+}
+
+.raid-stage-card.unlocked {
+  cursor: pointer;
+}
+
+.raid-stage-card.unlocked:hover {
+  border-color: var(--accent);
+  box-shadow: 0 0 10px rgba(233, 69, 96, 0.35);
+  transform: translateY(-2px);
+}
+
+.raid-stage-card.locked {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.raid-stage-card.selected {
+  border-color: var(--gold);
+  box-shadow: 0 0 12px rgba(255, 215, 0, 0.4);
+}
+
+.raid-stage-label {
+  font-size: 1.05rem;
+  font-weight: bold;
+  font-family: 'Black Han Sans', 'Segoe UI', sans-serif;
+  margin-bottom: 6px;
+}
+
+.raid-lock-msg {
+  font-size: 0.78rem;
+  color: var(--text-dim);
+}
+
+.raid-stage-info {
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  margin-bottom: 4px;
+}
+
+.raid-stage-reward {
+  font-size: 0.85rem;
+  color: var(--gold);
+  font-weight: bold;
+}
+
+.raid-battle-area {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.raid-hp-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.raid-hp-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.raid-hp-label {
+  width: 80px;
+  font-size: 0.85rem;
+  flex-shrink: 0;
+}
+
+.raid-hp-bar-wrap {
+  flex: 1;
+  background: var(--border);
+  border-radius: 4px;
+  height: 14px;
+  overflow: hidden;
+}
+
+.raid-hp-bar {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.4s ease;
+}
+
+.raid-hp-bar.player-hp {
+  background: linear-gradient(90deg, var(--success), #81c784);
+  box-shadow: 0 0 6px var(--success);
+}
+
+.raid-hp-bar.boss-hp {
+  background: linear-gradient(90deg, var(--fail), #e57373);
+  box-shadow: 0 0 6px var(--fail);
+}
+
+.raid-log {
+  width: 100%;
+  max-height: 140px;
+  overflow-y: auto;
+  background: var(--bg-deep);
+  border-radius: 6px;
+  padding: 6px 8px;
+  font-size: 0.8rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.raid-log-entry {
+  padding: 2px 0;
+  border-bottom: 1px solid rgba(42, 42, 74, 0.5);
+  color: var(--text-dim);
+}
+
+.raid-round {
+  color: #555;
+  font-size: 0.75rem;
+  margin-right: 4px;
+}
+
+.atk-num { color: var(--success); }
+.dmg-num { color: var(--fail); }
+
+.raid-result {
+  text-align: center;
+  min-height: 28px;
+}
+
+.raid-clear {
+  font-size: 1.3rem;
+  color: var(--gold);
+  font-weight: bold;
+  font-family: 'Black Han Sans', 'Segoe UI', sans-serif;
+  animation: pop 0.4s ease;
+}
+
+.raid-fail {
+  font-size: 1.1rem;
+  color: var(--fail);
+  animation: pop 0.4s ease;
+}

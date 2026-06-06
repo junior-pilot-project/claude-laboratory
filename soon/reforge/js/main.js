@@ -4,6 +4,7 @@ let isOpening = false;
 let _modalCloseTimer = null;
 let isEnhancing = false;
 let _enhanceCloseTimer = null;
+let isRaiding = false;
 
 function _openEnhanceModal(item) {
   const icon = item.type === 'sword' ? '⚔️' : '🛡️';
@@ -325,6 +326,83 @@ window.handleOpenBox = function(boxId, count) {
     isOpening = false;
     document.querySelectorAll('.btn-open-box').forEach(b => b.disabled = false);
   });
+};
+
+window.handleRaidSelectStage = function(stageId) {
+  UIManager.selectRaidStage(stageId);
+  UIManager.renderRaid(state);
+};
+
+window.handleRaidStart = function() {
+  if (isRaiding) return;
+  const stageId = UIManager.getSelectedRaidStage();
+  if (!stageId) return;
+
+  const stage = CONFIG.RAID_STAGES.find(s => s.id === stageId);
+  if (!stage || !RaidSystem.isStageUnlocked(stage, state)) return;
+
+  isRaiding = true;
+  window.isRaidingActive = true;
+
+  const btn = document.getElementById('btn-raid-start');
+  if (btn) btn.disabled = true;
+
+  const playerStats = RaidSystem.getPlayerStats(state);
+  const battle = RaidSystem.simulateBattle(playerStats, stage);
+
+  const logEl = document.getElementById('raid-log');
+  const resultEl = document.getElementById('raid-result');
+  if (logEl) logEl.innerHTML = '';
+  if (resultEl) resultEl.innerHTML = '';
+
+  let roundIdx = 0;
+  const ticker = setInterval(() => {
+    if (roundIdx >= battle.rounds.length) {
+      clearInterval(ticker);
+
+      if (battle.cleared) {
+        state.gold += stage.reward;
+        GameState.save(state);
+        UIManager.updateHeader(state);
+        const res = document.getElementById('raid-result');
+        if (res) res.innerHTML = `<div class="raid-clear">🏆 클리어! +${stage.reward.toLocaleString()}G</div>`;
+      } else {
+        const res = document.getElementById('raid-result');
+        if (res) res.innerHTML = `<div class="raid-fail">💀 전투 실패...</div>`;
+      }
+
+      isRaiding = false;
+      window.isRaidingActive = false;
+      const startBtn = document.getElementById('btn-raid-start');
+      if (startBtn) startBtn.disabled = false;
+      return;
+    }
+
+    const r = battle.rounds[roundIdx];
+    const playerPct = (r.playerHp / CONFIG.RAID_PLAYER_HP) * 100;
+    const bossPct = (r.bossHp / stage.bossHp) * 100;
+
+    const playerBar = document.getElementById('raid-player-hp-bar');
+    const bossBar = document.getElementById('raid-boss-hp-bar');
+    const playerText = document.getElementById('raid-player-hp-text');
+    const bossText = document.getElementById('raid-boss-hp-text');
+
+    if (playerBar) playerBar.style.width = playerPct + '%';
+    if (bossBar) bossBar.style.width = bossPct + '%';
+    if (playerText) playerText.textContent = r.playerHp;
+    if (bossText) bossText.textContent = r.bossHp;
+
+    const log = document.getElementById('raid-log');
+    if (log) {
+      const entry = document.createElement('div');
+      entry.className = 'raid-log-entry';
+      entry.innerHTML = `<span class="raid-round">${r.round}R</span> ⚔️<b class="atk-num">-${r.playerDmg}</b> 보스HP<b>${r.bossHp}</b> | 👹<b class="dmg-num">-${r.bossDmg}</b> 내HP<b>${r.playerHp}</b>`;
+      log.appendChild(entry);
+      log.scrollTop = log.scrollHeight;
+    }
+
+    roundIdx++;
+  }, 500);
 };
 
 window.handleNewGame = function() {
