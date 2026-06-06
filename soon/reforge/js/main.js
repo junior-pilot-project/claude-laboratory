@@ -4,7 +4,64 @@ let isOpening = false;
 let _modalCloseTimer = null;
 let isEnhancing = false;
 let _enhanceCloseTimer = null;
-let isRaiding = false;
+let isBossing = false;
+let isRaidActing = false;
+let isCrafting = false;
+
+function _openCraftModal(type) {
+  const icon = type === 'sword' ? '⚔️' : '🛡️';
+  const typeName = type === 'sword' ? '칼' : '방패';
+  document.getElementById('enhance-modal-icon').textContent = icon;
+  document.getElementById('enhance-modal-icon').className = 'enhance-modal-icon charging';
+  document.getElementById('enhance-modal-level').textContent =
+    `상급 ${typeName} +${CONFIG.CRAFT.REQUIRED_ENHANCEMENT} → 최상급 ${typeName} +${CONFIG.SUPREME_START_LEVEL}`;
+  document.getElementById('enhance-modal-level').style.color = '';
+  document.getElementById('enhance-modal-prob').innerHTML =
+    `성공 확률: <b style="color:var(--fail)">${CONFIG.CRAFT.SUCCESS_RATE}%</b>`;
+  document.getElementById('enhance-modal-status').textContent = '제작 시도 중...';
+  document.getElementById('enhance-modal-status').className = 'enhance-modal-status';
+  document.getElementById('enhance-modal-bar').className = 'enhance-modal-bar charging';
+  document.getElementById('enhance-modal-ring').className = 'enhance-modal-ring spinning';
+  document.getElementById('enhance-modal').className = 'enhance-modal-overlay active';
+  document.querySelector('#enhance-modal .enhance-modal-hint')?.remove();
+}
+
+function _revealCraftModal(result, type) {
+  const modal = document.getElementById('enhance-modal');
+  const iconEl   = document.getElementById('enhance-modal-icon');
+  const levelEl  = document.getElementById('enhance-modal-level');
+  const statusEl = document.getElementById('enhance-modal-status');
+  const barEl    = document.getElementById('enhance-modal-bar');
+  const ringEl   = document.getElementById('enhance-modal-ring');
+  const typeName = type === 'sword' ? '칼' : '방패';
+
+  if (result.success) {
+    iconEl.className   = 'enhance-modal-icon success';
+    ringEl.className   = 'enhance-modal-ring success';
+    barEl.className    = 'enhance-modal-bar success';
+    levelEl.textContent = `최상급 ${typeName} +${CONFIG.SUPREME_START_LEVEL} 제작 완료!`;
+    levelEl.style.color = 'var(--gold)';
+    statusEl.textContent = '✨ 제작 성공!';
+    statusEl.className  = 'enhance-modal-status success';
+    _spawnEnhanceSparks(modal.querySelector('.enhance-modal-card'));
+  } else {
+    iconEl.className   = 'enhance-modal-icon fail';
+    ringEl.className   = 'enhance-modal-ring fail';
+    barEl.className    = 'enhance-modal-bar fail';
+    levelEl.textContent = `제작 실패`;
+    levelEl.style.color = 'var(--fail)';
+    statusEl.textContent = '💥 제작 실패... 연마제 소모';
+    statusEl.className  = 'enhance-modal-status fail';
+  }
+
+  const hint = document.createElement('p');
+  hint.className = 'enhance-modal-hint';
+  hint.textContent = '화면을 클릭하여 닫기';
+  modal.querySelector('.enhance-modal-card').appendChild(hint);
+
+  modal.classList.add('closeable');
+  _enhanceCloseTimer = setTimeout(_closeEnhanceModal, 2500);
+}
 
 function _openEnhanceModal(item) {
   const icon = item.type === 'sword' ? '⚔️' : '🛡️';
@@ -328,32 +385,32 @@ window.handleOpenBox = function(boxId, count) {
   });
 };
 
-window.handleRaidSelectStage = function(stageId) {
-  UIManager.selectRaidStage(stageId);
-  UIManager.renderRaid(state);
+window.handleBossSelectStage = function(stageId) {
+  UIManager.selectBossStage(stageId);
+  UIManager.renderBoss(state);
 };
 
-window.handleRaidStart = function() {
-  if (isRaiding) return;
+window.handleBossStart = function() {
+  if (isBossing) return;
   soundManager.init();
-  const stageId = UIManager.getSelectedRaidStage();
+  const stageId = UIManager.getSelectedBossStage();
   if (!stageId) return;
 
-  const stage = CONFIG.RAID_STAGES.find(s => s.id === stageId);
-  if (!stage || !RaidSystem.isStageUnlocked(stage, state)) return;
+  const stage = CONFIG.BOSS_STAGES.find(s => s.id === stageId);
+  if (!stage || !BossSystem.isStageUnlocked(stage, state)) return;
 
-  isRaiding = true;
-  window.isRaidingActive = true;
-  RaidCanvas.reset();
+  isBossing = true;
+  window.isBossingActive = true;
+  BossCanvas.reset();
 
-  const btn = document.getElementById('btn-raid-start');
+  const btn = document.getElementById('btn-boss-start');
   if (btn) btn.disabled = true;
 
-  const playerStats = RaidSystem.getPlayerStats(state);
-  const battle = RaidSystem.simulateBattle(playerStats, stage);
+  const playerStats = BossSystem.getPlayerStats(state);
+  const battle = BossSystem.simulateBattle(playerStats, stage);
 
-  const logEl = document.getElementById('raid-log');
-  const resultEl = document.getElementById('raid-result');
+  const logEl = document.getElementById('boss-log');
+  const resultEl = document.getElementById('boss-result');
   if (logEl) logEl.innerHTML = '';
   if (resultEl) resultEl.innerHTML = '';
 
@@ -367,49 +424,49 @@ window.handleRaidStart = function() {
         const dropped = CraftSystem.rollWhetstoneDrops(state, stage.id);
         GameState.save(state);
         UIManager.updateHeader(state);
-        const res = document.getElementById('raid-result');
+        const res = document.getElementById('boss-result');
         const whetMsg = dropped ? ' <span class="whetstone-drop">🪨 강화연마제 획득!</span>' : '';
-        if (res) res.innerHTML = `<div class="raid-clear">🏆 클리어! +${stage.reward.toLocaleString()}G${whetMsg}</div>`;
-        RaidCanvas.animateVictory();
+        if (res) res.innerHTML = `<div class="boss-clear">🏆 클리어! +${stage.reward.toLocaleString()}G${whetMsg}</div>`;
+        BossCanvas.animateVictory();
         soundManager.playRaidVictory();
       } else {
-        const res = document.getElementById('raid-result');
-        if (res) res.innerHTML = `<div class="raid-fail">💀 전투 실패...</div>`;
-        RaidCanvas.animateDefeat();
+        const res = document.getElementById('boss-result');
+        if (res) res.innerHTML = `<div class="boss-fail">💀 전투 실패...</div>`;
+        BossCanvas.animateDefeat();
         soundManager.playRaidDefeat();
       }
 
-      isRaiding = false;
-      window.isRaidingActive = false;
-      const startBtn = document.getElementById('btn-raid-start');
+      isBossing = false;
+      window.isBossingActive = false;
+      const startBtn = document.getElementById('btn-boss-start');
       if (startBtn) startBtn.disabled = false;
       return;
     }
 
     const r = battle.rounds[roundIdx];
-    const playerPct = (r.playerHp / CONFIG.RAID_PLAYER_HP) * 100;
+    const playerPct = (r.playerHp / CONFIG.BOSS_PLAYER_HP) * 100;
     const bossPct = (r.bossHp / stage.bossHp) * 100;
 
-    const playerBar = document.getElementById('raid-player-hp-bar');
-    const bossBar = document.getElementById('raid-boss-hp-bar');
-    const playerText = document.getElementById('raid-player-hp-text');
-    const bossText = document.getElementById('raid-boss-hp-text');
+    const playerBar = document.getElementById('boss-player-hp-bar');
+    const bossBar = document.getElementById('boss-boss-hp-bar');
+    const playerText = document.getElementById('boss-player-hp-text');
+    const bossText = document.getElementById('boss-boss-hp-text');
 
     if (playerBar) playerBar.style.width = playerPct + '%';
     if (bossBar) bossBar.style.width = bossPct + '%';
     if (playerText) playerText.textContent = r.playerHp;
     if (bossText) bossText.textContent = r.bossHp;
 
-    const log = document.getElementById('raid-log');
+    const log = document.getElementById('boss-log');
     if (log) {
       const entry = document.createElement('div');
-      entry.className = 'raid-log-entry';
-      entry.innerHTML = `<span class="raid-round">${r.round}R</span> ⚔️<b class="atk-num">-${r.playerDmg}</b> 보스HP<b>${r.bossHp}</b> | 👹<b class="dmg-num">-${r.bossDmg}</b> 내HP<b>${r.playerHp}</b>`;
+      entry.className = 'boss-log-entry';
+      entry.innerHTML = `<span class="boss-round">${r.round}R</span> ⚔️<b class="atk-num">-${r.playerDmg}</b> 보스HP<b>${r.bossHp}</b> | 👹<b class="dmg-num">-${r.bossDmg}</b> 내HP<b>${r.playerHp}</b>`;
       log.appendChild(entry);
       log.scrollTop = log.scrollHeight;
     }
 
-    RaidCanvas.animateRound();
+    BossCanvas.animateRound();
     soundManager.playRaidAttack();
     setTimeout(() => soundManager.playRaidBossHit(), 150);
     if (r.bossDmg > 0) {
@@ -420,26 +477,94 @@ window.handleRaidStart = function() {
   }, 500);
 };
 
-window.handleCraftAttempt = function(type) {
-  soundManager.init();
-  soundManager.playClick();
-  const result = CraftSystem.craftSupreme(state, type);
-  GameState.save(state);
-  UIManager.renderCraft(state);
-  UIManager.renderInventory(state);
-  UIManager.updateHeader(state);
+window.handleRaidActionSelectStage = function(stageId) {
+  UIManager.selectRaidActionStage(stageId);
+  RaidAction.selectStage(stageId);
+  UIManager.renderRaidAction(state);
+};
 
-  if (result.success) {
-    const typeName = type === 'sword' ? '칼' : '방패';
-    UIManager.showToast(`✨ 최상급 ${typeName} 제작 성공!`, 'success');
-  } else if (result.reason === 'no_whetstone') {
+window.handleRaidActionStart = function() {
+  if (isRaidActing) return;
+  soundManager.init();
+  const stageId = RaidAction.getSelectedStage();
+  if (!stageId) return;
+
+  const stage = CONFIG.RAID_ACTION_STAGES.find(s => s.id === stageId);
+  const bossStageCfg = CONFIG.BOSS_STAGES.find(s => s.id === stageId);
+  if (!stage || !bossStageCfg || !BossSystem.isStageUnlocked(bossStageCfg, state)) return;
+
+  isRaidActing = true;
+  const startBtn = document.getElementById('btn-raidact-start');
+  if (startBtn) startBtn.disabled = true;
+
+  const resEl = document.getElementById('raidact-result');
+  if (resEl) resEl.innerHTML = '';
+
+  const playerStats = BossSystem.getPlayerStats(state);
+  RaidAction.start(stageId, playerStats, function(result) {
+    isRaidActing = false;
+    if (startBtn) startBtn.disabled = false;
+    if (result.victory) {
+      state.gold += stage.reward;
+      const dropped = CraftSystem.rollWhetstoneDrops(state, stage.id);
+      GameState.save(state);
+      UIManager.updateHeader(state);
+      soundManager.playRaidVictory();
+      const whetMsg = dropped ? ' <span class="whetstone-drop">🪨 강화연마제 획득!</span>' : '';
+      if (resEl) resEl.innerHTML = `<div class="boss-clear">🏆 클리어! +${stage.reward.toLocaleString()}G${whetMsg}</div>`;
+    } else {
+      soundManager.playRaidDefeat();
+      if (resEl) resEl.innerHTML = `<div class="boss-fail">💀 전투 실패...</div>`;
+    }
+  });
+};
+
+window.handleCraftAttempt = function(type) {
+  if (isCrafting) return;
+  soundManager.init();
+
+  const slotKey = type === 'sword' ? 'equippedSword' : 'equippedShield';
+  const hasMaterial = state.inventory.some(
+    i => i.type === type && i.grade === 'high' && i.enhancement === CONFIG.CRAFT.REQUIRED_ENHANCEMENT
+  ) || (state[slotKey]?.grade === 'high' && state[slotKey]?.enhancement === CONFIG.CRAFT.REQUIRED_ENHANCEMENT);
+
+  if ((state.whetstones || 0) < CONFIG.CRAFT.WHETSTONE_COST) {
+    soundManager.playInsufficientGold();
     UIManager.showToast('강화연마제가 부족합니다!', 'error');
-  } else if (result.reason === 'no_material') {
-    const typeName = type === 'sword' ? '칼' : '방패';
-    UIManager.showToast(`상급 ${typeName} +11이 필요합니다!`, 'error');
-  } else {
-    UIManager.showToast('💥 제작 실패... 연마제만 소모되었습니다.', 'error');
+    return;
   }
+  if (!hasMaterial) {
+    soundManager.playInsufficientGold();
+    const typeName = type === 'sword' ? '칼' : '방패';
+    UIManager.showToast(`상급 ${typeName} +${CONFIG.CRAFT.REQUIRED_ENHANCEMENT}이 필요합니다!`, 'error');
+    return;
+  }
+
+  isCrafting = true;
+  soundManager.playEnhanceReady();
+  _openCraftModal(type);
+
+  setTimeout(() => {
+    const result = CraftSystem.craftSupreme(state, type);
+
+    if (result.reason === 'no_whetstone' || result.reason === 'no_material') {
+      _closeEnhanceModal();
+      UIManager.showToast('오류가 발생했습니다.', 'error');
+      isCrafting = false;
+      return;
+    }
+
+    _revealCraftModal(result, type);
+
+    if (result.success) soundManager.playSuccess(true);
+    else soundManager.playFail();
+
+    GameState.save(state);
+    UIManager.renderCraft(state);
+    UIManager.renderInventory(state);
+    UIManager.updateHeader(state);
+    isCrafting = false;
+  }, 1500);
 };
 
 window.handleNewGame = function() {
@@ -448,7 +573,6 @@ window.handleNewGame = function() {
   document.getElementById('gameover-screen').style.display = 'none';
   document.getElementById('main-content').style.display = '';
 
-  // 첫 탭으로 돌아가기
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
   document.querySelector('.tab-btn[data-tab="equip"]').classList.add('active');

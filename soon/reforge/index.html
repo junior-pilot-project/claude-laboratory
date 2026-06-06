@@ -26,6 +26,7 @@
     <button class="tab-btn active" data-tab="equip">⚔️ 장비/강화</button>
     <button class="tab-btn" data-tab="shop">🏪 상점</button>
     <button class="tab-btn" data-tab="gambling">🎰 도박장</button>
+    <button class="tab-btn" data-tab="boss">👾 보스</button>
     <button class="tab-btn" data-tab="raid">⚔️ 레이드</button>
     <button class="tab-btn" data-tab="craft">🔨 제작</button>
   </nav>
@@ -69,16 +70,44 @@
       <div class="box-result-area" id="box-result-area"></div>
     </section>
 
-    <!-- 탭 4: 레이드 -->
-    <section class="tab-content" id="tab-raid">
-      <div id="raid-stats-box" class="raid-stats-box"></div>
-      <div id="raid-stages" class="raid-stages"></div>
-      <div id="raid-battle-area" class="raid-battle-area">
+    <!-- 탭 4: 보스 (자동 전투) -->
+    <section class="tab-content" id="tab-boss">
+      <div id="boss-stats-box" class="boss-stats-box"></div>
+      <div id="boss-stages" class="boss-stages"></div>
+      <div id="boss-battle-area" class="boss-battle-area">
         <p class="hint">스테이지를 선택하세요.</p>
       </div>
     </section>
 
-    <!-- 탭 5: 제작 -->
+    <!-- 탭 5: 레이드 (액션 게임) -->
+    <section class="tab-content" id="tab-raid">
+      <div id="raidact-stages" class="boss-stages"></div>
+      <div class="raidact-canvas-wrap">
+        <canvas id="raidact-canvas" width="160" height="96"></canvas>
+      </div>
+      <div class="raidact-hpbars">
+        <div class="raidact-hp-row">
+          <span>👤</span>
+          <div class="raidact-bar-wrap"><div class="raidact-bar player" id="raidact-player-hp"></div></div>
+          <span id="raidact-player-hp-text">200</span>
+        </div>
+        <div class="raidact-hp-row">
+          <span>👹</span>
+          <div class="raidact-bar-wrap"><div class="raidact-bar boss" id="raidact-boss-hp"></div></div>
+          <span id="raidact-boss-hp-text">-</span>
+        </div>
+      </div>
+      <div id="raidact-result" class="raidact-result"></div>
+      <button id="btn-raidact-start" class="btn-primary btn-lg" onclick="window.handleRaidActionStart()">⚔️ 전투 시작</button>
+      <div class="raidact-controls" id="raidact-controls">
+        <button class="raidact-btn" id="raidact-left">◀</button>
+        <button class="raidact-btn" id="raidact-jump">▲</button>
+        <button class="raidact-btn raidact-atk" id="raidact-attack">⚔</button>
+        <button class="raidact-btn" id="raidact-right">▶</button>
+      </div>
+    </section>
+
+    <!-- 탭 6: 제작 -->
     <section class="tab-content" id="tab-craft"></section>
   </div>
 
@@ -142,9 +171,10 @@
   <script src="js/gamblingSystem.js"></script>
   <script src="js/rankingSystem.js"></script>
   <script src="js/soundManager.js"></script>
-  <script src="js/raidSystem.js"></script>
+  <script src="js/bossSystem.js"></script>
   <script src="js/craftSystem.js"></script>
-  <script src="js/raidCanvas.js"></script>
+  <script src="js/bossCanvas.js"></script>
+  <script src="js/raidAction.js"></script>
   <script src="js/uiManager.js"></script>
   <script src="js/main.js"></script>
 </body>

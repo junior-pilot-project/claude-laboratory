@@ -1,5 +1,5 @@
-// 레이드 시스템
-const RaidSystem = (() => {
+// 보스 시스템
+const BossSystem = (() => {
 
   function getPlayerStats(state) {
     let atk = 1;
@@ -19,7 +19,7 @@ const RaidSystem = (() => {
 
   function simulateBattle(playerStats, stage) {
     let bossHp = stage.bossHp;
-    let playerHp = CONFIG.RAID_PLAYER_HP;
+    let playerHp = CONFIG.BOSS_PLAYER_HP;
     const rounds = [];
 
     let round = 0;

@@ -1,4 +1,4 @@
-/* 다크 판타지 테마 */
+﻿/* ?ㅽ겕 ?먰?吏 ?뚮쭏 */
 :root {
   --bg-deep: #0d0d1a;
   --bg-card: #1a1a2e;
@@ -25,7 +25,7 @@ body {
   min-height: 100vh;
 }
 
-/* 헤더 */
+/* ?ㅻ뜑 */
 .game-header {
   background: var(--bg-panel);
   border-bottom: 2px solid var(--accent);
@@ -80,7 +80,7 @@ body {
   border-radius: 6px;
 }
 
-/* 탭 */
+/* ??*/
 .tabs {
   display: flex;
   background: var(--bg-panel);
@@ -103,11 +103,11 @@ body {
 .tab-btn:hover { color: var(--text); background: rgba(255,255,255,0.03); }
 .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
 
-/* 탭 콘텐츠 */
+/* ??肄섑뀗痢?*/
 .tab-content { display: none; padding: 8px; }
 .tab-content.active { display: block; }
 
-/* 슬롯 영역 */
+/* ?щ’ ?곸뿭 */
 .slots-wrap {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -149,7 +149,7 @@ body {
 .grade-low { color: var(--low); }
 .grade-supreme { color: #ffd700; text-shadow: 0 0 6px #ffd70088; font-weight: bold; }
 
-/* 강화 패널 */
+/* 媛뺥솕 ?⑤꼸 */
 .enhance-panel {
   background: var(--bg-panel);
   border: 1px solid var(--border);
@@ -193,7 +193,7 @@ body {
   100% { transform: scale(1); opacity: 1; }
 }
 
-/* 인벤토리 */
+/* ?몃깽?좊━ */
 .inventory-section h3 {
   color: var(--text-dim);
   font-size: 0.9rem;
@@ -226,7 +226,19 @@ body {
   cursor: pointer;
 }
 
-/* 상점 */
+.inv-whetstone {
+  border-color: #7a6030;
+  background: rgba(180, 130, 40, 0.08);
+  cursor: default;
+}
+.inv-whetstone:hover { border-color: #b8922a; }
+.whet-count {
+  margin-left: auto;
+  font-weight: bold;
+  color: var(--gold);
+}
+
+/* ?곸젏 */
 .shop-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
@@ -252,7 +264,7 @@ body {
 .shop-item-name { font-size: 0.85rem; margin-bottom: 6px; }
 .shop-item-price { color: var(--gold); font-size: 0.85rem; font-weight: bold; margin-bottom: 10px; }
 
-/* 도박장 */
+/* ?꾨컯??*/
 .box-list { display: flex; flex-direction: column; gap: 12px; }
 
 .box-row {
@@ -302,7 +314,7 @@ body {
   100% { transform: scale(1) translateY(0); opacity: 1; }
 }
 
-/* 버튼 */
+/* 踰꾪듉 */
 .btn-primary {
   background: linear-gradient(135deg, var(--accent), #c0392b);
   color: white;
@@ -350,7 +362,7 @@ body {
   border-color: var(--accent);
 }
 
-/* 토스트 */
+/* ?좎뒪??*/
 .toast {
   position: fixed;
   bottom: 24px;
@@ -371,10 +383,10 @@ body {
   to { transform: translateX(-50%) translateY(0); opacity: 1; }
 }
 
-/* 힌트 텍스트 */
+/* ?뚰듃 ?띿뒪??*/
 .hint { color: var(--text-dim); font-size: 0.9rem; }
 
-/* 게임 종료 화면 */
+/* 寃뚯엫 醫낅즺 ?붾㈃ */
 #gameover-screen {
   display: none;
   position: fixed;
@@ -427,14 +439,14 @@ body {
 .rank-date { color: var(--text-dim); font-size: 0.85rem; flex: 1; }
 .rank-badge { background: var(--accent); color: white; font-size: 0.75rem; padding: 2px 8px; border-radius: 10px; }
 
-/* 반응형 */
+/* 諛섏쓳??*/
 @media (max-width: 600px) {
   .slots-wrap { grid-template-columns: 1fr; }
   .enhance-info { flex-direction: column; gap: 8px; }
   .shop-grid { grid-template-columns: repeat(2, 1fr); }
 }
 
-/* ===== 강화 모달 ===== */
+/* ===== 媛뺥솕 紐⑤떖 ===== */
 .enhance-modal-overlay {
   display: none;
   position: fixed;
@@ -578,7 +590,7 @@ body {
   to { opacity: 1; }
 }
 
-/* ===== 상자 오픈 모달 ===== */
+/* ===== ?곸옄 ?ㅽ뵂 紐⑤떖 ===== */
 .box-modal-overlay {
   display: none;
   position: fixed;
@@ -696,7 +708,7 @@ body {
   100% { transform: translate(-50%, -50%) translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
 }
 
-/* ===== 강화 정보 팝업 ===== */
+/* ===== 媛뺥솕 ?뺣낫 ?앹뾽 ===== */
 .prob-info-overlay {
   display: none;
   position: fixed;
@@ -775,8 +787,8 @@ body {
   background: rgba(244, 67, 54, 0.06);
 }
 
-/* ===== 레이드 ===== */
-#raid-canvas {
+/* ===== ?덉씠??===== */
+#boss-canvas {
   display: block;
   max-width: 100%;
   margin: 0 auto 10px;
@@ -785,7 +797,7 @@ body {
   image-rendering: pixelated;
 }
 
-.raid-stats-box {
+.boss-stats-box {
   display: flex;
   gap: 16px;
   background: var(--bg-panel);
@@ -795,24 +807,24 @@ body {
   margin-bottom: 10px;
 }
 
-.raid-stat-item {
+.boss-stat-item {
   font-size: 1rem;
   color: var(--text);
 }
 
-.raid-stat-item strong {
+.boss-stat-item strong {
   color: var(--gold);
   margin-left: 6px;
 }
 
-.raid-stages {
+.boss-stages {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 8px;
   margin-bottom: 10px;
 }
 
-.raid-stage-card {
+.boss-stage-card {
   background: var(--bg-card);
   border: 2px solid var(--border);
   border-radius: 10px;
@@ -821,51 +833,51 @@ body {
   transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
 }
 
-.raid-stage-card.unlocked {
+.boss-stage-card.unlocked {
   cursor: pointer;
 }
 
-.raid-stage-card.unlocked:hover {
+.boss-stage-card.unlocked:hover {
   border-color: var(--accent);
   box-shadow: 0 0 10px rgba(233, 69, 96, 0.35);
   transform: translateY(-2px);
 }
 
-.raid-stage-card.locked {
+.boss-stage-card.locked {
   opacity: 0.45;
   cursor: not-allowed;
 }
 
-.raid-stage-card.selected {
+.boss-stage-card.selected {
   border-color: var(--gold);
   box-shadow: 0 0 12px rgba(255, 215, 0, 0.4);
 }
 
-.raid-stage-label {
+.boss-stage-label {
   font-size: 1.05rem;
   font-weight: bold;
   font-family: 'Black Han Sans', 'Segoe UI', sans-serif;
   margin-bottom: 6px;
 }
 
-.raid-lock-msg {
+.boss-lock-msg {
   font-size: 0.78rem;
   color: var(--text-dim);
 }
 
-.raid-stage-info {
+.boss-stage-info {
   font-size: 0.8rem;
   color: var(--text-dim);
   margin-bottom: 4px;
 }
 
-.raid-stage-reward {
+.boss-stage-reward {
   font-size: 0.85rem;
   color: var(--gold);
   font-weight: bold;
 }
 
-.raid-battle-area {
+.boss-battle-area {
   background: var(--bg-panel);
   border: 1px solid var(--border);
   border-radius: 10px;
@@ -876,26 +888,26 @@ body {
   gap: 10px;
 }
 
-.raid-hp-bars {
+.boss-hp-bars {
   display: flex;
   flex-direction: column;
   gap: 8px;
   width: 100%;
 }
 
-.raid-hp-row {
+.boss-hp-row {
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
-.raid-hp-label {
+.boss-hp-label {
   width: 80px;
   font-size: 0.85rem;
   flex-shrink: 0;
 }
 
-.raid-hp-bar-wrap {
+.boss-hp-bar-wrap {
   flex: 1;
   background: var(--border);
   border-radius: 4px;
@@ -903,23 +915,23 @@ body {
   overflow: hidden;
 }
 
-.raid-hp-bar {
+.boss-hp-bar {
   height: 100%;
   border-radius: 4px;
   transition: width 0.4s ease;
 }
 
-.raid-hp-bar.player-hp {
+.boss-hp-bar.player-hp {
   background: linear-gradient(90deg, var(--success), #81c784);
   box-shadow: 0 0 6px var(--success);
 }
 
-.raid-hp-bar.boss-hp {
+.boss-hp-bar.boss-hp {
   background: linear-gradient(90deg, var(--fail), #e57373);
   box-shadow: 0 0 6px var(--fail);
 }
 
-.raid-log {
+.boss-log {
   width: 100%;
   max-height: 140px;
   overflow-y: auto;
@@ -932,13 +944,13 @@ body {
   gap: 2px;
 }
 
-.raid-log-entry {
+.boss-log-entry {
   padding: 2px 0;
   border-bottom: 1px solid rgba(42, 42, 74, 0.5);
   color: var(--text-dim);
 }
 
-.raid-round {
+.boss-round {
   color: #555;
   font-size: 0.75rem;
   margin-right: 4px;
@@ -947,12 +959,12 @@ body {
 .atk-num { color: var(--success); }
 .dmg-num { color: var(--fail); }
 
-.raid-result {
+.boss-result {
   text-align: center;
   min-height: 28px;
 }
 
-.raid-clear {
+.boss-clear {
   font-size: 1.3rem;
   color: var(--gold);
   font-weight: bold;
@@ -960,13 +972,13 @@ body {
   animation: pop 0.4s ease;
 }
 
-.raid-fail {
+.boss-fail {
   font-size: 1.1rem;
   color: var(--fail);
   animation: pop 0.4s ease;
 }
 
-/* 제작 탭 */
+/* ?쒖옉 ??*/
 .craft-whetstone-info {
   background: var(--bg-panel);
   border: 1px solid var(--border);
@@ -1038,3 +1050,33 @@ body {
   font-size: 0.9rem;
   margin-left: 6px;
 }
+
+/* ===== 레이드 액션 ===== */
+.raidact-canvas-wrap {
+  display: flex; justify-content: center; margin-bottom: 10px;
+}
+#raidact-canvas {
+  width: 480px; height: 288px;
+  max-width: 100%;
+  border: 2px solid var(--border); border-radius: 6px;
+  image-rendering: pixelated; image-rendering: crisp-edges;
+  display: block;
+}
+.raidact-hpbars { display: flex; flex-direction: column; gap: 6px; max-width: 480px; margin: 0 auto 8px; }
+.raidact-hp-row { display: flex; align-items: center; gap: 8px; }
+.raidact-bar-wrap { flex: 1; background: var(--border); border-radius: 4px; height: 12px; overflow: hidden; }
+.raidact-bar { height: 100%; border-radius: 4px; transition: width 0.08s linear; }
+.raidact-bar.player { background: linear-gradient(90deg, #43a047, #81c784); }
+.raidact-bar.boss   { background: linear-gradient(90deg, #e53935, #e57373); }
+.raidact-result { text-align: center; min-height: 28px; margin: 6px 0; }
+.raidact-controls {
+  display: flex; gap: 12px; justify-content: center; margin-top: 12px;
+}
+.raidact-btn {
+  width: 72px; height: 72px; font-size: 1.8rem;
+  background: var(--bg-card); border: 2px solid var(--border); border-radius: 12px;
+  color: var(--text); cursor: pointer; user-select: none; touch-action: none;
+  transition: transform 0.08s, background 0.08s;
+}
+.raidact-btn:active { background: var(--accent); border-color: var(--accent); transform: scale(0.92); }
+.raidact-atk { color: var(--gold); border-color: var(--gold); }

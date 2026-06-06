@@ -2,7 +2,8 @@
 const UIManager = (() => {
   let _state = null;
   let _selectedSlotKey = null;
-  let _selectedRaidStage = null;
+  let _selectedBossStage = null;
+  let _selectedRaidActionStage = null;
 
   function formatGold(n) {
     return n.toLocaleString('ko-KR') + '원';
@@ -75,11 +76,20 @@ const UIManager = (() => {
   function renderInventory(state) {
     const container = document.getElementById('inventory-list');
     if (!container) return;
+    const whetCount = state.whetstones || 0;
+    const whetHtml = whetCount > 0
+      ? `<div class="inv-item inv-whetstone">
+          <span>🪨</span>
+          <span class="item-grade grade-high">재료</span>
+          <span>강화연마제</span>
+          <span class="whet-count">× ${whetCount}</span>
+        </div>`
+      : '';
     if (!state.inventory.length) {
-      container.innerHTML = `<p class="hint">인벤토리가 비어있습니다.</p>`;
+      container.innerHTML = whetHtml || `<p class="hint">인벤토리가 비어있습니다.</p>`;
       return;
     }
-    container.innerHTML = state.inventory.map(item => `
+    container.innerHTML = whetHtml + state.inventory.map(item => `
       <div class="inv-item" data-id="${item.id}">
         <span>${item.type === 'sword' ? '⚔️' : '🛡️'}</span>
         <span class="item-grade grade-${item.grade}">${CONFIG.GRADE_NAMES[item.grade]}</span>
@@ -153,70 +163,101 @@ const UIManager = (() => {
     });
   }
 
-  // 탭 4: 레이드 렌더링
-  function renderRaid(state) {
-    const playerStats = RaidSystem.getPlayerStats(state);
+  // 탭 4: 보스 렌더링
+  function renderBoss(state) {
+    const playerStats = BossSystem.getPlayerStats(state);
 
-    const statsBox = document.getElementById('raid-stats-box');
+    const statsBox = document.getElementById('boss-stats-box');
     if (statsBox) {
       statsBox.innerHTML = `
-        <div class="raid-stat-item">⚔️ ATK <strong>${playerStats.atk}</strong></div>
-        <div class="raid-stat-item">🛡️ DEF <strong>${playerStats.def}</strong></div>
+        <div class="boss-stat-item">⚔️ ATK <strong>${playerStats.atk}</strong></div>
+        <div class="boss-stat-item">🛡️ DEF <strong>${playerStats.def}</strong></div>
       `;
     }
 
-    const stagesEl = document.getElementById('raid-stages');
+    const stagesEl = document.getElementById('boss-stages');
     if (stagesEl) {
-      stagesEl.innerHTML = CONFIG.RAID_STAGES.map(stage => {
-        const unlocked = RaidSystem.isStageUnlocked(stage, state);
-        const selected = _selectedRaidStage === stage.id;
+      stagesEl.innerHTML = CONFIG.BOSS_STAGES.map(stage => {
+        const unlocked = BossSystem.isStageUnlocked(stage, state);
+        const selected = _selectedBossStage === stage.id;
         const innerHtml = unlocked
-          ? `<div class="raid-stage-info">HP <b>${stage.bossHp}</b> / ATK <b>${stage.bossAtk}</b></div>
-             <div class="raid-stage-reward">💰 ${stage.reward.toLocaleString()}원</div>`
-          : `<div class="raid-lock-msg">🔒 강화합 ${stage.unlock} 필요</div>`;
+          ? `<div class="boss-stage-info">HP <b>${stage.bossHp}</b> / ATK <b>${stage.bossAtk}</b></div>
+             <div class="boss-stage-reward">💰 ${stage.reward.toLocaleString()}원</div>`
+          : `<div class="boss-lock-msg">🔒 강화합 ${stage.unlock} 필요</div>`;
         return `
-          <div class="raid-stage-card ${unlocked ? 'unlocked' : 'locked'} ${selected ? 'selected' : ''}"
-               ${unlocked ? `onclick="window.handleRaidSelectStage('${stage.id}')"` : ''}>
-            <div class="raid-stage-label">${stage.label}</div>
+          <div class="boss-stage-card ${unlocked ? 'unlocked' : 'locked'} ${selected ? 'selected' : ''}"
+               ${unlocked ? `onclick="window.handleBossSelectStage('${stage.id}')"` : ''}>
+            <div class="boss-stage-label">${stage.label}</div>
             ${innerHtml}
           </div>
         `;
       }).join('');
     }
 
-    const battleArea = document.getElementById('raid-battle-area');
+    const battleArea = document.getElementById('boss-battle-area');
     if (!battleArea) return;
-    if (window.isRaidingActive) return;
+    if (window.isBossingActive) return;
 
-    if (_selectedRaidStage) {
-      const stage = CONFIG.RAID_STAGES.find(s => s.id === _selectedRaidStage);
+    if (_selectedBossStage) {
+      const stage = CONFIG.BOSS_STAGES.find(s => s.id === _selectedBossStage);
       battleArea.innerHTML = `
-        <canvas id="raid-canvas" width="420" height="260"></canvas>
-        <div class="raid-hp-bars">
-          <div class="raid-hp-row">
-            <span class="raid-hp-label">👤 플레이어</span>
-            <div class="raid-hp-bar-wrap">
-              <div class="raid-hp-bar player-hp" id="raid-player-hp-bar" style="width:100%"></div>
+        <canvas id="boss-canvas" width="420" height="260"></canvas>
+        <div class="boss-hp-bars">
+          <div class="boss-hp-row">
+            <span class="boss-hp-label">👤 플레이어</span>
+            <div class="boss-hp-bar-wrap">
+              <div class="boss-hp-bar player-hp" id="boss-player-hp-bar" style="width:100%"></div>
             </div>
-            <span id="raid-player-hp-text">${CONFIG.RAID_PLAYER_HP}</span>
+            <span id="boss-player-hp-text">${CONFIG.BOSS_PLAYER_HP}</span>
           </div>
-          <div class="raid-hp-row">
-            <span class="raid-hp-label">👹 보스</span>
-            <div class="raid-hp-bar-wrap">
-              <div class="raid-hp-bar boss-hp" id="raid-boss-hp-bar" style="width:100%"></div>
+          <div class="boss-hp-row">
+            <span class="boss-hp-label">👹 보스</span>
+            <div class="boss-hp-bar-wrap">
+              <div class="boss-hp-bar boss-hp" id="boss-boss-hp-bar" style="width:100%"></div>
             </div>
-            <span id="raid-boss-hp-text">${stage.bossHp}</span>
+            <span id="boss-boss-hp-text">${stage.bossHp}</span>
           </div>
         </div>
-        <div id="raid-log" class="raid-log"></div>
-        <div id="raid-result" class="raid-result"></div>
-        <button id="btn-raid-start" class="btn-primary btn-lg" onclick="window.handleRaidStart()">⚔️ 전투 시작</button>
+        <div id="boss-log" class="boss-log"></div>
+        <div id="boss-result" class="boss-result"></div>
+        <button id="btn-boss-start" class="btn-primary btn-lg" onclick="window.handleBossStart()">⚔️ 전투 시작</button>
       `;
-      RaidCanvas.init('raid-canvas', stage, state);
+      BossCanvas.init('boss-canvas', stage, state);
     } else {
-      RaidCanvas.stop();
+      BossCanvas.stop();
       battleArea.innerHTML = '<p class="hint">스테이지를 선택하세요.</p>';
     }
+  }
+
+  // 탭 5 (레이드 액션): 렌더링
+  function renderRaidAction(state) {
+    const stagesEl = document.getElementById('raidact-stages');
+    if (stagesEl) {
+      stagesEl.innerHTML = CONFIG.RAID_ACTION_STAGES.map(stage => {
+        const bossStageCfg = CONFIG.BOSS_STAGES.find(s => s.id === stage.id);
+        const unlocked = bossStageCfg ? BossSystem.isStageUnlocked(bossStageCfg, state) : true;
+        const selected = _selectedRaidActionStage === stage.id;
+        const innerHtml = unlocked
+          ? `<div class="boss-stage-info">HP <b>${stage.bossHp}</b> / ATK <b>${stage.bossAtk}</b></div>
+             <div class="boss-stage-reward">💰 ${stage.reward.toLocaleString()}원</div>`
+          : `<div class="boss-lock-msg">🔒 강화합 ${bossStageCfg?.unlock ?? 0} 필요</div>`;
+        return `
+          <div class="boss-stage-card ${unlocked ? 'unlocked' : 'locked'} ${selected ? 'selected' : ''}"
+               ${unlocked ? `onclick="window.handleRaidActionSelectStage('${stage.id}')"` : ''}>
+            <div class="boss-stage-label">${stage.label}</div>
+            ${innerHtml}
+          </div>
+        `;
+      }).join('');
+    }
+
+    if (_selectedRaidActionStage) {
+      const stage = CONFIG.RAID_ACTION_STAGES.find(s => s.id === _selectedRaidActionStage);
+      const bossHpText = document.getElementById('raidact-boss-hp-text');
+      if (bossHpText && stage) bossHpText.textContent = stage.bossHp;
+    }
+
+    RaidAction.init('raidact-canvas');
   }
 
   // 강화 결과 메시지 표시
@@ -306,7 +347,7 @@ const UIManager = (() => {
     });
   }
 
-  // 탭 5: 제작 렌더링
+  // 탭 6: 제작 렌더링
   function renderCraft(state) {
     const container = document.getElementById('tab-craft');
     if (!container) return;
@@ -345,7 +386,7 @@ const UIManager = (() => {
     container.innerHTML = `
       <div class="craft-whetstone-info">
         🪨 강화연마제 보유: <b>${whetCount}개</b>
-        <div class="craft-drop-hint">하급 레이드 1% / 중급 10% / 상급 30% 확률로 드롭</div>
+        <div class="craft-drop-hint">하급 보스 1% / 중급 10% / 상급 30% 확률로 드롭</div>
       </div>
       <div class="craft-panels">${panelsHtml}</div>
     `;
@@ -397,12 +438,20 @@ const UIManager = (() => {
     return _selectedSlotKey;
   }
 
-  function selectRaidStage(stageId) {
-    _selectedRaidStage = stageId;
+  function selectBossStage(stageId) {
+    _selectedBossStage = stageId;
   }
 
-  function getSelectedRaidStage() {
-    return _selectedRaidStage;
+  function getSelectedBossStage() {
+    return _selectedBossStage;
+  }
+
+  function selectRaidActionStage(stageId) {
+    _selectedRaidActionStage = stageId;
+  }
+
+  function getSelectedRaidActionStage() {
+    return _selectedRaidActionStage;
   }
 
   // 전체 UI 갱신
@@ -413,7 +462,8 @@ const UIManager = (() => {
     if (activeTab === 'equip') renderEquip(state);
     else if (activeTab === 'shop') renderShop(state);
     else if (activeTab === 'gambling') renderGambling();
-    else if (activeTab === 'raid') renderRaid(state);
+    else if (activeTab === 'boss') renderBoss(state);
+    else if (activeTab === 'raid') renderRaidAction(state);
     else if (activeTab === 'craft') renderCraft(state);
   }
 
@@ -422,6 +472,8 @@ const UIManager = (() => {
     renderEquip,
     renderShop,
     renderGambling,
+    renderBoss,
+    renderRaidAction,
     showEnhanceResult,
     showBoxResults,
     showToast,
@@ -431,9 +483,10 @@ const UIManager = (() => {
     stopTimer,
     selectSlot,
     getSelectedSlot,
-    selectRaidStage,
-    getSelectedRaidStage,
-    renderRaid,
+    selectBossStage,
+    getSelectedBossStage,
+    selectRaidActionStage,
+    getSelectedRaidActionStage,
     renderCraft,
     renderInventory,
     formatGold,
