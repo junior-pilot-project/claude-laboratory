@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Reforge - 장비 강화 게임</title>
+  <link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -11,7 +12,6 @@
   <!-- 공통 헤더 -->
   <header class="game-header">
     <div class="header-gold">💰 Gold: <span id="gold-display">0원</span></div>
-    <div class="header-timer">⏱️ <span id="timer-display">00:00:00</span></div>
     <div class="header-progress">
       <span>강화합: <span id="enhance-sum">0 / 40</span></span>
       <div class="progress-bar-wrap">
@@ -44,6 +44,10 @@
         <p class="hint">슬롯에서 [강화] 버튼을 눌러 선택하세요.</p>
       </div>
 
+      <div class="enhance-info-btn-wrap">
+        <button id="btn-prob-info" class="btn-sm">📊 강화 정보</button>
+      </div>
+
       <div class="inventory-section">
         <h3>— 인벤토리 —</h3>
         <div class="inventory-list" id="inventory-list">
@@ -64,10 +68,51 @@
     </section>
   </div>
 
+  <!-- 강화 팝업 -->
+  <div id="enhance-modal" class="enhance-modal-overlay">
+    <div class="enhance-modal-card">
+      <div class="enhance-modal-icon-wrap">
+        <div class="enhance-modal-ring" id="enhance-modal-ring"></div>
+        <div class="enhance-modal-icon" id="enhance-modal-icon">⚔️</div>
+      </div>
+      <div class="enhance-modal-level" id="enhance-modal-level"></div>
+      <div class="enhance-modal-prob" id="enhance-modal-prob"></div>
+      <div class="enhance-modal-bar-wrap">
+        <div class="enhance-modal-bar" id="enhance-modal-bar"></div>
+      </div>
+      <div class="enhance-modal-status" id="enhance-modal-status">강화 시도 중...</div>
+    </div>
+  </div>
+
+  <!-- 상자 오픈 팝업 -->
+  <div id="box-open-modal" class="box-modal-overlay">
+    <div class="box-modal-card">
+      <div class="box-modal-glow-ring"></div>
+      <div class="box-modal-emoji" id="box-modal-emoji">🎁</div>
+      <div class="box-modal-status" id="box-modal-status">두근두근...</div>
+      <div class="box-modal-rewards" id="box-modal-rewards"></div>
+    </div>
+  </div>
+
+  <!-- 강화 정보 팝업 -->
+  <div id="prob-info-modal" class="prob-info-overlay">
+    <div class="prob-info-card">
+      <div class="prob-info-header">
+        <span>📊 강화 정보</span>
+        <button id="prob-info-close" class="btn-sm">✕ 닫기</button>
+      </div>
+      <div class="prob-info-tabs">
+        <button class="prob-tab-btn active" data-grade="high">상급</button>
+        <button class="prob-tab-btn" data-grade="mid">중급</button>
+        <button class="prob-tab-btn" data-grade="low">하급</button>
+      </div>
+      <div id="prob-info-table"></div>
+    </div>
+  </div>
+
   <!-- 게임 종료 화면 -->
   <div id="gameover-screen">
     <div class="gameover-title">🎉 목표 달성! 강화합 40 완성!</div>
-    <div class="gameover-time">플레이타임: <span id="gameover-time">00:00:00</span></div>
     <div class="ranking-box">
       <h2>🏆 TOP 10 랭킹</h2>
       <div id="ranking-list"></div>

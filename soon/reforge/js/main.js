@@ -1,17 +1,162 @@
 // 진입점 - 초기화 및 이벤트 바인딩
 let state;
+let isOpening = false;
+let _modalCloseTimer = null;
+let isEnhancing = false;
+let _enhanceCloseTimer = null;
+
+function _openEnhanceModal(item) {
+  const icon = item.type === 'sword' ? '⚔️' : '🛡️';
+  const prob = getProbability(item.grade, item.enhancement);
+  const probClass = prob <= 30 ? 'color:var(--fail)' : 'color:var(--success)';
+
+  document.getElementById('enhance-modal-icon').textContent = icon;
+  document.getElementById('enhance-modal-icon').className = 'enhance-modal-icon charging';
+  document.getElementById('enhance-modal-level').textContent =
+    `${CONFIG.GRADE_NAMES[item.grade]} +${item.enhancement} → ?`;
+  document.getElementById('enhance-modal-level').style.color = '';
+  document.getElementById('enhance-modal-prob').innerHTML =
+    `성공 확률: <b style="${probClass}">${prob}%</b>`;
+  document.getElementById('enhance-modal-status').textContent = '강화 시도 중...';
+  document.getElementById('enhance-modal-status').className = 'enhance-modal-status';
+  document.getElementById('enhance-modal-bar').className = 'enhance-modal-bar charging';
+  document.getElementById('enhance-modal-ring').className = 'enhance-modal-ring spinning';
+  document.getElementById('enhance-modal').className = 'enhance-modal-overlay active';
+  document.querySelector('#enhance-modal .enhance-modal-hint')?.remove();
+}
+
+function _revealEnhanceModal(result, snapshot) {
+  const modal = document.getElementById('enhance-modal');
+  const iconEl   = document.getElementById('enhance-modal-icon');
+  const levelEl  = document.getElementById('enhance-modal-level');
+  const statusEl = document.getElementById('enhance-modal-status');
+  const barEl    = document.getElementById('enhance-modal-bar');
+  const ringEl   = document.getElementById('enhance-modal-ring');
+  const grade    = CONFIG.GRADE_NAMES[snapshot.grade];
+
+  if (result.success) {
+    iconEl.className   = 'enhance-modal-icon success';
+    ringEl.className   = 'enhance-modal-ring success';
+    barEl.className    = 'enhance-modal-bar success';
+    levelEl.textContent = `${grade} +${snapshot.enhancement} → +${result.enhancement}`;
+    levelEl.style.color = 'var(--gold)';
+    statusEl.textContent = '✨ 강화 성공!';
+    statusEl.className  = 'enhance-modal-status success';
+    _spawnEnhanceSparks(modal.querySelector('.enhance-modal-card'));
+  } else {
+    iconEl.className   = 'enhance-modal-icon fail';
+    ringEl.className   = 'enhance-modal-ring fail';
+    barEl.className    = 'enhance-modal-bar fail';
+    levelEl.textContent = `${grade} +${snapshot.enhancement}`;
+    levelEl.style.color = 'var(--fail)';
+    statusEl.textContent = '💥 강화 실패...';
+    statusEl.className  = 'enhance-modal-status fail';
+  }
+
+  const hint = document.createElement('p');
+  hint.className = 'enhance-modal-hint';
+  hint.textContent = '화면을 클릭하여 닫기';
+  modal.querySelector('.enhance-modal-card').appendChild(hint);
+
+  modal.classList.add('closeable');
+  _enhanceCloseTimer = setTimeout(_closeEnhanceModal, 2500);
+}
+
+function _spawnEnhanceSparks(card) {
+  card.querySelectorAll('.box-modal-spark').forEach(s => s.remove());
+  ['✨','⭐','💫','🌟','✨','⭐'].forEach((e, i) => {
+    const span = document.createElement('span');
+    span.textContent = e;
+    span.className = 'box-modal-spark';
+    const angle = (i / 6) * 2 * Math.PI;
+    const dist = 70 + Math.random() * 40;
+    span.style.cssText = `--tx:${(Math.cos(angle)*dist).toFixed(0)}px;--ty:${(Math.sin(angle)*dist).toFixed(0)}px;animation-delay:${i*40}ms`;
+    card.appendChild(span);
+  });
+}
+
+function _closeEnhanceModal() {
+  if (_enhanceCloseTimer) { clearTimeout(_enhanceCloseTimer); _enhanceCloseTimer = null; }
+  const modal = document.getElementById('enhance-modal');
+  modal.className = 'enhance-modal-overlay';
+  document.getElementById('enhance-modal-icon').style.color = '';
+  document.getElementById('enhance-modal-level').style.color = '';
+}
+
+function _openBoxModal(boxId) {
+  const emojiMap = { free: '🎁', silver: '💰', gold: '💎' };
+  const modal = document.getElementById('box-open-modal');
+  const emoji = document.getElementById('box-modal-emoji');
+  const status = document.getElementById('box-modal-status');
+  document.getElementById('box-modal-rewards').innerHTML = '';
+
+  emoji.textContent = emojiMap[boxId] || '📦';
+  emoji.style.visibility = '';
+  emoji.className = 'box-modal-emoji shaking';
+  status.textContent = '두근두근...';
+  modal.querySelector('.box-modal-glow-ring').className = 'box-modal-glow-ring pulse';
+  modal.className = 'box-modal-overlay active';
+}
+
+function _revealBoxModal(rewards) {
+  const modal = document.getElementById('box-open-modal');
+  const emoji = document.getElementById('box-modal-emoji');
+  const status = document.getElementById('box-modal-status');
+  const rewardsEl = document.getElementById('box-modal-rewards');
+
+  modal.querySelector('.box-modal-glow-ring').className = 'box-modal-glow-ring gone';
+  emoji.className = 'box-modal-emoji burst';
+
+  const card = modal.querySelector('.box-modal-card');
+  modal.querySelectorAll('.box-modal-spark').forEach(s => s.remove());
+  ['✨','💫','⭐','🌟','💥','✨','💫','⭐'].forEach((e, i) => {
+    const span = document.createElement('span');
+    span.textContent = e;
+    span.className = 'box-modal-spark';
+    const angle = (i / 8) * 2 * Math.PI - Math.PI / 2;
+    const dist = 90 + Math.random() * 55;
+    span.style.cssText = `--tx:${(Math.cos(angle) * dist).toFixed(0)}px;--ty:${(Math.sin(angle) * dist).toFixed(0)}px;animation-delay:${i * 35}ms`;
+    card.appendChild(span);
+  });
+
+  setTimeout(() => {
+    emoji.style.visibility = 'hidden';
+    status.textContent = '🎉 오픈 완료!';
+    const total = rewards.reduce((a, b) => a + b, 0);
+    rewardsEl.innerHTML =
+      `<div class="box-modal-total" style="animation-delay:0ms">🪙 ${total.toLocaleString()}원 획득!</div>` +
+      rewards.map((r, i) =>
+        `<span class="modal-coin-item" style="animation-delay:${80 + i * 65}ms">+${r.toLocaleString()}원</span>`
+      ).join('') +
+      `<p class="box-modal-close-hint">화면을 클릭하여 닫기</p>`;
+    modal.classList.add('closeable');
+    _modalCloseTimer = setTimeout(_closeBoxModal, 3500);
+  }, 500);
+}
+
+function _closeBoxModal() {
+  if (_modalCloseTimer) { clearTimeout(_modalCloseTimer); _modalCloseTimer = null; }
+  const modal = document.getElementById('box-open-modal');
+  modal.className = 'box-modal-overlay';
+  document.getElementById('box-modal-emoji').style.visibility = '';
+}
 
 function init() {
   state = GameState.load();
-  UIManager.startTimer(state);
   UIManager.render(state);
   bindTabs();
+  UIManager.bindProbInfo();
   bindGlobalHandlers();
 
-  // 저장된 게임이 이미 클리어된 경우 처리
+  document.getElementById('box-open-modal').addEventListener('click', function() {
+    if (this.classList.contains('closeable')) _closeBoxModal();
+  });
+  document.getElementById('enhance-modal').addEventListener('click', function() {
+    if (this.classList.contains('closeable')) _closeEnhanceModal();
+  });
+
   if (state.gameOver) {
-    const elapsed = state.endTime ? state.endTime - state.startTime : 0;
-    UIManager.showGameOver(state, elapsed);
+    UIManager.showGameOver(state);
   }
 }
 
@@ -64,40 +209,50 @@ function bindGlobalHandlers() {
 
 // 전역 핸들러 (uiManager에서 직접 호출)
 window.handleEnhance = function(slotKey) {
+  if (isEnhancing) return;
   soundManager.init();
-  soundManager.playEnhanceReady();
-  const result = ItemSystem.tryEnhance(state, slotKey);
 
-  if (result.reason === 'insufficient_gold') {
+  const item = state[slotKey];
+  if (!item) { UIManager.showToast('장착된 아이템이 없습니다.', 'error'); return; }
+  if (state.gold < getEnhanceCost(item.grade, item.enhancement)) {
     soundManager.playInsufficientGold();
     UIManager.showToast('골드가 부족합니다!', 'error');
     return;
   }
-  if (result.reason === 'no_item') {
-    UIManager.showToast('장착된 아이템이 없습니다.', 'error');
-    return;
-  }
 
-  if (result.success) {
-    soundManager.playSuccess(result.isRare);
-  } else {
-    soundManager.playFail();
-  }
+  isEnhancing = true;
+  const snapshot = { grade: item.grade, type: item.type, enhancement: item.enhancement };
+  soundManager.playEnhanceReady();
+  _openEnhanceModal(snapshot);
 
-  GameState.save(state);
-  UIManager.showEnhanceResult(result);
-  UIManager.renderEquip(state);
-  UIManager.updateHeader(state);
+  setTimeout(() => {
+    const result = ItemSystem.tryEnhance(state, slotKey);
 
-  // 목표 달성 확인
-  if (GameState.isGoalReached(state)) {
-    const playTimeMs = Date.now() - state.startTime;
-    state.gameOver = true;
-    state.endTime = Date.now();
-    RankingSystem.addRanking(state, playTimeMs);
+    if (result.reason === 'insufficient_gold' || result.reason === 'no_item') {
+      _closeEnhanceModal();
+      UIManager.showToast('오류가 발생했습니다.', 'error');
+      isEnhancing = false;
+      return;
+    }
+
+    _revealEnhanceModal(result, snapshot);
+
+    if (result.success) soundManager.playSuccess(result.isRare);
+    else soundManager.playFail();
+
     GameState.save(state);
-    setTimeout(() => UIManager.showGameOver(state, playTimeMs), 800);
-  }
+    UIManager.showEnhanceResult(result);
+    UIManager.renderEquip(state);
+    UIManager.updateHeader(state);
+    isEnhancing = false;
+
+    if (GameState.isGoalReached(state)) {
+      state.gameOver = true;
+      RankingSystem.addRanking(state);
+      GameState.save(state);
+      setTimeout(() => UIManager.showGameOver(state), 2800);
+    }
+  }, 1500);
 };
 
 window.handleEquip = function(itemId) {
@@ -124,6 +279,7 @@ window.handleBuy = function(type, grade) {
 };
 
 window.handleOpenBox = function(boxId, count) {
+  if (isOpening) return;
   soundManager.init();
   const box = CONFIG.BOXES.find(b => b.id === boxId);
   const cost = (box?.price || 0) * count;
@@ -134,24 +290,33 @@ window.handleOpenBox = function(boxId, count) {
     return;
   }
 
+  isOpening = true;
+  document.querySelectorAll('.btn-open-box').forEach(b => b.disabled = true);
+  _openBoxModal(boxId);
+
   soundManager.playBoxShake(() => {
     const result = GamblingSystem.openBoxes(state, boxId, count);
     if (!result.success) {
+      _closeBoxModal();
       soundManager.playInsufficientGold();
       UIManager.showToast('골드가 부족합니다!', 'error');
+      isOpening = false;
+      document.querySelectorAll('.btn-open-box').forEach(b => b.disabled = false);
       return;
     }
     soundManager.playBoxOpen();
     GameState.save(state);
     UIManager.updateHeader(state);
+    _revealBoxModal(result.rewards);
     UIManager.showBoxResults(result.rewards);
+    isOpening = false;
+    document.querySelectorAll('.btn-open-box').forEach(b => b.disabled = false);
   });
 };
 
 window.handleNewGame = function() {
   state = GameState.reset(true);
   UIManager.selectSlot(null);
-  UIManager.startTimer(state);
   document.getElementById('gameover-screen').style.display = 'none';
   document.getElementById('main-content').style.display = '';
 

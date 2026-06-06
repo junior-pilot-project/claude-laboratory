@@ -18,15 +18,15 @@ const CONFIG = {
   },
 
   // 강화 비용 계산 기준
-  COST_EASY_PER_LEVEL: 10000,       // 확률 > 30% 구간
-  COST_HARD_PER_LEVEL: 1000000,     // 확률 <= 30% 구간
+  COST_EASY_PER_LEVEL: 5000,        // 확률 > 30% 구간
+  COST_HARD_PER_LEVEL: 100000,      // 확률 <= 30% 구간
   // 확률 테이블에서 <=30% 구간은 index 7부터 (PROB_TABLE[7] = 30)
 
   // 랜덤박스
   BOXES: [
     { id: 'free', name: '무료 상자 🎁', price: 0, maxReward: 100, maxCount: 10 },
-    { id: 'silver', name: '천원 상자 🎪', price: 1000, maxReward: 10000, maxCount: 1 },
-    { id: 'gold', name: '만원 상자 👑', price: 10000, maxReward: 100000, maxCount: 1 },
+    { id: 'silver', name: '천원 상자 🎪', price: 1000, maxReward: 10000, maxCount: 10 },
+    { id: 'gold', name: '만원 상자 👑', price: 10000, maxReward: 100000, maxCount: 10 },
   ],
 
   // 게임 목표
@@ -43,7 +43,7 @@ const CONFIG = {
   },
 
   // 초기 골드
-  INITIAL_GOLD: 50000,
+  INITIAL_GOLD: 0,
 };
 
 // 강화 확률 계산

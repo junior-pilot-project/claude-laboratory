@@ -1,19 +1,10 @@
 // UI 관리자
 const UIManager = (() => {
   let _state = null;
-  let _timerInterval = null;
   let _selectedSlotKey = null;
 
   function formatGold(n) {
     return n.toLocaleString('ko-KR') + '원';
-  }
-
-  function getElapsed(state) {
-    return Date.now() - state.startTime;
-  }
-
-  function formatElapsed(state) {
-    return RankingSystem.formatTime(getElapsed(state));
   }
 
   // 헤더 업데이트
@@ -25,17 +16,8 @@ const UIManager = (() => {
     document.getElementById('progress-bar').style.width = pct + '%';
   }
 
-  // 타이머 시작
-  function startTimer(state) {
-    if (_timerInterval) clearInterval(_timerInterval);
-    _timerInterval = setInterval(() => {
-      document.getElementById('timer-display').textContent = formatElapsed(state);
-    }, 1000);
-  }
-
-  function stopTimer() {
-    if (_timerInterval) clearInterval(_timerInterval);
-  }
+  function startTimer() {}
+  function stopTimer() {}
 
   // 탭 1: 장비/강화 렌더링
   function renderEquip(state) {
@@ -195,35 +177,81 @@ const UIManager = (() => {
     setTimeout(() => toast.remove(), 2000);
   }
 
+  // 강화 정보 팝업 바인딩
+  function bindProbInfo() {
+    const btn = document.getElementById('btn-prob-info');
+    const modal = document.getElementById('prob-info-modal');
+    const closeBtn = document.getElementById('prob-info-close');
+    if (!btn || !modal) return;
+
+    let currentGrade = 'high';
+
+    function renderTable(grade) {
+      const container = document.getElementById('prob-info-table');
+      if (!container) return;
+      const rows = Array.from({ length: 20 }, (_, level) => {
+        const prob = getProbability(grade, level);
+        const cost = getEnhanceCost(grade, level);
+        const isHard = prob <= 30;
+        return `<tr class="${isHard ? 'hard-zone' : ''}">
+          <td>+${level} → +${level + 1}</td>
+          <td class="${isHard ? 'text-danger' : 'text-success'}">${prob}%</td>
+          <td>${formatGold(cost)}</td>
+        </tr>`;
+      }).join('');
+      container.innerHTML = `
+        <table class="prob-table">
+          <thead><tr><th>단계</th><th>확률</th><th>비용</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+      `;
+    }
+
+    btn.addEventListener('click', () => {
+      renderTable(currentGrade);
+      modal.classList.add('active');
+    });
+
+    closeBtn.addEventListener('click', () => modal.classList.remove('active'));
+
+    modal.addEventListener('click', e => {
+      if (e.target === modal) modal.classList.remove('active');
+    });
+
+    modal.querySelectorAll('.prob-tab-btn').forEach(tabBtn => {
+      tabBtn.addEventListener('click', () => {
+        modal.querySelectorAll('.prob-tab-btn').forEach(b => b.classList.remove('active'));
+        tabBtn.classList.add('active');
+        currentGrade = tabBtn.dataset.grade;
+        renderTable(currentGrade);
+      });
+    });
+  }
+
   // 랭킹 화면 렌더링
-  function renderRanking(state, currentPlayTime) {
+  function renderRanking(state) {
     const container = document.getElementById('ranking-list');
     if (!container) return;
-    container.innerHTML = state.rankings.map((r, i) => {
-      const isCurrent = r.playTime === currentPlayTime;
-      const stars = '★'.repeat(RankingSystem.getStars(r.playTime, state.rankings)) +
-                    '☆'.repeat(3 - RankingSystem.getStars(r.playTime, state.rankings));
-      return `
-        <div class="rank-row ${isCurrent ? 'rank-current' : ''}">
-          <span class="rank-num">${i + 1}.</span>
-          <span class="rank-time">${RankingSystem.formatTime(r.playTime)}</span>
-          <span class="rank-stars">${stars}</span>
-          <span class="rank-date">${r.date}</span>
-          ${isCurrent ? '<span class="rank-badge">← 현재 기록</span>' : ''}
-        </div>
-      `;
-    }).join('');
+    if (!state.rankings.length) {
+      container.innerHTML = '<p class="hint">기록 없음</p>';
+      return;
+    }
+    container.innerHTML = state.rankings.map((r, i) => `
+      <div class="rank-row">
+        <span class="rank-num">${i + 1}.</span>
+        <span class="rank-date">${r.date}</span>
+        ${i === 0 ? '<span class="rank-badge">최신 기록</span>' : ''}
+      </div>
+    `).join('');
   }
 
   // 게임 종료 화면 표시
-  function showGameOver(state, playTimeMs) {
-    stopTimer();
+  function showGameOver(state) {
     const screen = document.getElementById('gameover-screen');
     const main = document.getElementById('main-content');
     if (screen) screen.style.display = 'flex';
     if (main) main.style.display = 'none';
-    document.getElementById('gameover-time').textContent = RankingSystem.formatTime(playTimeMs);
-    renderRanking(state, playTimeMs);
+    renderRanking(state);
     soundManager.playVictory();
   }
 
@@ -255,6 +283,7 @@ const UIManager = (() => {
     showBoxResults,
     showToast,
     showGameOver,
+    bindProbInfo,
     startTimer,
     stopTimer,
     selectSlot,
