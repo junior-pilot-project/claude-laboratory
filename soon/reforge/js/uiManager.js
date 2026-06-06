@@ -1,0 +1,265 @@
+// UI 관리자
+const UIManager = (() => {
+  let _state = null;
+  let _timerInterval = null;
+  let _selectedSlotKey = null;
+
+  function formatGold(n) {
+    return n.toLocaleString('ko-KR') + '원';
+  }
+
+  function getElapsed(state) {
+    return Date.now() - state.startTime;
+  }
+
+  function formatElapsed(state) {
+    return RankingSystem.formatTime(getElapsed(state));
+  }
+
+  // 헤더 업데이트
+  function updateHeader(state) {
+    const total = GameState.getTotalEnhancement(state);
+    document.getElementById('gold-display').textContent = formatGold(state.gold);
+    document.getElementById('enhance-sum').textContent = `${total} / ${CONFIG.GOAL}`;
+    const pct = Math.min(100, Math.floor((total / CONFIG.GOAL) * 100));
+    document.getElementById('progress-bar').style.width = pct + '%';
+  }
+
+  // 타이머 시작
+  function startTimer(state) {
+    if (_timerInterval) clearInterval(_timerInterval);
+    _timerInterval = setInterval(() => {
+      document.getElementById('timer-display').textContent = formatElapsed(state);
+    }, 1000);
+  }
+
+  function stopTimer() {
+    if (_timerInterval) clearInterval(_timerInterval);
+  }
+
+  // 탭 1: 장비/강화 렌더링
+  function renderEquip(state) {
+    renderSlot('sword', state);
+    renderSlot('shield', state);
+    renderEnhancePanel(state);
+    renderInventory(state);
+  }
+
+  function renderSlot(type, state) {
+    const slotKey = ItemSystem.getSlotKey(type);
+    const item = state[slotKey];
+    const el = document.getElementById(`slot-${type}`);
+    if (!el) return;
+
+    if (item) {
+      el.innerHTML = `
+        <div class="item-icon">${type === 'sword' ? '⚔️' : '🛡️'}</div>
+        <div class="item-info">
+          <span class="item-grade grade-${item.grade}">${CONFIG.GRADE_NAMES[item.grade]}</span>
+          <span class="item-name">${type === 'sword' ? '칼' : '방패'} +${item.enhancement}</span>
+        </div>
+        <button class="btn-sm btn-unequip" data-slot="${slotKey}">해제</button>
+        <button class="btn-sm btn-enhance-slot ${_selectedSlotKey === slotKey ? 'selected' : ''}" data-slot="${slotKey}">강화</button>
+      `;
+    } else {
+      el.innerHTML = `<div class="slot-empty">슬롯 비어있음<br><small>${type === 'sword' ? '⚔️ 칼' : '🛡️ 방패'}</small></div>`;
+    }
+  }
+
+  function renderEnhancePanel(state) {
+    const panel = document.getElementById('enhance-panel');
+    if (!_selectedSlotKey || !state[_selectedSlotKey]) {
+      panel.innerHTML = `<p class="hint">슬롯에서 [강화] 버튼을 눌러 선택하세요.</p>`;
+      return;
+    }
+    const item = state[_selectedSlotKey];
+    const prob = getProbability(item.grade, item.enhancement);
+    const cost = getEnhanceCost(item.grade, item.enhancement);
+    panel.innerHTML = `
+      <div class="enhance-info">
+        <span>선택: <b>${CONFIG.GRADE_NAMES[item.grade]} ${item.type === 'sword' ? '칼' : '방패'} +${item.enhancement}</b></span>
+        <span>성공 확률: <b class="${prob <= 30 ? 'text-danger' : 'text-success'}">${prob}%</b></span>
+        <span>비용: <b>${formatGold(cost)}</b></span>
+      </div>
+      <button id="btn-do-enhance" class="btn-primary btn-lg">🔨 강화 시도</button>
+      <div id="enhance-result"></div>
+    `;
+    document.getElementById('btn-do-enhance').addEventListener('click', () => {
+      window.handleEnhance(_selectedSlotKey);
+    });
+  }
+
+  function renderInventory(state) {
+    const container = document.getElementById('inventory-list');
+    if (!container) return;
+    if (!state.inventory.length) {
+      container.innerHTML = `<p class="hint">인벤토리가 비어있습니다.</p>`;
+      return;
+    }
+    container.innerHTML = state.inventory.map(item => `
+      <div class="inv-item" data-id="${item.id}">
+        <span>${item.type === 'sword' ? '⚔️' : '🛡️'}</span>
+        <span class="item-grade grade-${item.grade}">${CONFIG.GRADE_NAMES[item.grade]}</span>
+        <span>${item.type === 'sword' ? '칼' : '방패'} +${item.enhancement}</span>
+        <button class="btn-sm btn-equip" data-id="${item.id}">착용</button>
+      </div>
+    `).join('');
+
+    container.querySelectorAll('.btn-equip').forEach(btn => {
+      btn.addEventListener('click', () => {
+        window.handleEquip(btn.dataset.id);
+      });
+    });
+  }
+
+  // 탭 2: 상점 렌더링
+  function renderShop(state) {
+    const container = document.getElementById('shop-items');
+    if (!container) return;
+    const types = ['sword', 'shield'];
+    const grades = ['low', 'mid', 'high'];
+    const typeLabels = { sword: '칼', shield: '방패' };
+
+    container.innerHTML = grades.map(grade =>
+      types.map(type => `
+        <div class="shop-item">
+          <div class="shop-item-icon">${type === 'sword' ? '⚔️' : '🛡️'}</div>
+          <div class="shop-item-name">${CONFIG.GRADE_NAMES[grade]} ${typeLabels[type]}</div>
+          <div class="shop-item-price">${formatGold(CONFIG.ITEM_PRICES[grade])}</div>
+          <button class="btn-buy btn-primary" data-type="${type}" data-grade="${grade}">구매</button>
+        </div>
+      `).join('')
+    ).join('');
+
+    container.querySelectorAll('.btn-buy').forEach(btn => {
+      btn.addEventListener('click', () => {
+        window.handleBuy(btn.dataset.type, btn.dataset.grade);
+      });
+    });
+  }
+
+  // 탭 3: 도박장 렌더링
+  function renderGambling() {
+    const container = document.getElementById('gambling-boxes');
+    if (!container) return;
+    container.innerHTML = CONFIG.BOXES.map(box => `
+      <div class="box-row">
+        <div class="box-name">${box.name}</div>
+        <div class="box-price">${box.price === 0 ? '무료' : formatGold(box.price)}</div>
+        ${box.id === 'free' ? `
+          <div class="box-count-wrap">
+            개수: <input type="number" id="count-${box.id}" min="1" max="${box.maxCount}" value="1" class="count-input">
+          </div>
+        ` : ''}
+        <button class="btn-primary btn-open-box" data-box="${box.id}">열기</button>
+      </div>
+    `).join('');
+
+    container.querySelectorAll('.btn-open-box').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const boxId = btn.dataset.box;
+        const countEl = document.getElementById(`count-${boxId}`);
+        const count = countEl ? parseInt(countEl.value) : 1;
+        window.handleOpenBox(boxId, count);
+      });
+    });
+  }
+
+  // 강화 결과 메시지 표시
+  function showEnhanceResult(result) {
+    const el = document.getElementById('enhance-result');
+    if (!el) return;
+    if (result.success) {
+      el.innerHTML = `<div class="result-success">✨ 강화 성공! +${result.enhancement}</div>`;
+    } else {
+      el.innerHTML = `<div class="result-fail">💥 강화 실패... (${result.prob}% 도전)</div>`;
+    }
+    setTimeout(() => { if (el) el.innerHTML = ''; }, 2000);
+  }
+
+  // 박스 오픈 결과 렌더링
+  function showBoxResults(rewards) {
+    const area = document.getElementById('box-result-area');
+    if (!area) return;
+    area.innerHTML = rewards.map(r => `<span class="coin-result">🪙 +${r.toLocaleString()}원</span>`).join(' ');
+    soundManager.playCoin();
+    setTimeout(() => { area.innerHTML = ''; }, 4000);
+  }
+
+  // 에러 토스트
+  function showToast(msg, type = 'error') {
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+    toast.textContent = msg;
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 2000);
+  }
+
+  // 랭킹 화면 렌더링
+  function renderRanking(state, currentPlayTime) {
+    const container = document.getElementById('ranking-list');
+    if (!container) return;
+    container.innerHTML = state.rankings.map((r, i) => {
+      const isCurrent = r.playTime === currentPlayTime;
+      const stars = '★'.repeat(RankingSystem.getStars(r.playTime, state.rankings)) +
+                    '☆'.repeat(3 - RankingSystem.getStars(r.playTime, state.rankings));
+      return `
+        <div class="rank-row ${isCurrent ? 'rank-current' : ''}">
+          <span class="rank-num">${i + 1}.</span>
+          <span class="rank-time">${RankingSystem.formatTime(r.playTime)}</span>
+          <span class="rank-stars">${stars}</span>
+          <span class="rank-date">${r.date}</span>
+          ${isCurrent ? '<span class="rank-badge">← 현재 기록</span>' : ''}
+        </div>
+      `;
+    }).join('');
+  }
+
+  // 게임 종료 화면 표시
+  function showGameOver(state, playTimeMs) {
+    stopTimer();
+    const screen = document.getElementById('gameover-screen');
+    const main = document.getElementById('main-content');
+    if (screen) screen.style.display = 'flex';
+    if (main) main.style.display = 'none';
+    document.getElementById('gameover-time').textContent = RankingSystem.formatTime(playTimeMs);
+    renderRanking(state, playTimeMs);
+    soundManager.playVictory();
+  }
+
+  // 슬롯 선택
+  function selectSlot(slotKey) {
+    _selectedSlotKey = slotKey;
+  }
+
+  function getSelectedSlot() {
+    return _selectedSlotKey;
+  }
+
+  // 전체 UI 갱신
+  function render(state) {
+    _state = state;
+    updateHeader(state);
+    const activeTab = document.querySelector('.tab-btn.active')?.dataset?.tab || 'equip';
+    if (activeTab === 'equip') renderEquip(state);
+    else if (activeTab === 'shop') renderShop(state);
+    else if (activeTab === 'gambling') renderGambling();
+  }
+
+  return {
+    render,
+    renderEquip,
+    renderShop,
+    renderGambling,
+    showEnhanceResult,
+    showBoxResults,
+    showToast,
+    showGameOver,
+    startTimer,
+    stopTimer,
+    selectSlot,
+    getSelectedSlot,
+    formatGold,
+    updateHeader,
+  };
+})();

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reforge - 장비 강화 게임</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- 공통 헤더 -->
+  <header class="game-header">
+    <div class="header-gold">💰 Gold: <span id="gold-display">0원</span></div>
+    <div class="header-timer">⏱️ <span id="timer-display">00:00:00</span></div>
+    <div class="header-progress">
+      <span>강화합: <span id="enhance-sum">0 / 40</span></span>
+      <div class="progress-bar-wrap">
+        <div class="progress-bar" id="progress-bar"></div>
+      </div>
+    </div>
+    <button class="btn-sound" id="btn-sound" title="사운드 토글">🔊</button>
+  </header>
+
+  <!-- 탭 네비게이션 -->
+  <nav class="tabs">
+    <button class="tab-btn active" data-tab="equip">⚔️ 장비/강화</button>
+    <button class="tab-btn" data-tab="shop">🏪 상점</button>
+    <button class="tab-btn" data-tab="gambling">🎰 도박장</button>
+  </nav>
+
+  <div id="main-content">
+    <!-- 탭 1: 장비/강화 -->
+    <section class="tab-content active" id="tab-equip">
+      <div class="slots-wrap">
+        <div class="slot-card" id="slot-sword">
+          <div class="slot-empty">슬롯 비어있음<br><small>⚔️ 칼</small></div>
+        </div>
+        <div class="slot-card" id="slot-shield">
+          <div class="slot-empty">슬롯 비어있음<br><small>🛡️ 방패</small></div>
+        </div>
+      </div>
+
+      <div class="enhance-panel" id="enhance-panel">
+        <p class="hint">슬롯에서 [강화] 버튼을 눌러 선택하세요.</p>
+      </div>
+
+      <div class="inventory-section">
+        <h3>— 인벤토리 —</h3>
+        <div class="inventory-list" id="inventory-list">
+          <p class="hint">인벤토리가 비어있습니다.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 탭 2: 상점 -->
+    <section class="tab-content" id="tab-shop">
+      <div class="shop-grid" id="shop-items"></div>
+    </section>
+
+    <!-- 탭 3: 도박장 -->
+    <section class="tab-content" id="tab-gambling">
+      <div class="box-list" id="gambling-boxes"></div>
+      <div class="box-result-area" id="box-result-area"></div>
+    </section>
+  </div>
+
+  <!-- 게임 종료 화면 -->
+  <div id="gameover-screen">
+    <div class="gameover-title">🎉 목표 달성! 강화합 40 완성!</div>
+    <div class="gameover-time">플레이타임: <span id="gameover-time">00:00:00</span></div>
+    <div class="ranking-box">
+      <h2>🏆 TOP 10 랭킹</h2>
+      <div id="ranking-list"></div>
+    </div>
+    <button class="btn-primary btn-lg" onclick="handleNewGame()">🔄 새 게임 시작</button>
+  </div>
+
+  <!-- JS 로드 순서 중요 -->
+  <script src="js/config.js"></script>
+  <script src="js/gameState.js"></script>
+  <script src="js/itemSystem.js"></script>
+  <script src="js/gamblingSystem.js"></script>
+  <script src="js/rankingSystem.js"></script>
+  <script src="js/soundManager.js"></script>
+  <script src="js/uiManager.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

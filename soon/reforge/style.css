@@ -1,0 +1,410 @@
+/* 다크 판타지 테마 */
+:root {
+  --bg-deep: #0d0d1a;
+  --bg-card: #1a1a2e;
+  --bg-panel: #16213e;
+  --accent: #e94560;
+  --accent2: #f5a623;
+  --gold: #ffd700;
+  --success: #4caf50;
+  --fail: #f44336;
+  --text: #e0e0e0;
+  --text-dim: #888;
+  --border: #2a2a4a;
+  --high: #ff6b35;
+  --mid: #7c83fd;
+  --low: #aaa;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg-deep);
+  color: var(--text);
+  font-family: 'Segoe UI', sans-serif;
+  min-height: 100vh;
+}
+
+/* 헤더 */
+.game-header {
+  background: var(--bg-panel);
+  border-bottom: 2px solid var(--border);
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.header-gold {
+  font-size: 1.1rem;
+  color: var(--gold);
+  font-weight: bold;
+}
+
+.header-timer {
+  color: var(--text-dim);
+  font-size: 0.95rem;
+}
+
+.header-progress {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 200px;
+}
+
+.progress-bar-wrap {
+  background: var(--border);
+  border-radius: 4px;
+  height: 12px;
+  flex: 1;
+  overflow: hidden;
+}
+
+.progress-bar {
+  background: linear-gradient(90deg, var(--accent), var(--gold));
+  height: 100%;
+  width: 0%;
+  transition: width 0.4s ease;
+  border-radius: 4px;
+}
+
+.btn-sound {
+  margin-left: auto;
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text);
+  cursor: pointer;
+  font-size: 1.3rem;
+  padding: 4px 10px;
+  border-radius: 6px;
+}
+
+/* 탭 */
+.tabs {
+  display: flex;
+  background: var(--bg-panel);
+  border-bottom: 1px solid var(--border);
+}
+
+.tab-btn {
+  flex: 1;
+  padding: 12px;
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: all 0.2s;
+  border-bottom: 3px solid transparent;
+}
+
+.tab-btn:hover { color: var(--text); background: rgba(255,255,255,0.03); }
+.tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+/* 탭 콘텐츠 */
+.tab-content { display: none; padding: 20px; }
+.tab-content.active { display: block; }
+
+/* 슬롯 영역 */
+.slots-wrap {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.slot-card {
+  background: var(--bg-card);
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  padding: 16px;
+  min-height: 100px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  position: relative;
+}
+
+.slot-card:hover { border-color: var(--accent); }
+
+.slot-empty {
+  color: var(--text-dim);
+  font-size: 0.9rem;
+  text-align: center;
+  width: 100%;
+}
+
+.item-icon { font-size: 2rem; }
+.item-info { flex: 1; }
+.item-info .item-name { display: block; font-weight: bold; font-size: 1rem; }
+.item-grade { font-size: 0.8rem; font-weight: bold; }
+.grade-high { color: var(--high); }
+.grade-mid { color: var(--mid); }
+.grade-low { color: var(--low); }
+
+/* 강화 패널 */
+.enhance-panel {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px;
+  margin-bottom: 20px;
+}
+
+.enhance-info {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+  font-size: 0.95rem;
+}
+
+.text-success { color: var(--success); }
+.text-danger { color: var(--fail); }
+
+.result-success {
+  color: var(--gold);
+  font-size: 1.1rem;
+  font-weight: bold;
+  margin-top: 10px;
+  animation: pop 0.3s ease;
+}
+
+.result-fail {
+  color: var(--fail);
+  font-size: 1rem;
+  margin-top: 10px;
+}
+
+@keyframes pop {
+  0% { transform: scale(0.8); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* 인벤토리 */
+.inventory-section h3 {
+  color: var(--text-dim);
+  font-size: 0.9rem;
+  margin-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 6px;
+}
+
+.inventory-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.inv-item {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.9rem;
+}
+
+/* 상점 */
+.shop-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 12px;
+}
+
+.shop-item {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px;
+  text-align: center;
+  transition: border-color 0.2s;
+}
+
+.shop-item:hover { border-color: var(--accent2); }
+
+.shop-item-icon { font-size: 2rem; margin-bottom: 6px; }
+.shop-item-name { font-size: 0.85rem; margin-bottom: 6px; }
+.shop-item-price { color: var(--gold); font-size: 0.85rem; font-weight: bold; margin-bottom: 10px; }
+
+/* 도박장 */
+.box-list { display: flex; flex-direction: column; gap: 12px; }
+
+.box-row {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.box-name { font-size: 1rem; font-weight: bold; flex: 1; }
+.box-price { color: var(--gold); font-size: 0.9rem; }
+
+.count-input {
+  width: 60px;
+  background: var(--bg-deep);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 4px 8px;
+  border-radius: 6px;
+  text-align: center;
+}
+
+.box-result-area {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-height: 40px;
+  margin-top: 16px;
+}
+
+.coin-result {
+  background: var(--bg-panel);
+  border: 1px solid var(--gold);
+  color: var(--gold);
+  border-radius: 20px;
+  padding: 4px 12px;
+  font-size: 0.85rem;
+  animation: coinPop 0.3s ease;
+}
+
+@keyframes coinPop {
+  0% { transform: scale(0.5) translateY(-10px); opacity: 0; }
+  100% { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+/* 버튼 */
+.btn-primary {
+  background: linear-gradient(135deg, var(--accent), #c0392b);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: opacity 0.2s, transform 0.1s;
+}
+
+.btn-primary:hover { opacity: 0.85; transform: translateY(-1px); }
+.btn-primary:active { transform: translateY(0); }
+
+.btn-lg { padding: 12px 28px; font-size: 1.05rem; font-weight: bold; }
+
+.btn-sm {
+  padding: 4px 10px;
+  font-size: 0.78rem;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--bg-deep);
+  color: var(--text);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-sm:hover { background: var(--border); }
+
+.btn-enhance-slot.selected {
+  background: var(--accent);
+  color: white;
+  border-color: var(--accent);
+}
+
+/* 토스트 */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  z-index: 9999;
+  animation: slideUp 0.3s ease;
+}
+
+.toast-error { background: #b71c1c; color: white; }
+.toast-success { background: #1b5e20; color: white; }
+
+@keyframes slideUp {
+  from { transform: translateX(-50%) translateY(20px); opacity: 0; }
+  to { transform: translateX(-50%) translateY(0); opacity: 1; }
+}
+
+/* 힌트 텍스트 */
+.hint { color: var(--text-dim); font-size: 0.9rem; }
+
+/* 게임 종료 화면 */
+#gameover-screen {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.92);
+  z-index: 1000;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.gameover-title {
+  font-size: 2rem;
+  color: var(--gold);
+  font-weight: bold;
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+.gameover-time {
+  color: var(--text-dim);
+  font-size: 1.2rem;
+  margin-bottom: 24px;
+}
+
+.ranking-box {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  width: 100%;
+  max-width: 480px;
+  margin-bottom: 24px;
+}
+
+.ranking-box h2 {
+  color: var(--accent2);
+  margin-bottom: 12px;
+  font-size: 1.1rem;
+}
+
+.rank-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.9rem;
+}
+
+.rank-row:last-child { border-bottom: none; }
+.rank-current { color: var(--gold); font-weight: bold; }
+.rank-num { width: 24px; }
+.rank-time { font-family: monospace; flex: 1; }
+.rank-stars { color: var(--gold); }
+.rank-date { color: var(--text-dim); font-size: 0.8rem; }
+.rank-badge { background: var(--accent); color: white; font-size: 0.75rem; padding: 2px 8px; border-radius: 10px; }
+
+/* 반응형 */
+@media (max-width: 600px) {
+  .slots-wrap { grid-template-columns: 1fr; }
+  .enhance-info { flex-direction: column; gap: 8px; }
+  .shop-grid { grid-template-columns: repeat(2, 1fr); }
+}
