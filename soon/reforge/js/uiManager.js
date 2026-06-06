@@ -84,12 +84,19 @@ const UIManager = (() => {
         <span class="item-grade grade-${item.grade}">${CONFIG.GRADE_NAMES[item.grade]}</span>
         <span>${item.type === 'sword' ? '칼' : '방패'} +${item.enhancement}</span>
         <button class="btn-sm btn-equip" data-id="${item.id}">착용</button>
+        <button class="btn-sm btn-remove-item" data-id="${item.id}">🗑️</button>
       </div>
     `).join('');
 
     container.querySelectorAll('.btn-equip').forEach(btn => {
       btn.addEventListener('click', () => {
         window.handleEquip(btn.dataset.id);
+      });
+    });
+
+    container.querySelectorAll('.btn-remove-item').forEach(btn => {
+      btn.addEventListener('click', () => {
+        window.handleRemoveItem(btn.dataset.id);
       });
     });
   }

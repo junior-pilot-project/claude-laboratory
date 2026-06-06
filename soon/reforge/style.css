@@ -336,6 +336,13 @@ body {
 
 .btn-sm:hover { background: var(--border); }
 
+.btn-remove-item {
+  color: var(--fail);
+  border-color: var(--fail);
+  margin-left: 4px;
+}
+.btn-remove-item:hover { background: rgba(239,68,68,0.15); }
+
 .btn-enhance-slot.selected {
   background: var(--accent);
   color: white;

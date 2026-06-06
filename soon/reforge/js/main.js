@@ -84,7 +84,7 @@ function _closeEnhanceModal() {
 }
 
 function _openBoxModal(boxId) {
-  const emojiMap = { free: '🎁', silver: '💰', gold: '💎' };
+  const emojiMap = { free: '🎁', silver: '💰', gold: '💎', diamond: '💠' };
   const modal = document.getElementById('box-open-modal');
   const emoji = document.getElementById('box-modal-emoji');
   const status = document.getElementById('box-modal-status');
@@ -259,6 +259,19 @@ window.handleEquip = function(itemId) {
   soundManager.init();
   soundManager.playClick();
   ItemSystem.equipItem(state, itemId);
+  GameState.save(state);
+  UIManager.renderEquip(state);
+  UIManager.updateHeader(state);
+};
+
+window.handleRemoveItem = function(itemId) {
+  soundManager.init();
+  const item = state.inventory.find(i => i.id === itemId);
+  if (!item) return;
+  const name = `${CONFIG.GRADE_NAMES[item.grade]} ${item.type === 'sword' ? '칼' : '방패'} +${item.enhancement}`;
+  if (!confirm(`${name}을(를) 버리겠습니까?`)) return;
+  soundManager.playClick();
+  ItemSystem.removeItem(state, itemId);
   GameState.save(state);
   UIManager.renderEquip(state);
   UIManager.updateHeader(state);

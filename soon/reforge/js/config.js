@@ -27,6 +27,7 @@ const CONFIG = {
     { id: 'free', name: '무료 상자 🎁', price: 0, maxReward: 100, maxCount: 10 },
     { id: 'silver', name: '천원 상자 🎪', price: 1000, maxReward: 10000, maxCount: 10 },
     { id: 'gold', name: '만원 상자 👑', price: 10000, maxReward: 100000, maxCount: 10 },
+    { id: 'diamond', name: '오만원 상자 💠', price: 50000, maxReward: 500000, maxCount: 10 },
   ],
 
   // 게임 목표

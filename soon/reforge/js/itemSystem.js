@@ -65,5 +65,13 @@ const ItemSystem = (() => {
     return { success: true, item };
   }
 
-  return { tryEnhance, equipItem, unequipItem, buyItem, getSlotKey };
+  // 인벤토리에서 아이템 삭제
+  function removeItem(state, itemId) {
+    const idx = state.inventory.findIndex(i => i.id === itemId);
+    if (idx === -1) return false;
+    state.inventory.splice(idx, 1);
+    return true;
+  }
+
+  return { tryEnhance, equipItem, unequipItem, buyItem, getSlotKey, removeItem };
 })();
