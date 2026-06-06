@@ -8,6 +8,7 @@ const CONFIG = {
     high: 0,
     mid: 4,
     low: 9,
+    supreme: 0,
   },
 
   // 아이템 구매 가격
@@ -41,6 +42,7 @@ const CONFIG = {
     high: '상급',
     mid: '중급',
     low: '하급',
+    supreme: '최상급',
   },
 
   // 초기 골드
@@ -48,10 +50,21 @@ const CONFIG = {
 
   // 레이드: 등급별 스탯
   ITEM_GRADE_STATS: {
-    low:  { atk: 5,  def: 3,  atkMult: 1, defMult: 1 },
-    mid:  { atk: 15, def: 10, atkMult: 2, defMult: 2 },
-    high: { atk: 30, def: 20, atkMult: 3, defMult: 3 },
+    low:     { atk: 5,  def: 3,  atkMult: 1, defMult: 1 },
+    mid:     { atk: 15, def: 10, atkMult: 2, defMult: 2 },
+    high:    { atk: 30, def: 20, atkMult: 3, defMult: 3 },
+    supreme: { atk: 80, def: 50, atkMult: 5, defMult: 5 },
   },
+
+  // 제작 시스템
+  CRAFT: {
+    SUCCESS_RATE: 10,
+    REQUIRED_ENHANCEMENT: 11,
+    WHETSTONE_COST: 1,
+  },
+
+  // 강화연마제 드롭률 (stage id 기준)
+  WHETSTONE_DROP_RATES: { easy: 1, normal: 10, hard: 30 },
 
   // 레이드 스테이지
   RAID_STAGES: [

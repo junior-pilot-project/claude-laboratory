@@ -300,6 +300,61 @@ const UIManager = (() => {
     });
   }
 
+  // 탭 5: 제작 렌더링
+  function renderCraft(state) {
+    const container = document.getElementById('tab-craft');
+    if (!container) return;
+
+    const whetCount = state.whetstones || 0;
+    const types = [
+      { key: 'sword', label: '칼', icon: '⚔️' },
+      { key: 'shield', label: '방패', icon: '🛡️' },
+    ];
+
+    const panelsHtml = types.map(t => {
+      const hasMaterial = _hasHighPlusEleven(state, t.key);
+      const canCraft = hasMaterial && whetCount >= CONFIG.CRAFT.WHETSTONE_COST;
+      const materialClass = hasMaterial ? 'craft-check ok' : 'craft-check ng';
+      const whetClass = whetCount >= CONFIG.CRAFT.WHETSTONE_COST ? 'craft-check ok' : 'craft-check ng';
+      return `
+        <div class="craft-panel">
+          <div class="craft-panel-title">${t.icon} ${t.label} 제작</div>
+          <div class="craft-requirements">
+            <div class="${materialClass}">
+              ${hasMaterial ? '✅' : '❌'} 상급 ${t.label} +${CONFIG.CRAFT.REQUIRED_ENHANCEMENT}
+            </div>
+            <div class="${whetClass}">
+              ${whetCount >= CONFIG.CRAFT.WHETSTONE_COST ? '✅' : '❌'} 강화연마제 × ${CONFIG.CRAFT.WHETSTONE_COST}
+            </div>
+          </div>
+          <div class="craft-rate">제작 성공률: <b>${CONFIG.CRAFT.SUCCESS_RATE}%</b></div>
+          <button class="btn-primary btn-craft ${canCraft ? '' : 'disabled'}"
+            ${canCraft ? `onclick="window.handleCraftAttempt('${t.key}')"` : 'disabled'}>
+            🔨 제작 시도
+          </button>
+        </div>
+      `;
+    }).join('');
+
+    container.innerHTML = `
+      <div class="craft-whetstone-info">
+        🪨 강화연마제 보유: <b>${whetCount}개</b>
+        <div class="craft-drop-hint">하급 레이드 1% / 중급 10% / 상급 30% 확률로 드롭</div>
+      </div>
+      <div class="craft-panels">${panelsHtml}</div>
+    `;
+  }
+
+  function _hasHighPlusEleven(state, type) {
+    const inInv = state.inventory.some(
+      i => i.type === type && i.grade === 'high' && i.enhancement === CONFIG.CRAFT.REQUIRED_ENHANCEMENT
+    );
+    if (inInv) return true;
+    const slotKey = type === 'sword' ? 'equippedSword' : 'equippedShield';
+    const equipped = state[slotKey];
+    return !!(equipped && equipped.grade === 'high' && equipped.enhancement === CONFIG.CRAFT.REQUIRED_ENHANCEMENT);
+  }
+
   // 랭킹 화면 렌더링
   function renderRanking(state) {
     const container = document.getElementById('ranking-list');
@@ -353,6 +408,7 @@ const UIManager = (() => {
     else if (activeTab === 'shop') renderShop(state);
     else if (activeTab === 'gambling') renderGambling();
     else if (activeTab === 'raid') renderRaid(state);
+    else if (activeTab === 'craft') renderCraft(state);
   }
 
   return {
@@ -372,6 +428,8 @@ const UIManager = (() => {
     selectRaidStage,
     getSelectedRaidStage,
     renderRaid,
+    renderCraft,
+    renderInventory,
     formatGold,
     updateHeader,
   };

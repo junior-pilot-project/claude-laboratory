@@ -147,6 +147,7 @@ body {
 .grade-high { color: var(--high); }
 .grade-mid { color: var(--mid); }
 .grade-low { color: var(--low); }
+.grade-supreme { color: #ffd700; text-shadow: 0 0 6px #ffd70088; font-weight: bold; }
 
 /* 강화 패널 */
 .enhance-panel {
@@ -963,4 +964,77 @@ body {
   font-size: 1.1rem;
   color: var(--fail);
   animation: pop 0.4s ease;
+}
+
+/* 제작 탭 */
+.craft-whetstone-info {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  font-size: 1rem;
+  text-align: center;
+}
+
+.craft-drop-hint {
+  font-size: 0.78rem;
+  color: var(--text-dim);
+  margin-top: 4px;
+}
+
+.craft-panels {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.craft-panel {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px;
+  flex: 1;
+  min-width: 200px;
+  max-width: 280px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+}
+
+.craft-panel-title {
+  font-size: 1.1rem;
+  font-weight: bold;
+  font-family: 'Black Han Sans', 'Segoe UI', sans-serif;
+}
+
+.craft-requirements {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.88rem;
+}
+
+.craft-check { padding: 4px 6px; border-radius: 6px; }
+.craft-check.ok  { background: rgba(129, 199, 132, 0.12); color: var(--success); }
+.craft-check.ng  { background: rgba(229, 115, 115, 0.1);  color: var(--fail); }
+
+.craft-rate {
+  font-size: 0.9rem;
+  color: var(--text-dim);
+}
+
+.btn-craft { width: 100%; }
+.btn-craft.disabled, .btn-craft:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.whetstone-drop {
+  color: #aad4f5;
+  font-size: 0.9rem;
+  margin-left: 6px;
 }

@@ -10,6 +10,7 @@ const GameState = (() => {
     inventory: [],
     rankings: [],
     gameOver: false,
+    whetstones: 0,
   });
 
   function load() {

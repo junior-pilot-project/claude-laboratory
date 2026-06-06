@@ -364,10 +364,12 @@ window.handleRaidStart = function() {
 
       if (battle.cleared) {
         state.gold += stage.reward;
+        const dropped = CraftSystem.rollWhetstoneDrops(state, stage.id);
         GameState.save(state);
         UIManager.updateHeader(state);
         const res = document.getElementById('raid-result');
-        if (res) res.innerHTML = `<div class="raid-clear">🏆 클리어! +${stage.reward.toLocaleString()}G</div>`;
+        const whetMsg = dropped ? ' <span class="whetstone-drop">🪨 강화연마제 획득!</span>' : '';
+        if (res) res.innerHTML = `<div class="raid-clear">🏆 클리어! +${stage.reward.toLocaleString()}G${whetMsg}</div>`;
         RaidCanvas.animateVictory();
         soundManager.playRaidVictory();
       } else {
@@ -416,6 +418,28 @@ window.handleRaidStart = function() {
     }
     roundIdx++;
   }, 500);
+};
+
+window.handleCraftAttempt = function(type) {
+  soundManager.init();
+  soundManager.playClick();
+  const result = CraftSystem.craftSupreme(state, type);
+  GameState.save(state);
+  UIManager.renderCraft(state);
+  UIManager.renderInventory(state);
+  UIManager.updateHeader(state);
+
+  if (result.success) {
+    const typeName = type === 'sword' ? '칼' : '방패';
+    UIManager.showToast(`✨ 최상급 ${typeName} 제작 성공!`, 'success');
+  } else if (result.reason === 'no_whetstone') {
+    UIManager.showToast('강화연마제가 부족합니다!', 'error');
+  } else if (result.reason === 'no_material') {
+    const typeName = type === 'sword' ? '칼' : '방패';
+    UIManager.showToast(`상급 ${typeName} +11이 필요합니다!`, 'error');
+  } else {
+    UIManager.showToast('💥 제작 실패... 연마제만 소모되었습니다.', 'error');
+  }
 };
 
 window.handleNewGame = function() {
