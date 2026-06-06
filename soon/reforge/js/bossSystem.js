@@ -11,7 +11,19 @@ const BossSystem = (() => {
     }
     if (state.equippedShield) {
       const s = CONFIG.ITEM_GRADE_STATS[state.equippedShield.grade];
-      def = s.def + state.equippedShield.enhancement * s.defMult;
+      def += s.def + state.equippedShield.enhancement * s.defMult;
+    }
+    if (state.equippedArmor) {
+      const s = CONFIG.ARMOR_GRADE_STATS[state.equippedArmor.grade];
+      def += s.def + state.equippedArmor.enhancement * s.defMult;
+    }
+    if (state.equippedBoots) {
+      const s = CONFIG.BOOTS_GRADE_STATS[state.equippedBoots.grade];
+      def += s.def + state.equippedBoots.enhancement * s.defMult;
+    }
+    if (state.equippedHelmet) {
+      const s = CONFIG.HELMET_GRADE_STATS[state.equippedHelmet.grade];
+      def += s.def;
     }
 
     return { atk, def };

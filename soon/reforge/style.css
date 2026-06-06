@@ -263,6 +263,7 @@ body {
 .shop-item-icon { font-size: 2rem; margin-bottom: 6px; }
 .shop-item-name { font-size: 0.85rem; margin-bottom: 6px; }
 .shop-item-price { color: var(--gold); font-size: 0.85rem; font-weight: bold; margin-bottom: 10px; }
+.shop-item-locked { opacity: 0.55; pointer-events: none; }
 
 /* ?꾨컯??*/
 .box-list { display: flex; flex-direction: column; gap: 12px; }

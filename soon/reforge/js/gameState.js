@@ -7,6 +7,9 @@ const GameState = (() => {
     startTime: Date.now(),
     equippedSword: null,
     equippedShield: null,
+    equippedArmor: null,
+    equippedBoots: null,
+    equippedHelmet: null,
     inventory: [],
     rankings: [],
     gameOver: false,
@@ -46,9 +49,12 @@ const GameState = (() => {
   }
 
   function getTotalEnhancement(state) {
-    const sword = state.equippedSword ? state.equippedSword.enhancement : 0;
-    const shield = state.equippedShield ? state.equippedShield.enhancement : 0;
-    return sword + shield;
+    const sword   = state.equippedSword   ? state.equippedSword.enhancement   : 0;
+    const shield  = state.equippedShield  ? state.equippedShield.enhancement  : 0;
+    const armor   = state.equippedArmor   ? state.equippedArmor.enhancement   : 0;
+    const boots   = state.equippedBoots   ? state.equippedBoots.enhancement   : 0;
+    // 투구는 강화 불가이므로 강화합 미포함
+    return sword + shield + armor + boots;
   }
 
   function isGoalReached(state) {

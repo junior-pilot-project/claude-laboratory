@@ -33,6 +33,7 @@ const RaidAction = (() => {
       state: 'idle', stateTimer: 0,
       attackCooldown: 0, flashTimer: 0,
       atk: ps.atk, def: ps.def,
+      kbVx: 0,
     };
   }
 
@@ -182,7 +183,12 @@ const RaidAction = (() => {
     if (p.stateTimer <= 0 && (p.state === 'attack' || p.state === 'hurt'))
       p.state = p.onGround ? 'idle' : 'jump';
 
-    if (p.state !== 'attack') {
+    // 넉백 중이면 이동 입력 무시하고 왼쪽으로 밀려남
+    if (p.kbVx < 0) {
+      p.x += p.kbVx * dt;
+      p.kbVx = Math.min(0, p.kbVx + 1400 * dt);
+      p.x = Math.max(0, p.x);
+    } else if (p.state !== 'attack') {
       if (_keys.left)  { p.x -= C.WALK_SPEED * dt; p.facingRight = false; }
       if (_keys.right) { p.x += C.WALK_SPEED * dt; p.facingRight = true; }
       if (p.onGround) {
@@ -216,7 +222,7 @@ const RaidAction = (() => {
 
     p.x = Math.max(0, Math.min(C.CANVAS_W - p.w, p.x));
 
-    if (_attackEdge && p.attackCooldown <= 0) _tryAttack();
+    if (_attackEdge && p.attackCooldown <= 0 && p.kbVx >= 0) _tryAttack();
     _attackEdge = false;
   }
 
@@ -236,6 +242,13 @@ const RaidAction = (() => {
       b.flashTimer = 0.1;
       b.state = 'hurt'; b.stateTimer = 0.1;
       soundManager.playRaidBossHit();
+      // 보스가 반격 — 플레이어를 시작 위치 방향으로 강하게 밀쳐냄
+      p.kbVx = -620;
+      p.state = 'hurt';
+      p.stateTimer = 0.5;
+      p.flashTimer = 0.35;
+      if (p.onGround) { p.vy = -110; p.onGround = false; }
+      soundManager.playRaidPlayerHit();
     }
   }
 
@@ -467,61 +480,107 @@ const RaidAction = (() => {
     const ctx = _ctx;
     const p   = _player;
     const flash = p.flashTimer > 0;
-    const sg = _playerStats?.swordGrade || null;
-    const hg = _playerStats?.shieldGrade || null;
+    const sg   = _playerStats?.swordGrade  || null;
+    const hg   = _playerStats?.shieldGrade || null;
+    const ag   = _playerStats?.armorGrade  || null;
+    const bg   = _playerStats?.bootsGrade  || null;
+    const helg = _playerStats?.helmetGrade || null;
+    const skin = '#e8b87a', skinD = '#c8986a';
+
+    function gc(grade) {
+      if (grade === 'high' || grade === 'supreme') return { b: '#d4a520', s: '#fff8a0', d: '#8b6914' };
+      if (grade === 'mid')  return { b: '#6a70f0', s: '#c0c4ff', d: '#3a40a0' };
+      return { b: '#909090', s: '#d8d8d8', d: '#505050' };
+    }
 
     ctx.save();
     ctx.translate(Math.round(p.x), Math.round(p.y));
     if (!p.facingRight) { ctx.translate(p.w, 0); ctx.scale(-1, 1); }
     ctx.globalAlpha = p.state === 'hurt' ? 0.5 : 1.0;
 
+    // 그림자
     if (p.onGround) {
       ctx.fillStyle = 'rgba(0,0,0,0.22)';
-      ctx.fillRect(2, p.h, 12, 2);
+      ctx.fillRect(1, p.h, 14, 2);
     }
-    const lo = (p.state === 'walk' && _walkFrame === 1) ? 1 : 0;
 
-    // 맨발 (살색)
-    ctx.fillStyle = '#c8a070';
-    ctx.fillRect(2, p.h - 4, 5, 4);
-    ctx.fillRect(9, p.h - 4 - lo, 5, 4);
-    // 다리 (바지)
-    ctx.fillStyle = '#5a4a3a';
-    ctx.fillRect(3, p.h - 12, 4, 8);
-    ctx.fillRect(9, p.h - 12 - lo, 4, 8);
-    // 몸통 (맨몸 살색)
-    ctx.fillStyle = '#c8a070'; ctx.fillRect(2, 7, 12, 9);
+    // 뒷다리·뒷발 (옆모습)
+    ctx.fillStyle = skinD; ctx.fillRect(2, 15, 4, 7);
+    ctx.fillStyle = skinD; ctx.fillRect(1, 21, 6, 3);
+    if (bg) {
+      const bc = gc(bg);
+      ctx.fillStyle = bc.b; ctx.fillRect(1, 22, 6, 2);
+      ctx.fillStyle = bc.s; ctx.fillRect(2, 22, 2, 1);
+    }
 
-    // 방패 (착용 시에만)
+    // 방패 (뒤쪽)
     if (hg) {
       const sc = hg === 'high' ? '#d4a520' : hg === 'mid' ? '#6a70f0' : '#909090';
       const ss = hg === 'high' ? '#fff8a0' : hg === 'mid' ? '#c0c4ff' : '#d8d8d8';
-      ctx.fillStyle = sc; ctx.fillRect(-1, 7, 4, 9);
-      ctx.fillStyle = ss; ctx.fillRect(0, 9, 1, 5);
+      ctx.fillStyle = sc; ctx.fillRect(-3, 5, 4, 10);
+      ctx.fillStyle = ss; ctx.fillRect(-2, 7, 2, 6);
     }
 
-    // 칼 (착용 시에만)
+    // 몸통
+    ctx.fillStyle = skin; ctx.fillRect(2, 8, 10, 9);
+    if (ag) {
+      const ac = gc(ag);
+      ctx.fillStyle = ac.b; ctx.fillRect(2, 8, 10, 4);  // 어깨 플레이트
+      ctx.fillStyle = ac.d; ctx.fillRect(2, 12, 10, 1); // 구분선
+      ctx.fillStyle = ac.b; ctx.fillRect(3, 13, 8, 4);  // 흉갑
+      ctx.fillStyle = ac.s; ctx.fillRect(4, 14, 3, 2);  // 광택
+    }
+
+    // 앞다리·앞발
+    ctx.fillStyle = skin;  ctx.fillRect(6, 15, 5, 7);
+    ctx.fillStyle = skinD; ctx.fillRect(5, 21, 7, 3);
+    if (bg) {
+      const bc = gc(bg);
+      ctx.fillStyle = bc.b; ctx.fillRect(5, 22, 7, 2);
+      ctx.fillStyle = bc.s; ctx.fillRect(6, 22, 2, 1);
+    }
+
+    // 칼·팔 (오른쪽, 옆모습)
+    const atkOff = p.state === 'attack' ? 5 : 0;
+    ctx.fillStyle = skin; ctx.fillRect(11, 9, 4, 8);
     if (sg) {
-      const atkOff = p.state === 'attack' ? 5 : 0;
       const wc = sg === 'high' ? '#d4a520' : sg === 'mid' ? '#6a70f0' : '#909090';
-      ctx.fillStyle = '#8a6030'; ctx.fillRect(12, 12, 2, 4);   // 손잡이
-      ctx.fillStyle = '#4a2a10'; ctx.fillRect(10, 10, 6, 3);   // 가드
-      ctx.fillStyle = wc; ctx.fillRect(13 + atkOff, 1, 2, 10); // 날
-      ctx.fillStyle = '#fff'; ctx.fillRect(14 + atkOff, 1, 1, 10); // 광택
+      ctx.fillStyle = '#4a2a10'; ctx.fillRect(10, 7, 5, 3);
+      ctx.fillStyle = wc; ctx.fillRect(13 + atkOff, -1, 2, 9);
+      ctx.fillStyle = '#fff'; ctx.fillRect(14 + atkOff, -1, 1, 9);
     }
 
-    // 목 (살색)
-    ctx.fillStyle = '#c8a070'; ctx.fillRect(6, 3, 4, 5);
-    // 머리 (맨머리 살색)
-    ctx.fillStyle = '#c8a070'; ctx.fillRect(4, -6, 8, 9);
-    // 눈
-    ctx.fillStyle = '#4a2a0a'; ctx.fillRect(5, -4, 2, 2); ctx.fillRect(9, -4, 2, 2);
-    // 머리카락
-    ctx.fillStyle = '#3a2010'; ctx.fillRect(4, -6, 8, 3);
+    // 목
+    ctx.fillStyle = skin; ctx.fillRect(5, 4, 4, 5);
+
+    // 머리 (큰 머리, 오른쪽 방향)
+    ctx.fillStyle = skin;
+    ctx.beginPath(); ctx.arc(9, -1, 7, 0, Math.PI * 2); ctx.fill();
+
+    // 머리카락 (위쪽)
+    ctx.fillStyle = '#3a2010';
+    ctx.beginPath(); ctx.arc(9, -1, 7, Math.PI * 1.05, Math.PI * 1.9); ctx.fill();
+
+    // 투구 (머리 위 반원 + 챙)
+    if (helg) {
+      const hc = gc(helg);
+      ctx.fillStyle = hc.b;
+      ctx.beginPath(); ctx.arc(9, -1, 8, Math.PI, 2 * Math.PI); ctx.fill();
+      ctx.fillStyle = hc.d; ctx.fillRect(0, -2, 18, 2);
+      ctx.fillStyle = hc.s; ctx.fillRect(5, -7, 2, 4);
+    }
+
+    // 눈 (오른쪽 방향 한쪽)
+    ctx.fillStyle = '#fff'; ctx.fillRect(13, -3, 3, 3);
+    ctx.fillStyle = '#2a1a0a'; ctx.fillRect(14, -3, 2, 2);
+    ctx.fillStyle = '#fff'; ctx.fillRect(15, -3, 1, 1);
+
+    // 볼
+    ctx.fillStyle = 'rgba(240,130,100,0.4)'; ctx.fillRect(14, 0, 2, 1);
 
     if (flash) {
       ctx.fillStyle = 'rgba(255,255,255,0.75)';
-      ctx.fillRect(-1, -6, p.w + 2, p.h + 6);
+      ctx.fillRect(-3, -8, p.w + 6, p.h + 8);
     }
     ctx.globalAlpha = 1;
     ctx.restore();
@@ -539,82 +598,100 @@ const RaidAction = (() => {
     if (!b.facingRight) { ctx.translate(b.w, 0); ctx.scale(-1, 1); }
     if (flash) ctx.filter = 'brightness(4) saturate(0)';
 
-    _drawDemonBoss(isCharge);
+    _drawSkeletonKnight(isCharge);
 
     ctx.filter = 'none';
     ctx.restore();
   }
 
-  function _drawDemonBoss(isCharge) {
+  function _drawSkeletonKnight(isCharge) {
     const ctx = _ctx;
     const b   = _boss;
-    const mg  = 0.6 + 0.4 * Math.sin(_gameTime * 4);
+    const mg  = 0.5 + 0.5 * Math.sin(_gameTime * 4);
     const W = b.w, H = b.h;
+    const bone = '#e0d8b0', darkBone = '#a09060';
+    const eyeCol = isCharge ? `rgba(255,80,0,${0.8 + 0.2 * mg})` : `rgba(255,200,50,${0.6 + 0.4 * mg})`;
 
-    // 오라 (charge 중이면 더 밝게)
+    // charge 오라
     if (isCharge) {
-      ctx.shadowBlur = 18; ctx.shadowColor = '#ff0044';
-      ctx.fillStyle = `rgba(255,0,60,${mg * 0.35})`;
-      ctx.beginPath(); ctx.ellipse(W / 2, H / 2, W * 0.9, H * 0.85, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.shadowBlur = 14; ctx.shadowColor = '#ff6600';
+      ctx.fillStyle = `rgba(255,100,0,${mg * 0.28})`;
+      ctx.beginPath(); ctx.ellipse(W * 0.4, H * 0.5, W * 0.85, H * 0.8, 0, 0, Math.PI * 2); ctx.fill();
       ctx.shadowBlur = 0;
     }
 
-    // 날개
-    ctx.fillStyle = '#150008'; ctx.globalAlpha = 0.85;
-    ctx.fillRect(-13, 4, 14, H * 0.55); ctx.fillRect(W - 1, 4, 14, H * 0.55);
-    ctx.globalAlpha = 1;
-    ctx.fillStyle = '#2a0015';
-    ctx.fillRect(-11, 6, 1, H * 0.4); ctx.fillRect(-7, 4, 1, H * 0.5);
-    ctx.fillRect(W, 6, 1, H * 0.4); ctx.fillRect(W + 4, 4, 1, H * 0.5);
+    // 방패 (앞쪽, 오른쪽)
+    ctx.fillStyle = '#880010';
+    ctx.fillRect(W - 5, H * 0.22, 9, H * 0.36);
+    ctx.strokeStyle = '#cc3333'; ctx.lineWidth = 1;
+    ctx.strokeRect(W - 5, H * 0.22, 9, H * 0.36);
+    ctx.fillStyle = '#cc2222';
+    ctx.beginPath(); ctx.moveTo(W - 1, H * 0.28); ctx.lineTo(W + 2, H * 0.4); ctx.lineTo(W - 1, H * 0.52); ctx.fill();
 
-    // 발굽
-    ctx.fillStyle = '#100404';
-    ctx.fillRect(4, H - 6, 10, 6); ctx.fillRect(W - 14, H - 6, 10, 6);
-    // 다리
-    ctx.fillStyle = '#1e0808';
-    ctx.fillRect(6, H - 20, 8, 16); ctx.fillRect(W - 14, H - 20, 8, 16);
-    // 몸통
-    ctx.fillStyle = '#140614'; ctx.fillRect(3, H * 0.28, W - 6, H * 0.42);
-    ctx.strokeStyle = '#7a0000'; ctx.lineWidth = 1;
-    [0.36, 0.48, 0.58].forEach(ry => {
-      ctx.beginPath(); ctx.moveTo(3, H * ry); ctx.lineTo(W - 3, H * ry); ctx.stroke();
-    });
-    // 시길
-    ctx.fillStyle = '#cc0000';
-    ctx.beginPath(); ctx.ellipse(W / 2, H * 0.44, 6, 3, 0, 0, Math.PI * 2); ctx.fill();
+    // 뒷발·뒷다리 (뼈)
+    ctx.fillStyle = darkBone; ctx.fillRect(W - 18, H - 7, 11, 7);
+    ctx.fillStyle = bone;     ctx.fillRect(W - 17, H - 22, 8, 16);
 
-    // 팔
-    ctx.fillStyle = '#1e0808';
-    ctx.fillRect(-2, H * 0.3, 6, H * 0.28); ctx.fillRect(W - 4, H * 0.3, 6, H * 0.28);
-    // 오브 (charge 중이면 더 크게 맥동)
-    const orbSz = isCharge ? (8 + 4 * mg) : (6 + 2 * mg);
-    ctx.shadowBlur = isCharge ? 14 : 6;
-    ctx.shadowColor = '#aa00cc';
-    ctx.fillStyle = `rgba(140,0,200,${mg})`;
-    ctx.beginPath(); ctx.arc(-2 + orbSz / 4, H * 0.44, orbSz / 2, 0, Math.PI * 2); ctx.fill();
-    ctx.shadowColor = '#cc0066';
-    ctx.fillStyle = `rgba(200,0,100,${mg})`;
-    ctx.beginPath(); ctx.arc(W + 2 - orbSz / 4, H * 0.44, orbSz / 2, 0, Math.PI * 2); ctx.fill();
+    // 몸통 갑옷
+    ctx.fillStyle = '#606075';
+    ctx.fillRect(W * 0.08, H * 0.26, W * 0.56, H * 0.4);
+    ctx.fillStyle = '#404055';
+    ctx.fillRect(W * 0.08, H * 0.26, W * 0.56, 5);
+    ctx.fillRect(W * 0.08, H * 0.52, W * 0.56, 4);
+    ctx.strokeStyle = bone; ctx.lineWidth = 0.7;
+    ctx.strokeRect(W * 0.14, H * 0.32, W * 0.44, H * 0.2);
+
+    // 앞발·앞다리 (뼈)
+    ctx.fillStyle = darkBone; ctx.fillRect(W * 0.06, H - 7, 13, 7);
+    ctx.fillStyle = bone;     ctx.fillRect(W * 0.08, H - 24, 9, 18);
+
+    // 칼 팔 (왼쪽, 앞으로 뻗음)
+    ctx.fillStyle = darkBone;
+    ctx.fillRect(W * 0.02, H * 0.29, 6, H * 0.26);
+    // 칼날
+    ctx.fillStyle = '#9090aa';
+    ctx.fillRect(-11, H * 0.2, 4, H * 0.23);
+    ctx.fillStyle = bone;
+    ctx.fillRect(-2, H * 0.37, 13, 3); // 가드
+
+    // 뒷팔
+    ctx.fillStyle = darkBone;
+    ctx.fillRect(W * 0.66, H * 0.29, 5, H * 0.24);
+
+    // 목뼈
+    ctx.fillStyle = darkBone;
+    ctx.fillRect(W * 0.28, H * 0.2, W * 0.18, H * 0.08);
+
+    // 해골 머리 (왼쪽 방향)
+    ctx.fillStyle = bone;
+    ctx.beginPath(); ctx.ellipse(W * 0.26, H * 0.11, W * 0.2, H * 0.14, 0, 0, Math.PI * 2); ctx.fill();
+    // 아래턱
+    ctx.beginPath(); ctx.ellipse(W * 0.26, H * 0.19, W * 0.14, H * 0.06, 0, 0, Math.PI * 2); ctx.fill();
+
+    // 눈 (왼쪽 방향 한쪽)
+    ctx.shadowBlur = 7; ctx.shadowColor = eyeCol;
+    ctx.fillStyle = eyeCol;
+    ctx.beginPath(); ctx.ellipse(W * 0.14, H * 0.1, 3.5, 4, 0, 0, Math.PI * 2); ctx.fill();
     ctx.shadowBlur = 0;
+    // 코구멍
+    ctx.fillStyle = '#2a2000'; ctx.fillRect(W * 0.08, H * 0.135, 3, 2.5);
 
-    // 목
-    ctx.fillStyle = '#140010'; ctx.fillRect(W * 0.35, H * 0.16, W * 0.3, H * 0.14);
-    // 머리
-    ctx.fillStyle = '#140010'; ctx.fillRect(W * 0.12, 0, W * 0.76, H * 0.28);
-    // 뿔
-    ctx.fillStyle = '#7a0000';
-    [[W * 0.15, -8], [W * 0.35, -12], [W * 0.5, -14], [W * 0.65, -12], [W * 0.85, -8]].forEach(([hx, hy]) => {
-      ctx.fillRect(hx - 3, H * 0.02 + hy + Math.sin(_gameTime * 2 + hx) * 0.8, 5, -hy);
+    // 이빨
+    ctx.fillStyle = bone;
+    [W * 0.13, W * 0.19, W * 0.25].forEach(tx => ctx.fillRect(tx, H * 0.2, 3.5, 4.5));
+    ctx.fillStyle = darkBone;
+    ctx.fillRect(W * 0.12, H * 0.2, W * 0.2, 2);
+
+    // 왕관
+    ctx.fillStyle = '#c8a020';
+    ctx.fillRect(W * 0.08, H * 0.01, W * 0.26, 4);
+    [W * 0.1, W * 0.18, W * 0.27].forEach(hx => {
+      ctx.beginPath();
+      ctx.moveTo(hx - 2.5, H * 0.02);
+      ctx.lineTo(hx, -5 + Math.sin(_gameTime * 2) * 1.2);
+      ctx.lineTo(hx + 2.5, H * 0.02);
+      ctx.fill();
     });
-    // 눈
-    ctx.shadowBlur = 8; ctx.shadowColor = '#ff0000';
-    ctx.fillStyle = '#ff2200';
-    ctx.fillRect(W * 0.18, H * 0.08, W * 0.2, 4);
-    ctx.fillRect(W * 0.62, H * 0.08, W * 0.2, 4);
-    ctx.shadowBlur = 0;
-    ctx.fillStyle = '#000';
-    ctx.fillRect(W * 0.22, H * 0.09, W * 0.1, 2);
-    ctx.fillRect(W * 0.66, H * 0.09, W * 0.1, 2);
   }
 
   function _drawHud() {

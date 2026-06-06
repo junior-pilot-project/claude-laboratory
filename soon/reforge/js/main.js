@@ -322,11 +322,14 @@ window.handleEquip = function(itemId) {
   UIManager.updateHeader(state);
 };
 
+const _itemTypeNames = { sword: '칼', shield: '방패', armor: '갑옷', boots: '신발', helmet: '투구' };
+
 window.handleRemoveItem = function(itemId) {
   soundManager.init();
   const item = state.inventory.find(i => i.id === itemId);
   if (!item) return;
-  const name = `${CONFIG.GRADE_NAMES[item.grade]} ${item.type === 'sword' ? '칼' : '방패'} +${item.enhancement}`;
+  const typeName = _itemTypeNames[item.type] || item.type;
+  const name = `${CONFIG.GRADE_NAMES[item.grade]} ${typeName} +${item.enhancement}`;
   if (!confirm(`${name}을(를) 버리겠습니까?`)) return;
   soundManager.playClick();
   ItemSystem.removeItem(state, itemId);
@@ -346,7 +349,8 @@ window.handleBuy = function(type, grade) {
   soundManager.playPurchase();
   GameState.save(state);
   UIManager.updateHeader(state);
-  UIManager.showToast(`${CONFIG.GRADE_NAMES[grade]} ${type === 'sword' ? '칼' : '방패'} 구매 완료!`, 'success');
+  const typeName = _itemTypeNames[type] || type;
+  UIManager.showToast(`${CONFIG.GRADE_NAMES[grade]} ${typeName} 구매 완료!`, 'success');
 };
 
 window.handleOpenBox = function(boxId, count) {
@@ -489,8 +493,11 @@ window.handleRaidActionStart = function() {
   if (resEl) resEl.innerHTML = '';
 
   const playerStats = BossSystem.getPlayerStats(state);
-  playerStats.swordGrade = state.equippedSword?.grade || null;
+  playerStats.swordGrade  = state.equippedSword?.grade  || null;
   playerStats.shieldGrade = state.equippedShield?.grade || null;
+  playerStats.armorGrade  = state.equippedArmor?.grade  || null;
+  playerStats.bootsGrade  = state.equippedBoots?.grade  || null;
+  playerStats.helmetGrade = state.equippedHelmet?.grade || null;
   RaidAction.start(playerStats, function(result) {
     isRaidActing = false;
     if (startBtn) startBtn.disabled = false;
@@ -498,11 +505,13 @@ window.handleRaidActionStart = function() {
     if (result.victory) {
       state.gold += B.reward;
       const dropped = CraftSystem.rollWhetstoneDrops(state, 'normal');
+      const helmetGrade = CraftSystem.rollHelmetDrop(state);
       GameState.save(state);
       UIManager.updateHeader(state);
       soundManager.playRaidVictory();
-      const whetMsg = dropped ? ' <span class="whetstone-drop">🪨 강화연마제 획득!</span>' : '';
-      if (resEl) resEl.innerHTML = `<div class="boss-clear">🏆 클리어! +${B.reward.toLocaleString()}G${whetMsg}</div>`;
+      const whetMsg   = dropped     ? ' <span class="whetstone-drop">🪨 강화연마제 획득!</span>' : '';
+      const helmMsg   = helmetGrade ? ` <span class="whetstone-drop">🪖 ${CONFIG.GRADE_NAMES[helmetGrade]} 투구 획득!</span>` : '';
+      if (resEl) resEl.innerHTML = `<div class="boss-clear">🏆 클리어! +${B.reward.toLocaleString()}G${whetMsg}${helmMsg}</div>`;
     } else {
       soundManager.playRaidDefeat();
       if (resEl) resEl.innerHTML = `<div class="boss-fail">💀 전투 실패...</div>`;

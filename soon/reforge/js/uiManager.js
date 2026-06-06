@@ -21,10 +21,17 @@ const UIManager = (() => {
   function startTimer() {}
   function stopTimer() {}
 
+  const _itemMeta = {
+    sword:  { icon: '⚔️', name: '칼',  canEnhance: true  },
+    shield: { icon: '🛡️', name: '방패', canEnhance: true  },
+    armor:  { icon: '🥋', name: '갑옷', canEnhance: true  },
+    boots:  { icon: '👟', name: '신발', canEnhance: true  },
+    helmet: { icon: '🪖', name: '투구', canEnhance: false },
+  };
+
   // 탭 1: 장비/강화 렌더링
   function renderEquip(state) {
-    renderSlot('sword', state);
-    renderSlot('shield', state);
+    ['sword', 'shield', 'armor', 'boots', 'helmet'].forEach(t => renderSlot(t, state));
     renderEnhancePanel(state);
     renderInventory(state);
   }
@@ -34,19 +41,23 @@ const UIManager = (() => {
     const item = state[slotKey];
     const el = document.getElementById(`slot-${type}`);
     if (!el) return;
+    const meta = _itemMeta[type] || { icon: '❓', name: type, canEnhance: false };
 
     if (item) {
+      const enhBtn = meta.canEnhance
+        ? `<button class="btn-sm btn-enhance-slot ${_selectedSlotKey === slotKey ? 'selected' : ''}" data-slot="${slotKey}">강화</button>`
+        : '';
       el.innerHTML = `
-        <div class="item-icon">${type === 'sword' ? '⚔️' : '🛡️'}</div>
+        <div class="item-icon">${meta.icon}</div>
         <div class="item-info">
           <span class="item-grade grade-${item.grade}">${CONFIG.GRADE_NAMES[item.grade]}</span>
-          <span class="item-name">${type === 'sword' ? '칼' : '방패'} +${item.enhancement}</span>
+          <span class="item-name">${meta.name} +${item.enhancement}</span>
         </div>
         <button class="btn-sm btn-unequip" data-slot="${slotKey}">해제</button>
-        <button class="btn-sm btn-enhance-slot ${_selectedSlotKey === slotKey ? 'selected' : ''}" data-slot="${slotKey}">강화</button>
+        ${enhBtn}
       `;
     } else {
-      el.innerHTML = `<div class="slot-empty">슬롯 비어있음<br><small>${type === 'sword' ? '⚔️ 칼' : '🛡️ 방패'}</small></div>`;
+      el.innerHTML = `<div class="slot-empty">슬롯 비어있음<br><small>${meta.icon} ${meta.name}</small></div>`;
     }
   }
 
@@ -59,9 +70,10 @@ const UIManager = (() => {
     const item = state[_selectedSlotKey];
     const prob = getProbability(item.grade, item.enhancement);
     const cost = getEnhanceCost(item.grade, item.enhancement);
+    const meta = _itemMeta[item.type] || { icon: '❓', name: item.type };
     panel.innerHTML = `
       <div class="enhance-info">
-        <span>선택: <b>${CONFIG.GRADE_NAMES[item.grade]} ${item.type === 'sword' ? '칼' : '방패'} +${item.enhancement}</b></span>
+        <span>선택: <b>${CONFIG.GRADE_NAMES[item.grade]} ${meta.name} +${item.enhancement}</b></span>
         <span>성공 확률: <b class="${prob <= 30 ? 'text-danger' : 'text-success'}">${prob}%</b></span>
         <span>비용: <b>${formatGold(cost)}</b></span>
       </div>
@@ -89,15 +101,18 @@ const UIManager = (() => {
       container.innerHTML = whetHtml || `<p class="hint">인벤토리가 비어있습니다.</p>`;
       return;
     }
-    container.innerHTML = whetHtml + state.inventory.map(item => `
-      <div class="inv-item" data-id="${item.id}">
-        <span>${item.type === 'sword' ? '⚔️' : '🛡️'}</span>
-        <span class="item-grade grade-${item.grade}">${CONFIG.GRADE_NAMES[item.grade]}</span>
-        <span>${item.type === 'sword' ? '칼' : '방패'} +${item.enhancement}</span>
-        <button class="btn-sm btn-equip" data-id="${item.id}">착용</button>
-        <button class="btn-sm btn-remove-item" data-id="${item.id}">🗑️</button>
-      </div>
-    `).join('');
+    container.innerHTML = whetHtml + state.inventory.map(item => {
+      const meta = _itemMeta[item.type] || { icon: '❓', name: item.type };
+      return `
+        <div class="inv-item" data-id="${item.id}">
+          <span>${meta.icon}</span>
+          <span class="item-grade grade-${item.grade}">${CONFIG.GRADE_NAMES[item.grade]}</span>
+          <span>${meta.name} +${item.enhancement}</span>
+          <button class="btn-sm btn-equip" data-id="${item.id}">착용</button>
+          <button class="btn-sm btn-remove-item" data-id="${item.id}">🗑️</button>
+        </div>
+      `;
+    }).join('');
 
     container.querySelectorAll('.btn-equip').forEach(btn => {
       btn.addEventListener('click', () => {
@@ -112,24 +127,31 @@ const UIManager = (() => {
     });
   }
 
-  // 탭 2: 상점 렌더링
+  // 탭 2: 상점 렌더링 (갑옷/신발 추가, 투구는 레이드 드롭 전용)
   function renderShop(state) {
     const container = document.getElementById('shop-items');
     if (!container) return;
-    const types = ['sword', 'shield'];
+    const types = ['sword', 'shield', 'armor', 'boots'];
     const grades = ['low', 'mid', 'high'];
-    const typeLabels = { sword: '칼', shield: '방패' };
 
     container.innerHTML = grades.map(grade =>
-      types.map(type => `
-        <div class="shop-item">
-          <div class="shop-item-icon">${type === 'sword' ? '⚔️' : '🛡️'}</div>
-          <div class="shop-item-name">${CONFIG.GRADE_NAMES[grade]} ${typeLabels[type]}</div>
-          <div class="shop-item-price">${formatGold(CONFIG.ITEM_PRICES[grade])}</div>
-          <button class="btn-buy btn-primary" data-type="${type}" data-grade="${grade}">구매</button>
-        </div>
-      `).join('')
-    ).join('');
+      types.map(type => {
+        const meta = _itemMeta[type];
+        return `
+          <div class="shop-item">
+            <div class="shop-item-icon">${meta.icon}</div>
+            <div class="shop-item-name">${CONFIG.GRADE_NAMES[grade]} ${meta.name}</div>
+            <div class="shop-item-price">${formatGold(CONFIG.ITEM_PRICES[grade])}</div>
+            <button class="btn-buy btn-primary" data-type="${type}" data-grade="${grade}">구매</button>
+          </div>
+        `;
+      }).join('')
+    ).join('') +
+    `<div class="shop-item shop-item-locked">
+      <div class="shop-item-icon">🪖</div>
+      <div class="shop-item-name">투구</div>
+      <div class="shop-item-price" style="color:var(--gold)">레이드 보스 드롭 전용</div>
+    </div>`;
 
     container.querySelectorAll('.btn-buy').forEach(btn => {
       btn.addEventListener('click', () => {
@@ -231,31 +253,9 @@ const UIManager = (() => {
 
   // 탭 5 (레이드 액션): 렌더링
   function renderRaidAction(state) {
-    const stagesEl = document.getElementById('raidact-stages');
-    if (stagesEl) {
-      stagesEl.innerHTML = CONFIG.RAID_ACTION_STAGES.map(stage => {
-        const bossStageCfg = CONFIG.BOSS_STAGES.find(s => s.id === stage.id);
-        const unlocked = bossStageCfg ? BossSystem.isStageUnlocked(bossStageCfg, state) : true;
-        const selected = _selectedRaidActionStage === stage.id;
-        const innerHtml = unlocked
-          ? `<div class="boss-stage-info">HP <b>${stage.bossHp}</b> / ATK <b>${stage.bossAtk}</b></div>
-             <div class="boss-stage-reward">💰 ${stage.reward.toLocaleString()}원</div>`
-          : `<div class="boss-lock-msg">🔒 강화합 ${bossStageCfg?.unlock ?? 0} 필요</div>`;
-        return `
-          <div class="boss-stage-card ${unlocked ? 'unlocked' : 'locked'} ${selected ? 'selected' : ''}"
-               ${unlocked ? `onclick="window.handleRaidActionSelectStage('${stage.id}')"` : ''}>
-            <div class="boss-stage-label">${stage.label}</div>
-            ${innerHtml}
-          </div>
-        `;
-      }).join('');
-    }
-
-    if (_selectedRaidActionStage) {
-      const stage = CONFIG.RAID_ACTION_STAGES.find(s => s.id === _selectedRaidActionStage);
-      const bossHpText = document.getElementById('raidact-boss-hp-text');
-      if (bossHpText && stage) bossHpText.textContent = stage.bossHp;
-    }
+    const B = CONFIG.RAID_BOSS;
+    const bossHpText = document.getElementById('raidact-boss-hp-text');
+    if (bossHpText) bossHpText.textContent = B.hp;
 
     RaidAction.init('raidact-canvas');
   }

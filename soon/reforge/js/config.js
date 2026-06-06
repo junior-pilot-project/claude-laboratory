@@ -18,6 +18,28 @@ const CONFIG = {
     high: 5000000,
   },
 
+  // 방어 아이템 전용 스탯 (갑옷/신발/투구 — def만 있음)
+  ARMOR_GRADE_STATS: {
+    low:     { def: 2,  defMult: 0.8 },
+    mid:     { def: 8,  defMult: 1.5 },
+    high:    { def: 15, defMult: 2.5 },
+    supreme: { def: 40, defMult: 4.0 },
+  },
+  BOOTS_GRADE_STATS: {
+    low:     { def: 1,  defMult: 0.5 },
+    mid:     { def: 5,  defMult: 1.0 },
+    high:    { def: 10, defMult: 1.8 },
+    supreme: { def: 25, defMult: 3.0 },
+  },
+  HELMET_GRADE_STATS: {
+    low:  { def: 2,  defMult: 0 },
+    mid:  { def: 8,  defMult: 0 },
+    high: { def: 15, defMult: 0 },
+  },
+
+  // 투구 드롭률 (레이드 액션 보스 클리어 시)
+  HELMET_DROP_RATES: { high: 2, mid: 8, low: 20 },
+
   // 강화 비용 계산 기준
   COST_EASY_PER_LEVEL: 5000,        // 확률 > 30% 구간
   COST_HARD_PER_LEVEL: 100000,      // 확률 <= 30% 구간
@@ -32,7 +54,7 @@ const CONFIG = {
   ],
 
   // 게임 목표
-  GOAL: 40,
+  GOAL: 80,
 
   // 랭킹 최대 개수
   MAX_RANKINGS: 10,
@@ -71,11 +93,11 @@ const CONFIG = {
   // 강화연마제 드롭률 (stage id 기준)
   WHETSTONE_DROP_RATES: { easy: 1, normal: 10, hard: 30 },
 
-  // 보스 스테이지
+  // 보스 스테이지 (방어 아이템 추가로 공격력 대폭 상향)
   BOSS_STAGES: [
-    { id: 'easy',   label: '하급', bossHp: 100, bossAtk: 12, reward: 30000,  unlock: 0  },
-    { id: 'normal', label: '중급', bossHp: 300, bossAtk: 35, reward: 100000, unlock: 10 },
-    { id: 'hard',   label: '상급', bossHp: 700, bossAtk: 80, reward: 300000, unlock: 20 },
+    { id: 'easy',   label: '하급', bossHp: 100, bossAtk: 50,  reward: 30000,  unlock: 0  },
+    { id: 'normal', label: '중급', bossHp: 300, bossAtk: 150, reward: 100000, unlock: 10 },
+    { id: 'hard',   label: '상급', bossHp: 700, bossAtk: 320, reward: 300000, unlock: 20 },
   ],
   BOSS_ROUNDS: 10,
   BOSS_PLAYER_HP: 100,
@@ -92,15 +114,15 @@ const CONFIG = {
     WALK_SPEED: 55,
     JUMP_FORCE: 210,
     GRAVITY: 430,
-    PLAYER_HP: 200,
+    PLAYER_HP: 300,
     ATTACK_COOLDOWN: 0.4,
   },
 
-  // 레이드 단일 보스
+  // 레이드 단일 보스 (방어 아이템 추가로 공격력 대폭 상향, HP 하향으로 전투 가속)
   RAID_BOSS: {
     w: 42, h: 56,
     hp: 600,
-    atk: 38,
+    atk: 250,
     reward: 120000,
     firstAtkDelay: 1.2,
     minInterval: 1.2,

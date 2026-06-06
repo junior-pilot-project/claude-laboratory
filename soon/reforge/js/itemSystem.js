@@ -3,7 +3,14 @@ const ItemSystem = (() => {
 
   // 장착 슬롯 키 반환
   function getSlotKey(type) {
-    return type === 'sword' ? 'equippedSword' : 'equippedShield';
+    const map = {
+      sword:  'equippedSword',
+      shield: 'equippedShield',
+      armor:  'equippedArmor',
+      boots:  'equippedBoots',
+      helmet: 'equippedHelmet',
+    };
+    return map[type] || null;
   }
 
   // 강화 시도

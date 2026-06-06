@@ -59,5 +59,17 @@ const CraftSystem = (() => {
     return { success: false, reason: 'failed' };
   }
 
-  return { rollWhetstoneDrops, craftSupreme };
+  function rollHelmetDrop(state) {
+    const rates = CONFIG.HELMET_DROP_RATES;
+    for (const grade of ['high', 'mid', 'low']) {
+      if (Math.random() * 100 < rates[grade]) {
+        const helmet = GameState.createItem('helmet', grade);
+        state.inventory.push(helmet);
+        return grade;
+      }
+    }
+    return null;
+  }
+
+  return { rollWhetstoneDrops, craftSupreme, rollHelmetDrop };
 })();

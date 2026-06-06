@@ -41,6 +41,15 @@
         <div class="slot-card" id="slot-shield">
           <div class="slot-empty">슬롯 비어있음<br><small>🛡️ 방패</small></div>
         </div>
+        <div class="slot-card" id="slot-armor">
+          <div class="slot-empty">슬롯 비어있음<br><small>🥋 갑옷</small></div>
+        </div>
+        <div class="slot-card" id="slot-boots">
+          <div class="slot-empty">슬롯 비어있음<br><small>👟 신발</small></div>
+        </div>
+        <div class="slot-card" id="slot-helmet">
+          <div class="slot-empty">슬롯 비어있음<br><small>🪖 투구 (레이드 드롭)</small></div>
+        </div>
       </div>
 
       <div class="enhance-panel" id="enhance-panel">
@@ -81,29 +90,34 @@
 
     <!-- 탭 5: 레이드 (액션 게임) -->
     <section class="tab-content" id="tab-raid">
-      <div id="raidact-stages" class="boss-stages"></div>
       <div class="raidact-canvas-wrap">
-        <canvas id="raidact-canvas" width="160" height="96"></canvas>
+        <canvas id="raidact-canvas" width="240" height="135"></canvas>
       </div>
       <div class="raidact-hpbars">
         <div class="raidact-hp-row">
-          <span>👤</span>
+          <span class="raidact-hp-label">👤 나</span>
           <div class="raidact-bar-wrap"><div class="raidact-bar player" id="raidact-player-hp"></div></div>
           <span id="raidact-player-hp-text">200</span>
         </div>
         <div class="raidact-hp-row">
-          <span>👹</span>
+          <span class="raidact-hp-label">👹 보스</span>
           <div class="raidact-bar-wrap"><div class="raidact-bar boss" id="raidact-boss-hp"></div></div>
           <span id="raidact-boss-hp-text">-</span>
         </div>
       </div>
       <div id="raidact-result" class="raidact-result"></div>
       <button id="btn-raidact-start" class="btn-primary btn-lg" onclick="window.handleRaidActionStart()">⚔️ 전투 시작</button>
-      <div class="raidact-controls" id="raidact-controls">
-        <button class="raidact-btn" id="raidact-left">◀</button>
-        <button class="raidact-btn" id="raidact-jump">▲</button>
-        <button class="raidact-btn raidact-atk" id="raidact-attack">⚔</button>
-        <button class="raidact-btn" id="raidact-right">▶</button>
+
+      <!-- 모바일 게임패드 -->
+      <div class="gamepad-wrap">
+        <div class="gamepad-left">
+          <button class="gamepad-btn move" id="raidact-left">◀</button>
+          <button class="gamepad-btn move" id="raidact-right">▶</button>
+        </div>
+        <div class="gamepad-right">
+          <button class="gamepad-btn jump" id="raidact-jump">↑</button>
+          <button class="gamepad-btn attack" id="raidact-attack">⚔</button>
+        </div>
       </div>
     </section>
 
@@ -156,7 +170,7 @@
 
   <!-- 게임 종료 화면 -->
   <div id="gameover-screen">
-    <div class="gameover-title">🎉 목표 달성! 강화합 40 완성!</div>
+    <div class="gameover-title">🎉 목표 달성! 강화합 80 완성!</div>
     <div class="ranking-box">
       <h2>🏆 TOP 10 랭킹</h2>
       <div id="ranking-list"></div>
