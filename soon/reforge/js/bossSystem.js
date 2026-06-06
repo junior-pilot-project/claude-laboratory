@@ -4,6 +4,7 @@ const BossSystem = (() => {
   function getPlayerStats(state) {
     let atk = 1;
     let def = 0;
+    let maxHp = CONFIG.BOSS_PLAYER_HP;
 
     if (state.equippedSword) {
       const s = CONFIG.ITEM_GRADE_STATS[state.equippedSword.grade];
@@ -16,22 +17,25 @@ const BossSystem = (() => {
     if (state.equippedArmor) {
       const s = CONFIG.ARMOR_GRADE_STATS[state.equippedArmor.grade];
       def += s.def + state.equippedArmor.enhancement * s.defMult;
+      maxHp += s.hp + state.equippedArmor.enhancement * s.hpMult;
     }
     if (state.equippedBoots) {
       const s = CONFIG.BOOTS_GRADE_STATS[state.equippedBoots.grade];
       def += s.def + state.equippedBoots.enhancement * s.defMult;
+      maxHp += s.hp + state.equippedBoots.enhancement * s.hpMult;
     }
     if (state.equippedHelmet) {
       const s = CONFIG.HELMET_GRADE_STATS[state.equippedHelmet.grade];
       def += s.def;
+      maxHp += s.hp;
     }
 
-    return { atk, def };
+    return { atk: Math.round(atk), def: Math.round(def), maxHp: Math.round(maxHp) };
   }
 
   function simulateBattle(playerStats, stage) {
     let bossHp = stage.bossHp;
-    let playerHp = CONFIG.BOSS_PLAYER_HP;
+    let playerHp = playerStats.maxHp;
     const rounds = [];
 
     let round = 0;

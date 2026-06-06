@@ -18,23 +18,23 @@ const CONFIG = {
     high: 5000000,
   },
 
-  // 방어 아이템 전용 스탯 (갑옷/신발/투구 — def만 있음)
+  // 방어 아이템 전용 스탯 (갑옷/신발/투구 — def + hp 보너스)
   ARMOR_GRADE_STATS: {
-    low:     { def: 2,  defMult: 0.8 },
-    mid:     { def: 8,  defMult: 1.5 },
-    high:    { def: 15, defMult: 2.5 },
-    supreme: { def: 40, defMult: 4.0 },
+    low:     { def: 2,  defMult: 0.8, hp: 15,  hpMult: 3  },
+    mid:     { def: 8,  defMult: 1.5, hp: 40,  hpMult: 7  },
+    high:    { def: 15, defMult: 2.5, hp: 80,  hpMult: 12 },
+    supreme: { def: 40, defMult: 4.0, hp: 200, hpMult: 25 },
   },
   BOOTS_GRADE_STATS: {
-    low:     { def: 1,  defMult: 0.5 },
-    mid:     { def: 5,  defMult: 1.0 },
-    high:    { def: 10, defMult: 1.8 },
-    supreme: { def: 25, defMult: 3.0 },
+    low:     { def: 1,  defMult: 0.5, hp: 8,   hpMult: 1.5 },
+    mid:     { def: 5,  defMult: 1.0, hp: 20,  hpMult: 4   },
+    high:    { def: 10, defMult: 1.8, hp: 40,  hpMult: 8   },
+    supreme: { def: 25, defMult: 3.0, hp: 100, hpMult: 15  },
   },
   HELMET_GRADE_STATS: {
-    low:  { def: 2,  defMult: 0 },
-    mid:  { def: 8,  defMult: 0 },
-    high: { def: 15, defMult: 0 },
+    low:  { def: 2,  defMult: 0, hp: 20  },
+    mid:  { def: 8,  defMult: 0, hp: 50  },
+    high: { def: 15, defMult: 0, hp: 100 },
   },
 
   // 투구 드롭률 (레이드 액션 보스 클리어 시)
@@ -93,14 +93,14 @@ const CONFIG = {
   // 강화연마제 드롭률 (stage id 기준)
   WHETSTONE_DROP_RATES: { easy: 1, normal: 10, hard: 30 },
 
-  // 보스 스테이지 (방어 아이템 추가로 공격력 대폭 상향)
+  // 보스 스테이지
   BOSS_STAGES: [
-    { id: 'easy',   label: '하급', bossHp: 100, bossAtk: 50,  reward: 30000,  unlock: 0  },
-    { id: 'normal', label: '중급', bossHp: 300, bossAtk: 150, reward: 100000, unlock: 10 },
-    { id: 'hard',   label: '상급', bossHp: 700, bossAtk: 320, reward: 300000, unlock: 20 },
+    { id: 'easy',   label: '하급', bossHp: 200,  bossAtk: 80,  reward: 30000,  unlock: 0  },
+    { id: 'normal', label: '중급', bossHp: 600,  bossAtk: 160, reward: 100000, unlock: 10 },
+    { id: 'hard',   label: '상급', bossHp: 1500, bossAtk: 290, reward: 300000, unlock: 20 },
   ],
   BOSS_ROUNDS: 10,
-  BOSS_PLAYER_HP: 100,
+  BOSS_PLAYER_HP: 300,
 
   // 레이드 액션 게임 설정
   RAID_ACTION: {

@@ -8,9 +8,12 @@ let isBossing = false;
 let isRaidActing = false;
 let isCrafting = false;
 
+const _ITEM_TYPE_ICONS  = { sword: '⚔️', shield: '🛡️', armor: '🥋', boots: '👟', helmet: '🪖' };
+const _ITEM_TYPE_LABELS = { sword: '칼', shield: '방패', armor: '갑옷', boots: '신발', helmet: '투구' };
+
 function _openCraftModal(type) {
-  const icon = type === 'sword' ? '⚔️' : '🛡️';
-  const typeName = type === 'sword' ? '칼' : '방패';
+  const icon = _ITEM_TYPE_ICONS[type] || '🔨';
+  const typeName = _ITEM_TYPE_LABELS[type] || type;
   document.getElementById('enhance-modal-icon').textContent = icon;
   document.getElementById('enhance-modal-icon').className = 'enhance-modal-icon charging';
   document.getElementById('enhance-modal-level').textContent =
@@ -33,7 +36,7 @@ function _revealCraftModal(result, type) {
   const statusEl = document.getElementById('enhance-modal-status');
   const barEl    = document.getElementById('enhance-modal-bar');
   const ringEl   = document.getElementById('enhance-modal-ring');
-  const typeName = type === 'sword' ? '칼' : '방패';
+  const typeName = _ITEM_TYPE_LABELS[type] || type;
 
   if (result.success) {
     iconEl.className   = 'enhance-modal-icon success';
@@ -64,7 +67,7 @@ function _revealCraftModal(result, type) {
 }
 
 function _openEnhanceModal(item) {
-  const icon = item.type === 'sword' ? '⚔️' : '🛡️';
+  const icon = _ITEM_TYPE_ICONS[item.type] || '⚔️';
   const prob = getProbability(item.grade, item.enhancement);
   const probClass = prob <= 30 ? 'color:var(--fail)' : 'color:var(--success)';
 
@@ -212,6 +215,11 @@ function init() {
   document.getElementById('enhance-modal').addEventListener('click', function() {
     if (this.classList.contains('closeable')) _closeEnhanceModal();
   });
+  document.getElementById('item-detail-modal').addEventListener('click', function(e) {
+    if (e.target === this || e.target.id === 'item-detail-close') {
+      this.classList.remove('active');
+    }
+  });
 
   if (state.gameOver) {
     UIManager.showGameOver(state);
@@ -244,6 +252,11 @@ function bindGlobalHandlers() {
   // 슬롯 강화 버튼 (이벤트 위임)
   document.getElementById('tab-equip').addEventListener('click', (e) => {
     soundManager.init();
+    const detailBtn = e.target.closest('.btn-item-detail');
+    if (detailBtn) {
+      window.handleItemDetail(JSON.parse(decodeURIComponent(detailBtn.dataset.item)));
+      return;
+    }
     const btn = e.target.closest('.btn-enhance-slot');
     if (btn) {
       soundManager.playClick();
@@ -448,7 +461,7 @@ window.handleBossStart = function() {
     }
 
     const r = battle.rounds[roundIdx];
-    const playerPct = (r.playerHp / CONFIG.BOSS_PLAYER_HP) * 100;
+    const playerPct = (r.playerHp / playerStats.maxHp) * 100;
     const bossPct = (r.bossHp / stage.bossHp) * 100;
 
     const playerBar = document.getElementById('boss-player-hp-bar');
@@ -523,10 +536,11 @@ window.handleCraftAttempt = function(type) {
   if (isCrafting) return;
   soundManager.init();
 
-  const slotKey = type === 'sword' ? 'equippedSword' : 'equippedShield';
+  const slotMap = { sword: 'equippedSword', shield: 'equippedShield', armor: 'equippedArmor', boots: 'equippedBoots' };
+  const slotKey = slotMap[type];
   const hasMaterial = state.inventory.some(
     i => i.type === type && i.grade === 'high' && i.enhancement === CONFIG.CRAFT.REQUIRED_ENHANCEMENT
-  ) || (state[slotKey]?.grade === 'high' && state[slotKey]?.enhancement === CONFIG.CRAFT.REQUIRED_ENHANCEMENT);
+  ) || (slotKey && state[slotKey]?.grade === 'high' && state[slotKey]?.enhancement === CONFIG.CRAFT.REQUIRED_ENHANCEMENT);
 
   if ((state.whetstones || 0) < CONFIG.CRAFT.WHETSTONE_COST) {
     soundManager.playInsufficientGold();
@@ -535,7 +549,7 @@ window.handleCraftAttempt = function(type) {
   }
   if (!hasMaterial) {
     soundManager.playInsufficientGold();
-    const typeName = type === 'sword' ? '칼' : '방패';
+    const typeName = _ITEM_TYPE_LABELS[type] || type;
     UIManager.showToast(`상급 ${typeName} +${CONFIG.CRAFT.REQUIRED_ENHANCEMENT}이 필요합니다!`, 'error');
     return;
   }
@@ -565,6 +579,45 @@ window.handleCraftAttempt = function(type) {
     UIManager.updateHeader(state);
     isCrafting = false;
   }, 1500);
+};
+
+window.handleItemDetail = function(item) {
+  const meta = { sword: { icon: '⚔️', name: '칼' }, shield: { icon: '🛡️', name: '방패' }, armor: { icon: '🥋', name: '갑옷' }, boots: { icon: '👟', name: '신발' }, helmet: { icon: '🪖', name: '투구' } };
+  const m = meta[item.type] || { icon: '❓', name: item.type };
+
+  let stats = {};
+  if (item.type === 'sword') {
+    const s = CONFIG.ITEM_GRADE_STATS[item.grade];
+    stats = { '⚔️ 공격력': Math.round(s.atk + item.enhancement * s.atkMult) };
+  } else if (item.type === 'shield') {
+    const s = CONFIG.ITEM_GRADE_STATS[item.grade];
+    stats = { '🛡️ 방어력': Math.round(s.def + item.enhancement * s.defMult) };
+  } else if (item.type === 'armor') {
+    const s = CONFIG.ARMOR_GRADE_STATS[item.grade];
+    stats = {
+      '🛡️ 방어력': Math.round(s.def + item.enhancement * s.defMult),
+      '❤️ 체력': Math.round(s.hp + item.enhancement * s.hpMult),
+    };
+  } else if (item.type === 'boots') {
+    const s = CONFIG.BOOTS_GRADE_STATS[item.grade];
+    stats = {
+      '🛡️ 방어력': Math.round(s.def + item.enhancement * s.defMult),
+      '❤️ 체력': Math.round(s.hp + item.enhancement * s.hpMult),
+    };
+  } else if (item.type === 'helmet') {
+    const s = CONFIG.HELMET_GRADE_STATS[item.grade];
+    if (s) stats = { '🛡️ 방어력': s.def, '❤️ 체력': s.hp };
+  }
+
+  const statRows = Object.entries(stats).map(([k, v]) =>
+    `<div class="detail-stat-row"><span class="detail-stat-label">${k}</span><span class="detail-stat-val">${v}</span></div>`
+  ).join('');
+
+  document.getElementById('item-detail-icon').textContent = m.icon;
+  document.getElementById('item-detail-name').textContent = `${CONFIG.GRADE_NAMES[item.grade]} ${m.name} +${item.enhancement}`;
+  document.getElementById('item-detail-name').className = `item-detail-name grade-${item.grade}`;
+  document.getElementById('item-detail-stats').innerHTML = statRows || '<p class="hint">스탯 없음</p>';
+  document.getElementById('item-detail-modal').classList.add('active');
 };
 
 window.handleNewGame = function() {

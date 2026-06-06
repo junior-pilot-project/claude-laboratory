@@ -10,16 +10,19 @@ const CraftSystem = (() => {
     return false;
   }
 
+  const _SLOT_MAP = {
+    sword: 'equippedSword', shield: 'equippedShield',
+    armor: 'equippedArmor', boots: 'equippedBoots',
+  };
+
   function _findHighPlusEleven(state, type) {
-    // 인벤토리에서 탐색
     const inInv = state.inventory.find(
       i => i.type === type && i.grade === 'high' && i.enhancement === CONFIG.CRAFT.REQUIRED_ENHANCEMENT
     );
     if (inInv) return { source: 'inventory', item: inInv };
 
-    // 장착 슬롯에서 탐색
-    const slotKey = type === 'sword' ? 'equippedSword' : 'equippedShield';
-    const equipped = state[slotKey];
+    const slotKey = _SLOT_MAP[type];
+    const equipped = slotKey ? state[slotKey] : null;
     if (equipped && equipped.grade === 'high' && equipped.enhancement === CONFIG.CRAFT.REQUIRED_ENHANCEMENT) {
       return { source: 'equipped', slotKey, item: equipped };
     }

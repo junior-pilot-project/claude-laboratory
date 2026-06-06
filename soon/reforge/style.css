@@ -1119,3 +1119,79 @@ body {
   font-size: 1.7rem;
 }
 .gamepad-btn.attack:active { background: rgba(180, 80, 20, 0.85); }
+
+/* ===== 아이템 상세 팝업 ===== */
+.item-detail-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  z-index: 200;
+  align-items: center;
+  justify-content: center;
+}
+.item-detail-overlay.active { display: flex; }
+
+.item-detail-card {
+  background: var(--bg-card);
+  border: 2px solid var(--accent);
+  border-radius: 14px;
+  padding: 20px 24px;
+  min-width: 220px;
+  max-width: 320px;
+  width: 90%;
+  box-shadow: 0 0 28px rgba(233,69,96,0.35);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  animation: fadeInUp 0.2s ease;
+}
+
+.item-detail-header {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--text-dim);
+  font-size: 0.85rem;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 8px;
+}
+
+#item-detail-icon {
+  font-size: 2.8rem;
+  margin: 4px 0;
+  filter: drop-shadow(0 0 8px rgba(255,215,0,0.5));
+}
+
+.item-detail-name {
+  font-size: 1.1rem;
+  font-weight: bold;
+  text-align: center;
+}
+.item-detail-name.grade-supreme { color: var(--gold); text-shadow: 0 0 8px var(--gold); }
+.item-detail-name.grade-high    { color: var(--high); }
+.item-detail-name.grade-mid     { color: var(--mid);  }
+.item-detail-name.grade-low     { color: var(--low);  }
+
+.item-detail-stats {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-top: 4px;
+}
+
+.detail-stat-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--bg-panel);
+  border-radius: 8px;
+  padding: 8px 14px;
+  border: 1px solid var(--border);
+}
+
+.detail-stat-label { color: var(--text-dim); font-size: 0.9rem; }
+.detail-stat-val   { color: var(--gold); font-size: 1.2rem; font-weight: bold; }

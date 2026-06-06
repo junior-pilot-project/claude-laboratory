@@ -47,12 +47,14 @@ const UIManager = (() => {
       const enhBtn = meta.canEnhance
         ? `<button class="btn-sm btn-enhance-slot ${_selectedSlotKey === slotKey ? 'selected' : ''}" data-slot="${slotKey}">강화</button>`
         : '';
+      const itemJson = encodeURIComponent(JSON.stringify(item));
       el.innerHTML = `
         <div class="item-icon">${meta.icon}</div>
         <div class="item-info">
           <span class="item-grade grade-${item.grade}">${CONFIG.GRADE_NAMES[item.grade]}</span>
           <span class="item-name">${meta.name} +${item.enhancement}</span>
         </div>
+        <button class="btn-sm btn-item-detail" data-item="${itemJson}">상세</button>
         <button class="btn-sm btn-unequip" data-slot="${slotKey}">해제</button>
         ${enhBtn}
       `;
@@ -103,16 +105,24 @@ const UIManager = (() => {
     }
     container.innerHTML = whetHtml + state.inventory.map(item => {
       const meta = _itemMeta[item.type] || { icon: '❓', name: item.type };
+      const itemJson = encodeURIComponent(JSON.stringify(item));
       return `
         <div class="inv-item" data-id="${item.id}">
           <span>${meta.icon}</span>
           <span class="item-grade grade-${item.grade}">${CONFIG.GRADE_NAMES[item.grade]}</span>
           <span>${meta.name} +${item.enhancement}</span>
+          <button class="btn-sm btn-item-detail" data-item="${itemJson}">상세</button>
           <button class="btn-sm btn-equip" data-id="${item.id}">착용</button>
           <button class="btn-sm btn-remove-item" data-id="${item.id}">🗑️</button>
         </div>
       `;
     }).join('');
+
+    container.querySelectorAll('.btn-item-detail').forEach(btn => {
+      btn.addEventListener('click', () => {
+        window.handleItemDetail(JSON.parse(decodeURIComponent(btn.dataset.item)));
+      });
+    });
 
     container.querySelectorAll('.btn-equip').forEach(btn => {
       btn.addEventListener('click', () => {
@@ -194,6 +204,7 @@ const UIManager = (() => {
       statsBox.innerHTML = `
         <div class="boss-stat-item">⚔️ ATK <strong>${playerStats.atk}</strong></div>
         <div class="boss-stat-item">🛡️ DEF <strong>${playerStats.def}</strong></div>
+        <div class="boss-stat-item">❤️ HP <strong>${playerStats.maxHp}</strong></div>
       `;
     }
 
@@ -230,7 +241,7 @@ const UIManager = (() => {
             <div class="boss-hp-bar-wrap">
               <div class="boss-hp-bar player-hp" id="boss-player-hp-bar" style="width:100%"></div>
             </div>
-            <span id="boss-player-hp-text">${CONFIG.BOSS_PLAYER_HP}</span>
+            <span id="boss-player-hp-text">${playerStats.maxHp}</span>
           </div>
           <div class="boss-hp-row">
             <span class="boss-hp-label">👹 보스</span>
@@ -354,8 +365,10 @@ const UIManager = (() => {
 
     const whetCount = state.whetstones || 0;
     const types = [
-      { key: 'sword', label: '칼', icon: '⚔️' },
+      { key: 'sword',  label: '칼',   icon: '⚔️' },
       { key: 'shield', label: '방패', icon: '🛡️' },
+      { key: 'armor',  label: '갑옷', icon: '🥋' },
+      { key: 'boots',  label: '신발', icon: '👟' },
     ];
 
     const panelsHtml = types.map(t => {
@@ -397,8 +410,9 @@ const UIManager = (() => {
       i => i.type === type && i.grade === 'high' && i.enhancement === CONFIG.CRAFT.REQUIRED_ENHANCEMENT
     );
     if (inInv) return true;
-    const slotKey = type === 'sword' ? 'equippedSword' : 'equippedShield';
-    const equipped = state[slotKey];
+    const slotMap = { sword: 'equippedSword', shield: 'equippedShield', armor: 'equippedArmor', boots: 'equippedBoots' };
+    const slotKey = slotMap[type];
+    const equipped = slotKey ? state[slotKey] : null;
     return !!(equipped && equipped.grade === 'high' && equipped.enhancement === CONFIG.CRAFT.REQUIRED_ENHANCEMENT);
   }
 

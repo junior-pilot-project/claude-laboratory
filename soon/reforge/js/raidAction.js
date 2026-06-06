@@ -28,7 +28,7 @@ const RaidAction = (() => {
       x: 12, y: C.GROUND_Y - C.PLAYER_H,
       w: C.PLAYER_W, h: C.PLAYER_H,
       vy: 0, onGround: true,
-      hp: C.PLAYER_HP, maxHp: C.PLAYER_HP,
+      hp: _playerStats?.maxHp ?? C.PLAYER_HP, maxHp: _playerStats?.maxHp ?? C.PLAYER_HP,
       facingRight: true,
       state: 'idle', stateTimer: 0,
       attackCooldown: 0, flashTimer: 0,
@@ -477,110 +477,188 @@ const RaidAction = (() => {
   }
 
   function _drawPlayer() {
-    const ctx = _ctx;
-    const p   = _player;
-    const flash = p.flashTimer > 0;
+    const ctx  = _ctx;
+    const p    = _player;
     const sg   = _playerStats?.swordGrade  || null;
     const hg   = _playerStats?.shieldGrade || null;
     const ag   = _playerStats?.armorGrade  || null;
     const bg   = _playerStats?.bootsGrade  || null;
     const helg = _playerStats?.helmetGrade || null;
-    const skin = '#e8b87a', skinD = '#c8986a';
+    const flash = p.flashTimer > 0;
 
-    function gc(grade) {
-      if (grade === 'high' || grade === 'supreme') return { b: '#d4a520', s: '#fff8a0', d: '#8b6914' };
-      if (grade === 'mid')  return { b: '#6a70f0', s: '#c0c4ff', d: '#3a40a0' };
+    function gc(g) {
+      if (g === 'supreme') return { b: '#ffaa00', s: '#ffe566', d: '#aa6600' };
+      if (g === 'high')    return { b: '#d4a520', s: '#fff8a0', d: '#8b6914' };
+      if (g === 'mid')     return { b: '#6a70f0', s: '#c0c4ff', d: '#3a40a0' };
       return { b: '#909090', s: '#d8d8d8', d: '#505050' };
     }
+
+    const SK = '#f5c89a', SKD = '#c8885a';
+    const CL = '#3a5090', CLD = '#1e3268';
 
     ctx.save();
     ctx.translate(Math.round(p.x), Math.round(p.y));
     if (!p.facingRight) { ctx.translate(p.w, 0); ctx.scale(-1, 1); }
-    ctx.globalAlpha = p.state === 'hurt' ? 0.5 : 1.0;
+    ctx.globalAlpha = p.state === 'hurt' ? 0.45 : 1.0;
 
     // 그림자
     if (p.onGround) {
-      ctx.fillStyle = 'rgba(0,0,0,0.22)';
-      ctx.fillRect(1, p.h, 14, 2);
+      ctx.fillStyle = 'rgba(0,0,0,0.32)';
+      ctx.beginPath(); ctx.ellipse(8, 24, 9, 2.5, 0, 0, Math.PI * 2); ctx.fill();
     }
 
-    // 뒷다리·뒷발 (옆모습)
-    ctx.fillStyle = skinD; ctx.fillRect(2, 15, 4, 7);
-    ctx.fillStyle = skinD; ctx.fillRect(1, 21, 6, 3);
+    // 걷기 모션: 다리 전체를 유닛으로 이동
+    const walking = p.state === 'walk';
+    const wf = _walkFrame;
+    // 뒷다리: 프레임0=뒤로(-X,+Y), 프레임1=앞으로(+X,-Y)
+    const bLX = walking ? (wf === 0 ? -3 : 3) : 0;
+    const bLY = walking ? (wf === 0 ? 2 : -1) : 0;
+    // 앞다리: 뒷다리의 반대 위상
+    const fLX = walking ? (wf === 0 ? 3 : -3) : 0;
+    const fLY = walking ? (wf === 0 ? -1 : 2) : 0;
+
+    const LB = ag ? gc(ag).b : CL;
+    const LD = ag ? gc(ag).d : CLD;
+
+    // ── 뒷다리 (전체 유닛 이동) ──
+    ctx.fillStyle = LB; ctx.fillRect(2 + bLX, 14 + bLY, 5, 9);
+    ctx.fillStyle = LD; ctx.fillRect(1 + bLX, 22 + bLY, 6, 2);
     if (bg) {
       const bc = gc(bg);
-      ctx.fillStyle = bc.b; ctx.fillRect(1, 22, 6, 2);
-      ctx.fillStyle = bc.s; ctx.fillRect(2, 22, 2, 1);
+      ctx.fillStyle = bc.b; ctx.fillRect(0 + bLX, 23 + bLY, 8, 3);
+      ctx.fillStyle = bc.s; ctx.fillRect(1 + bLX, 23 + bLY, 3, 1);
+    } else {
+      ctx.fillStyle = SKD; ctx.fillRect(1 + bLX, 23 + bLY, 6, 3);
     }
 
-    // 방패 (뒤쪽)
+    // ── 방패 (뒤쪽) ──
     if (hg) {
-      const sc = hg === 'high' ? '#d4a520' : hg === 'mid' ? '#6a70f0' : '#909090';
-      const ss = hg === 'high' ? '#fff8a0' : hg === 'mid' ? '#c0c4ff' : '#d8d8d8';
-      ctx.fillStyle = sc; ctx.fillRect(-3, 5, 4, 10);
-      ctx.fillStyle = ss; ctx.fillRect(-2, 7, 2, 6);
+      const sc = gc(hg);
+      ctx.fillStyle = sc.d; ctx.fillRect(-9, 1, 9, 18);
+      ctx.fillStyle = sc.b; ctx.fillRect(-8, 2, 7, 16);
+      ctx.fillStyle = sc.s; ctx.fillRect(-7, 4, 2, 10);
+      ctx.fillStyle = sc.d; ctx.fillRect(-8, 9, 7, 1);
+      ctx.fillStyle = sc.s; ctx.fillRect(-6, 2, 2, 3);
     }
 
-    // 몸통
-    ctx.fillStyle = skin; ctx.fillRect(2, 8, 10, 9);
+    // ── 몸통 ──
     if (ag) {
       const ac = gc(ag);
-      ctx.fillStyle = ac.b; ctx.fillRect(2, 8, 10, 4);  // 어깨 플레이트
-      ctx.fillStyle = ac.d; ctx.fillRect(2, 12, 10, 1); // 구분선
-      ctx.fillStyle = ac.b; ctx.fillRect(3, 13, 8, 4);  // 흉갑
-      ctx.fillStyle = ac.s; ctx.fillRect(4, 14, 3, 2);  // 광택
+      ctx.fillStyle = ac.b; ctx.fillRect(0, 2, 15, 14);
+      ctx.fillStyle = ac.d;
+      ctx.fillRect(0, 2, 15, 2);
+      ctx.fillRect(0, 12, 15, 2);
+      ctx.fillRect(7, 4, 2, 7);
+      ctx.fillStyle = ac.s;
+      ctx.fillRect(1, 4, 5, 5);
+      ctx.fillRect(9, 4, 5, 5);
+      // 견갑
+      ctx.fillStyle = ac.b;
+      ctx.fillRect(-3, 0, 6, 5); ctx.fillRect(12, 0, 6, 5);
+      ctx.fillStyle = ac.d;
+      ctx.fillRect(-3, 0, 6, 1); ctx.fillRect(12, 0, 6, 1);
+      ctx.fillStyle = ac.s;
+      ctx.fillRect(-1, 1, 2, 2); ctx.fillRect(13, 1, 2, 2);
+      // 벨트 버클
+      ctx.fillStyle = '#c89820'; ctx.fillRect(6, 12, 4, 3);
+      ctx.fillStyle = '#fff8a0'; ctx.fillRect(7, 13, 2, 1);
+    } else {
+      ctx.fillStyle = CL;  ctx.fillRect(0, 3, 14, 12);
+      ctx.fillStyle = CLD; ctx.fillRect(0, 3, 14, 2);
+      ctx.fillStyle = CLD; ctx.fillRect(0, 11, 14, 2);
+      ctx.fillStyle = '#5a6aac'; ctx.fillRect(2, 5, 4, 5);
     }
 
-    // 앞다리·앞발
-    ctx.fillStyle = skin;  ctx.fillRect(6, 15, 5, 7);
-    ctx.fillStyle = skinD; ctx.fillRect(5, 21, 7, 3);
+    // ── 앞다리 (전체 유닛 이동) ──
+    ctx.fillStyle = LB; ctx.fillRect(9 + fLX, 14 + fLY, 5, 9);
+    ctx.fillStyle = LD; ctx.fillRect(8 + fLX, 22 + fLY, 7, 2);
     if (bg) {
       const bc = gc(bg);
-      ctx.fillStyle = bc.b; ctx.fillRect(5, 22, 7, 2);
-      ctx.fillStyle = bc.s; ctx.fillRect(6, 22, 2, 1);
+      ctx.fillStyle = bc.b; ctx.fillRect(8 + fLX, 23 + fLY, 8, 3);
+      ctx.fillStyle = bc.s; ctx.fillRect(9 + fLX, 23 + fLY, 3, 1);
+    } else {
+      ctx.fillStyle = SKD; ctx.fillRect(8 + fLX, 23 + fLY, 7, 3);
     }
 
-    // 칼·팔 (오른쪽, 옆모습)
+    // ── 칼 팔 + 칼 ──
     const atkOff = p.state === 'attack' ? 5 : 0;
-    ctx.fillStyle = skin; ctx.fillRect(11, 9, 4, 8);
+    ctx.fillStyle = ag ? gc(ag).b : SK;
+    ctx.fillRect(13, 2, 5, 11);
+    if (ag) { ctx.fillStyle = gc(ag).d; ctx.fillRect(13, 2, 5, 2); }
+
     if (sg) {
-      const wc = sg === 'high' ? '#d4a520' : sg === 'mid' ? '#6a70f0' : '#909090';
-      ctx.fillStyle = '#4a2a10'; ctx.fillRect(10, 7, 5, 3);
-      ctx.fillStyle = wc; ctx.fillRect(13 + atkOff, -1, 2, 9);
-      ctx.fillStyle = '#fff'; ctx.fillRect(14 + atkOff, -1, 1, 9);
+      const wc = gc(sg);
+      ctx.fillStyle = '#2a1005'; ctx.fillRect(15, 8, 3, 7);
+      ctx.fillStyle = wc.d; ctx.fillRect(9, 5, 14, 4);
+      ctx.fillStyle = wc.b; ctx.fillRect(10, 6, 12, 2);
+      ctx.fillStyle = wc.s; ctx.fillRect(11, 6, 10, 1);
+      const bx = 15 + atkOff;
+      ctx.fillStyle = '#9aacc8'; ctx.fillRect(bx, -20, 4, 27);
+      ctx.fillStyle = '#d8ecff'; ctx.fillRect(bx + 1, -20, 2, 27);
+      ctx.fillStyle = '#ffffff'; ctx.fillRect(bx + 1, -20, 1, 25);
+      ctx.fillStyle = wc.b;     ctx.fillRect(bx, -20, 4, 3);
+      ctx.fillStyle = wc.s;     ctx.fillRect(bx + 1, -20, 2, 2);
+    } else {
+      ctx.fillStyle = SK;  ctx.fillRect(14, 4, 5, 8);
+      ctx.fillStyle = SKD; ctx.fillRect(14, 11, 5, 1);
     }
 
-    // 목
-    ctx.fillStyle = skin; ctx.fillRect(5, 4, 4, 5);
+    // ── 목 ──
+    ctx.fillStyle = SK; ctx.fillRect(5, 0, 6, 4);
 
-    // 머리 (큰 머리, 오른쪽 방향)
-    ctx.fillStyle = skin;
-    ctx.beginPath(); ctx.arc(9, -1, 7, 0, Math.PI * 2); ctx.fill();
+    // ── 머리 ──
+    ctx.fillStyle = SK;
+    ctx.beginPath(); ctx.arc(8, -7, 8, 0, Math.PI * 2); ctx.fill();
+    // 옆면 (윤곽) 약간 어둡게
+    ctx.fillStyle = SKD;
+    ctx.beginPath(); ctx.arc(8, -7, 8, Math.PI * 1.55, Math.PI * 1.85); ctx.fill();
 
-    // 머리카락 (위쪽)
-    ctx.fillStyle = '#3a2010';
-    ctx.beginPath(); ctx.arc(9, -1, 7, Math.PI * 1.05, Math.PI * 1.9); ctx.fill();
+    // ── 머리카락 ──
+    ctx.fillStyle = '#160808';
+    ctx.beginPath(); ctx.arc(8, -8, 8, Math.PI * 0.82, Math.PI * 1.92); ctx.fill();
+    // 스파이크 2개
+    ctx.fillStyle = '#160808';
+    ctx.beginPath(); ctx.moveTo(13,-11); ctx.lineTo(17,-22); ctx.lineTo(15,-10); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(9,-13); ctx.lineTo(12,-24); ctx.lineTo(11,-12); ctx.fill();
+    // 하이라이트
+    ctx.fillStyle = '#3a1412';
+    ctx.fillRect(6, -15, 4, 2);
+    ctx.fillRect(10, -14, 3, 2);
 
-    // 투구 (머리 위 반원 + 챙)
+    // ── 투구 ──
     if (helg) {
       const hc = gc(helg);
       ctx.fillStyle = hc.b;
-      ctx.beginPath(); ctx.arc(9, -1, 8, Math.PI, 2 * Math.PI); ctx.fill();
-      ctx.fillStyle = hc.d; ctx.fillRect(0, -2, 18, 2);
-      ctx.fillStyle = hc.s; ctx.fillRect(5, -7, 2, 4);
+      ctx.beginPath(); ctx.arc(8, -7, 9, Math.PI * 0.95, Math.PI * 2.05); ctx.fill();
+      ctx.fillStyle = hc.d;
+      ctx.fillRect(-1, -9, 18, 4);
+      ctx.fillRect(13, -14, 4, 10);
+      ctx.fillStyle = hc.s;
+      ctx.fillRect(0, -14, 5, 8);
+      ctx.fillStyle = hc.d; ctx.fillRect(5, -17, 4, 4);
+      ctx.fillStyle = '#cc2020'; ctx.fillRect(5, -22, 4, 6);
+      ctx.fillStyle = '#ff5555'; ctx.fillRect(6, -22, 2, 5);
     }
 
-    // 눈 (오른쪽 방향 한쪽)
-    ctx.fillStyle = '#fff'; ctx.fillRect(13, -3, 3, 3);
-    ctx.fillStyle = '#2a1a0a'; ctx.fillRect(14, -3, 2, 2);
-    ctx.fillStyle = '#fff'; ctx.fillRect(15, -3, 1, 1);
-
+    // ── 얼굴 ──
+    // 눈 (흰자 + 홍채 + 하이라이트)
+    ctx.fillStyle = '#fff'; ctx.fillRect(10, -12, 6, 5);
+    ctx.fillStyle = '#1a1440'; ctx.fillRect(11, -11, 3, 4);
+    ctx.fillStyle = '#4466ff'; ctx.fillRect(11, -11, 2, 3); // 홍채 색
+    ctx.fillStyle = '#fff';    ctx.fillRect(13, -11, 1, 2); // 하이라이트
+    ctx.fillStyle = '#160808'; ctx.fillRect(10, -13, 7, 2); // 눈썹 (두껍게)
+    ctx.fillStyle = SKD; ctx.fillRect(11, -7, 3, 2);       // 코
+    // 입 (살짝 웃는 표정)
+    ctx.fillStyle = '#8a4a2a';
+    ctx.fillRect(9, -4, 5, 1);
+    ctx.fillRect(13, -3, 2, 1);
     // 볼
-    ctx.fillStyle = 'rgba(240,130,100,0.4)'; ctx.fillRect(14, 0, 2, 1);
+    ctx.fillStyle = 'rgba(220,100,80,0.38)'; ctx.fillRect(13, -8, 5, 4);
 
+    // ── 피격 플래시 ──
     if (flash) {
-      ctx.fillStyle = 'rgba(255,255,255,0.75)';
-      ctx.fillRect(-3, -8, p.w + 6, p.h + 8);
+      ctx.fillStyle = 'rgba(255,50,50,0.55)';
+      ctx.fillRect(-9, -28, p.w + 22, p.h + 28);
     }
     ctx.globalAlpha = 1;
     ctx.restore();
