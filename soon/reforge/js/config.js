@@ -18,10 +18,9 @@ const CONFIG = {
   },
 
   // 강화 비용 계산 기준
-  COST_BASE: 0,
   COST_EASY_PER_LEVEL: 10000,       // 확률 > 30% 구간
   COST_HARD_PER_LEVEL: 1000000,     // 확률 <= 30% 구간
-  COST_HARD_BASE: 70000,            // 30% 구간 진입 시 base (level 7부터)
+  // 확률 테이블에서 <=30% 구간은 index 7부터 (PROB_TABLE[7] = 30)
 
   // 랜덤박스
   BOXES: [
@@ -57,9 +56,15 @@ function getProbability(grade, currentLevel) {
 // 강화 비용 계산
 function getEnhanceCost(grade, currentLevel) {
   const prob = getProbability(grade, currentLevel);
+  const gradeStartIndex = CONFIG.GRADE_START_INDEX[grade];
+
   if (prob > 30) {
-    return CONFIG.COST_BASE + (currentLevel + 1) * CONFIG.COST_EASY_PER_LEVEL;
+    return (currentLevel + 1) * CONFIG.COST_EASY_PER_LEVEL;
   } else {
-    return CONFIG.COST_HARD_BASE + (currentLevel + 1) * CONFIG.COST_HARD_PER_LEVEL;
+    // PROB_TABLE[7] = 30 이므로 hard zone 시작 레벨 = max(0, 7 - gradeStartIndex)
+    const hardZoneStart = Math.max(0, 7 - gradeStartIndex);
+    const lastEasyCost = hardZoneStart * CONFIG.COST_EASY_PER_LEVEL;
+    const relativeHardLevel = currentLevel - hardZoneStart + 1;
+    return lastEasyCost + relativeHardLevel * CONFIG.COST_HARD_PER_LEVEL;
   }
 }
