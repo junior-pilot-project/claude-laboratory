@@ -1,0 +1,1 @@
+{ "interval": 30, "routes": [{ "site": "kobus", "from": "서울", "to": "부산", "date": "2026-06-10", "timeRange": { "start": "08:00", "end": "14:00" } }] }

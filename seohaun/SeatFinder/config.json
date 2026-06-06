@@ -1,0 +1,12 @@
+{
+  "interval": 60,
+  "routes": [
+    {
+      "site": "bustago",
+      "from": "인천공항T1",
+      "to": "동대구",
+      "date": "2026-06-07",
+      "timeRange": { "start": "07:00", "end": "12:00" }
+    }
+  ]
+}
