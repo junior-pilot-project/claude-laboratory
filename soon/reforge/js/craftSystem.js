@@ -49,8 +49,9 @@ const CraftSystem = (() => {
         state[found.slotKey] = null;
       }
 
-      // 최상급 장비 생성 후 인벤토리 추가
+      // 최상급 장비 생성 후 인벤토리 추가 (+12 시작)
       const newItem = GameState.createItem(type, 'supreme');
+      newItem.enhancement = CONFIG.SUPREME_START_LEVEL;
       state.inventory.push(newItem);
       return { success: true, item: newItem };
     }

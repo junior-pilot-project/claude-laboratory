@@ -261,7 +261,13 @@ const UIManager = (() => {
     function renderTable(grade) {
       const container = document.getElementById('prob-info-table');
       if (!container) return;
-      const rows = Array.from({ length: 20 }, (_, level) => {
+
+      const isSupreme = grade === 'supreme';
+      const start = isSupreme ? CONFIG.SUPREME_START_LEVEL : 0;
+      const count = isSupreme ? 9 : 20;
+
+      const rows = Array.from({ length: count }, (_, i) => {
+        const level = start + i;
         const prob = getProbability(grade, level);
         const cost = getEnhanceCost(grade, level);
         const isHard = prob <= 30;

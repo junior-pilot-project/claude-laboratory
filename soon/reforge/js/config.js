@@ -63,6 +63,11 @@ const CONFIG = {
     WHETSTONE_COST: 1,
   },
 
+  // 최상급 강화 전용
+  SUPREME_PROB_TABLE: [10, 7, 5, 3, 1],   // +12 → +13, +13 → +14, ... (이후 1% 고정)
+  SUPREME_START_LEVEL: 12,
+  COST_SUPREME_PER_LEVEL: 1000000,
+
   // 강화연마제 드롭률 (stage id 기준)
   WHETSTONE_DROP_RATES: { easy: 1, normal: 10, hard: 30 },
 
@@ -78,6 +83,12 @@ const CONFIG = {
 
 // 강화 확률 계산
 function getProbability(grade, currentLevel) {
+  if (grade === 'supreme') {
+    const idx = currentLevel - CONFIG.SUPREME_START_LEVEL;
+    if (idx < 0) return 0;
+    const tbl = CONFIG.SUPREME_PROB_TABLE;
+    return idx >= tbl.length ? 1 : tbl[idx];
+  }
   const startIndex = CONFIG.GRADE_START_INDEX[grade];
   const index = startIndex + currentLevel;
   return index >= CONFIG.PROB_TABLE.length ? 1 : CONFIG.PROB_TABLE[index];
@@ -85,6 +96,11 @@ function getProbability(grade, currentLevel) {
 
 // 강화 비용 계산
 function getEnhanceCost(grade, currentLevel) {
+  if (grade === 'supreme') {
+    const relativeLevel = currentLevel - CONFIG.SUPREME_START_LEVEL + 1;
+    return Math.max(1, relativeLevel) * CONFIG.COST_SUPREME_PER_LEVEL;
+  }
+
   const prob = getProbability(grade, currentLevel);
   const gradeStartIndex = CONFIG.GRADE_START_INDEX[grade];
 
