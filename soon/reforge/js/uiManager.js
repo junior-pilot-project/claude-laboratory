@@ -128,11 +128,9 @@ const UIManager = (() => {
       <div class="box-row">
         <div class="box-name">${box.name}</div>
         <div class="box-price">${box.price === 0 ? '무료' : formatGold(box.price)}</div>
-        ${box.id === 'free' ? `
-          <div class="box-count-wrap">
-            개수: <input type="number" id="count-${box.id}" min="1" max="${box.maxCount}" value="1" class="count-input">
-          </div>
-        ` : ''}
+        <div class="box-count-wrap">
+          개수: <input type="number" id="count-${box.id}" min="1" max="${box.maxCount}" value="1" class="count-input">
+        </div>
         <button class="btn-primary btn-open-box" data-box="${box.id}">열기</button>
       </div>
     `).join('');
