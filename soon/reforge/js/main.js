@@ -366,9 +366,11 @@ window.handleRaidStart = function() {
         UIManager.updateHeader(state);
         const res = document.getElementById('raid-result');
         if (res) res.innerHTML = `<div class="raid-clear">🏆 클리어! +${stage.reward.toLocaleString()}G</div>`;
+        RaidCanvas.animateVictory();
       } else {
         const res = document.getElementById('raid-result');
         if (res) res.innerHTML = `<div class="raid-fail">💀 전투 실패...</div>`;
+        RaidCanvas.animateDefeat();
       }
 
       isRaiding = false;
@@ -401,6 +403,7 @@ window.handleRaidStart = function() {
       log.scrollTop = log.scrollHeight;
     }
 
+    RaidCanvas.animateRound();
     roundIdx++;
   }, 500);
 };

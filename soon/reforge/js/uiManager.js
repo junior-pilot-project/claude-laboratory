@@ -191,6 +191,7 @@ const UIManager = (() => {
     if (_selectedRaidStage) {
       const stage = CONFIG.RAID_STAGES.find(s => s.id === _selectedRaidStage);
       battleArea.innerHTML = `
+        <canvas id="raid-canvas" width="420" height="260"></canvas>
         <div class="raid-hp-bars">
           <div class="raid-hp-row">
             <span class="raid-hp-label">👤 플레이어</span>
@@ -211,7 +212,9 @@ const UIManager = (() => {
         <div id="raid-result" class="raid-result"></div>
         <button id="btn-raid-start" class="btn-primary btn-lg" onclick="window.handleRaidStart()">⚔️ 전투 시작</button>
       `;
+      RaidCanvas.init('raid-canvas', stage, state);
     } else {
+      RaidCanvas.stop();
       battleArea.innerHTML = '<p class="hint">스테이지를 선택하세요.</p>';
     }
   }

@@ -775,6 +775,15 @@ body {
 }
 
 /* ===== 레이드 ===== */
+#raid-canvas {
+  display: block;
+  max-width: 100%;
+  margin: 0 auto 10px;
+  border-radius: 10px;
+  border: 1px solid #2a1a3a;
+  image-rendering: pixelated;
+}
+
 .raid-stats-box {
   display: flex;
   gap: 16px;
