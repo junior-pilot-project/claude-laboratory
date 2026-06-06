@@ -82,32 +82,29 @@ const CONFIG = {
 
   // 레이드 액션 게임 설정
   RAID_ACTION: {
-    CANVAS_W: 160,
-    CANVAS_H: 96,
-    SCALE: 3,
+    CANVAS_W: 240,
+    CANVAS_H: 135,
+    SCALE: 2,
     PLAYER_W: 16,
     PLAYER_H: 24,
-    GROUND_Y: 82,
-    ATTACK_RANGE: 22,
-    WALK_SPEED: 42,
-    JUMP_FORCE: 180,
-    GRAVITY: 380,
+    GROUND_Y: 113,
+    ATTACK_RANGE: 28,
+    WALK_SPEED: 55,
+    JUMP_FORCE: 210,
+    GRAVITY: 430,
     PLAYER_HP: 200,
-    ATTACK_COOLDOWN: 0.45,
+    ATTACK_COOLDOWN: 0.4,
   },
 
-  // 레이드 액션 스테이지
-  RAID_ACTION_STAGES: [
-    { id: 'easy',   label: '하급', bossHp: 300,  bossAtk: 8,  bossAtkInterval: 3.0, reward: 30000,  unlock: 0  },
-    { id: 'normal', label: '중급', bossHp: 900,  bossAtk: 20, bossAtkInterval: 2.5, reward: 100000, unlock: 10 },
-    { id: 'hard',   label: '상급', bossHp: 2100, bossAtk: 50, bossAtkInterval: 2.0, reward: 300000, unlock: 20 },
-  ],
-
-  // 보스별 픽셀 스프라이트 크기 (논리 px)
-  RAID_BOSS_SIZES: {
-    easy:   { w: 24, h: 32 },
-    normal: { w: 36, h: 48 },
-    hard:   { w: 48, h: 64 },
+  // 레이드 단일 보스
+  RAID_BOSS: {
+    w: 42, h: 56,
+    hp: 600,
+    atk: 38,
+    reward: 120000,
+    firstAtkDelay: 1.2,
+    minInterval: 1.2,
+    maxInterval: 2.2,
   },
 };
 

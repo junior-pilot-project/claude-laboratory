@@ -477,21 +477,9 @@ window.handleBossStart = function() {
   }, 500);
 };
 
-window.handleRaidActionSelectStage = function(stageId) {
-  UIManager.selectRaidActionStage(stageId);
-  RaidAction.selectStage(stageId);
-  UIManager.renderRaidAction(state);
-};
-
 window.handleRaidActionStart = function() {
   if (isRaidActing) return;
   soundManager.init();
-  const stageId = RaidAction.getSelectedStage();
-  if (!stageId) return;
-
-  const stage = CONFIG.RAID_ACTION_STAGES.find(s => s.id === stageId);
-  const bossStageCfg = CONFIG.BOSS_STAGES.find(s => s.id === stageId);
-  if (!stage || !bossStageCfg || !BossSystem.isStageUnlocked(bossStageCfg, state)) return;
 
   isRaidActing = true;
   const startBtn = document.getElementById('btn-raidact-start');
@@ -501,17 +489,20 @@ window.handleRaidActionStart = function() {
   if (resEl) resEl.innerHTML = '';
 
   const playerStats = BossSystem.getPlayerStats(state);
-  RaidAction.start(stageId, playerStats, function(result) {
+  playerStats.swordGrade = state.equippedSword?.grade || null;
+  playerStats.shieldGrade = state.equippedShield?.grade || null;
+  RaidAction.start(playerStats, function(result) {
     isRaidActing = false;
     if (startBtn) startBtn.disabled = false;
+    const B = CONFIG.RAID_BOSS;
     if (result.victory) {
-      state.gold += stage.reward;
-      const dropped = CraftSystem.rollWhetstoneDrops(state, stage.id);
+      state.gold += B.reward;
+      const dropped = CraftSystem.rollWhetstoneDrops(state, 'normal');
       GameState.save(state);
       UIManager.updateHeader(state);
       soundManager.playRaidVictory();
       const whetMsg = dropped ? ' <span class="whetstone-drop">🪨 강화연마제 획득!</span>' : '';
-      if (resEl) resEl.innerHTML = `<div class="boss-clear">🏆 클리어! +${stage.reward.toLocaleString()}G${whetMsg}</div>`;
+      if (resEl) resEl.innerHTML = `<div class="boss-clear">🏆 클리어! +${B.reward.toLocaleString()}G${whetMsg}</div>`;
     } else {
       soundManager.playRaidDefeat();
       if (resEl) resEl.innerHTML = `<div class="boss-fail">💀 전투 실패...</div>`;

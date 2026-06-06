@@ -1056,7 +1056,7 @@ body {
   display: flex; justify-content: center; margin-bottom: 10px;
 }
 #raidact-canvas {
-  width: 480px; height: 288px;
+  width: 480px; height: 270px;
   max-width: 100%;
   border: 2px solid var(--border); border-radius: 6px;
   image-rendering: pixelated; image-rendering: crisp-edges;
@@ -1064,19 +1064,57 @@ body {
 }
 .raidact-hpbars { display: flex; flex-direction: column; gap: 6px; max-width: 480px; margin: 0 auto 8px; }
 .raidact-hp-row { display: flex; align-items: center; gap: 8px; }
-.raidact-bar-wrap { flex: 1; background: var(--border); border-radius: 4px; height: 12px; overflow: hidden; }
+.raidact-hp-label { min-width: 52px; font-size: 0.82rem; color: var(--text-dim); }
+.raidact-bar-wrap { flex: 1; background: var(--border); border-radius: 4px; height: 13px; overflow: hidden; }
 .raidact-bar { height: 100%; border-radius: 4px; transition: width 0.08s linear; }
 .raidact-bar.player { background: linear-gradient(90deg, #43a047, #81c784); }
 .raidact-bar.boss   { background: linear-gradient(90deg, #e53935, #e57373); }
 .raidact-result { text-align: center; min-height: 28px; margin: 6px 0; }
-.raidact-controls {
-  display: flex; gap: 12px; justify-content: center; margin-top: 12px;
+#btn-raidact-start { display: block; margin: 4px auto 8px; }
+
+/* 게임패드 컨트롤러 */
+.gamepad-wrap {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 480px;
+  margin: 10px auto 0;
+  padding: 0 16px;
 }
-.raidact-btn {
-  width: 72px; height: 72px; font-size: 1.8rem;
-  background: var(--bg-card); border: 2px solid var(--border); border-radius: 12px;
-  color: var(--text); cursor: pointer; user-select: none; touch-action: none;
-  transition: transform 0.08s, background 0.08s;
+.gamepad-left, .gamepad-right {
+  display: flex;
+  gap: 10px;
+  align-items: center;
 }
-.raidact-btn:active { background: var(--accent); border-color: var(--accent); transform: scale(0.92); }
-.raidact-atk { color: var(--gold); border-color: var(--gold); }
+.gamepad-btn {
+  width: 76px; height: 76px;
+  font-size: 1.9rem;
+  background: rgba(30, 20, 50, 0.85);
+  border: 2px solid rgba(120, 100, 180, 0.45);
+  border-radius: 50%;
+  color: #ccc;
+  cursor: pointer;
+  user-select: none; -webkit-user-select: none;
+  touch-action: none;
+  display: flex; align-items: center; justify-content: center;
+  transition: transform 0.07s, background 0.07s, border-color 0.07s;
+  -webkit-tap-highlight-color: transparent;
+}
+.gamepad-btn:active {
+  background: rgba(80, 60, 140, 0.95);
+  border-color: rgba(180, 160, 255, 0.85);
+  transform: scale(0.88);
+}
+.gamepad-btn.move { font-size: 1.6rem; }
+.gamepad-btn.jump {
+  border-color: rgba(60, 130, 255, 0.7);
+  color: #88aaff;
+  font-size: 1.7rem;
+}
+.gamepad-btn.jump:active { background: rgba(40, 80, 200, 0.85); }
+.gamepad-btn.attack {
+  border-color: rgba(255, 160, 60, 0.7);
+  color: var(--gold);
+  font-size: 1.7rem;
+}
+.gamepad-btn.attack:active { background: rgba(180, 80, 20, 0.85); }
