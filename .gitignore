@@ -65,6 +65,7 @@ dist
 # Gatsby files
 .cache/
 public
+!seohaun/SeatFinder/public/
 
 # Storybook build outputs
 .out

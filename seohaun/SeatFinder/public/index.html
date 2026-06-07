@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SeatFinder 설정</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f3f4f6; color: #111; min-height: 100vh; }
+
+  .header { background: #7c3aed; color: white; padding: 14px 20px; display: flex; align-items: center; gap: 10px; }
+  .header h1 { font-size: 16px; font-weight: 700; }
+
+  .container { max-width: 680px; margin: 24px auto; padding: 0 16px; }
+
+  .card { background: white; border-radius: 10px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); margin-bottom: 16px; overflow: hidden; }
+  .card-header { padding: 14px 16px; border-bottom: 1px solid #f3f4f6; display: flex; justify-content: space-between; align-items: center; }
+  .card-title { font-size: 13px; font-weight: 600; color: #374151; }
+  .card-body { padding: 14px 16px; }
+
+  .route-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; border: 1px solid #e5e7eb; border-radius: 8px; margin-bottom: 8px; }
+  .route-info { display: flex; align-items: center; gap: 10px; }
+  .site-badge { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 10px; white-space: nowrap; }
+  .site-kobus   { background: #ede9fe; color: #5b21b6; }
+  .site-bustago { background: #d1fae5; color: #065f46; }
+  .site-korail  { background: #dbeafe; color: #1e40af; }
+  .route-main { font-size: 13px; font-weight: 500; color: #111; }
+  .route-sub  { font-size: 11px; color: #9ca3af; margin-top: 2px; }
+  .route-actions { display: flex; gap: 6px; flex-shrink: 0; }
+  .empty-msg { font-size: 13px; color: #9ca3af; text-align: center; padding: 16px 0; }
+
+  .btn { border: none; border-radius: 6px; cursor: pointer; font-size: 12px; padding: 6px 12px; font-weight: 500; }
+  .btn-primary  { background: #7c3aed; color: white; }
+  .btn-success  { background: #059669; color: white; }
+  .btn-ghost    { background: none; border: 1px solid #d1d5db; color: #6b7280; }
+  .btn-danger   { background: none; border: 1px solid #fca5a5; color: #ef4444; }
+  .btn:hover    { opacity: 0.85; }
+
+  .interval-row { display: flex; align-items: center; gap: 10px; }
+  .interval-input { width: 80px; border: 1px solid #d1d5db; border-radius: 6px; padding: 7px 10px; font-size: 14px; text-align: center; }
+  .interval-input.error { border-color: #ef4444; }
+  .interval-hint { font-size: 12px; color: #9ca3af; }
+  .interval-error { font-size: 11px; color: #ef4444; margin-top: 6px; display: none; }
+
+  .actions { display: flex; justify-content: flex-end; margin-top: 4px; }
+
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); align-items: center; justify-content: center; z-index: 100; }
+  .modal-overlay.open { display: flex; }
+  .modal { background: white; border-radius: 12px; width: 420px; max-width: calc(100vw - 32px); box-shadow: 0 20px 60px rgba(0,0,0,0.2); }
+  .modal-header { padding: 16px 20px; border-bottom: 1px solid #f3f4f6; display: flex; justify-content: space-between; align-items: center; }
+  .modal-title { font-size: 15px; font-weight: 700; }
+  .modal-close { background: none; border: none; font-size: 20px; color: #9ca3af; cursor: pointer; line-height: 1; }
+  .modal-body { padding: 20px; }
+  .modal-footer { padding: 12px 20px; border-top: 1px solid #f3f4f6; display: flex; justify-content: flex-end; gap: 8px; }
+
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .form-group { display: flex; flex-direction: column; gap: 5px; }
+  .form-group.full { grid-column: 1 / -1; }
+  .form-label { font-size: 11px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.4px; }
+  .form-label .opt { font-weight: 400; color: #9ca3af; text-transform: none; letter-spacing: 0; margin-left: 4px; }
+  .form-input, .form-select { border: 1px solid #d1d5db; border-radius: 6px; padding: 8px 10px; font-size: 13px; width: 100%; }
+  .form-input:focus, .form-select:focus { outline: 2px solid #7c3aed; border-color: transparent; }
+  .form-input.error, .form-select.error { border-color: #ef4444; }
+  .time-row { display: flex; align-items: center; gap: 8px; }
+  .time-sep { color: #9ca3af; font-size: 12px; flex-shrink: 0; }
+
+  .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); padding: 10px 20px; border-radius: 8px; font-size: 13px; font-weight: 500; color: white; opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 200; }
+  .toast.show { opacity: 1; }
+  .toast.success { background: #059669; }
+  .toast.error   { background: #dc2626; }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <span>🎯</span>
+  <h1>SeatFinder 설정</h1>
+</header>
+
+<div class="container">
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title">모니터링 노선</span>
+      <button class="btn btn-primary" id="btn-add">+ 노선 추가</button>
+    </div>
+    <div class="card-body">
+      <div id="route-list"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title">체크 간격</span>
+    </div>
+    <div class="card-body">
+      <div class="interval-row">
+        <input class="interval-input" type="number" id="interval" min="60" value="60">
+        <span class="interval-hint">초마다 잔여석 확인 (최소 60초)</span>
+      </div>
+      <div class="interval-error" id="interval-error">최소 60초 이상이어야 합니다</div>
+    </div>
+  </div>
+
+  <div class="actions">
+    <button class="btn btn-success" id="btn-save">💾 config.json 저장</button>
+  </div>
+</div>
+
+<!-- 모달 -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="modal-title">노선 추가</span>
+      <button class="modal-close" id="modal-close">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">사이트</label>
+          <select class="form-select" id="f-site">
+            <option value="kobus">kobus — 고속버스</option>
+            <option value="bustago">bustago — 시외버스</option>
+            <option value="korail">korail — KTX</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">날짜</label>
+          <input class="form-input" type="date" id="f-date">
+        </div>
+        <div class="form-group">
+          <label class="form-label">출발지</label>
+          <input class="form-input" type="text" id="f-from" placeholder="예: 서울">
+        </div>
+        <div class="form-group">
+          <label class="form-label">도착지</label>
+          <input class="form-input" type="text" id="f-to" placeholder="예: 부산">
+        </div>
+        <div class="form-group full">
+          <label class="form-label">시간대 <span class="opt">선택사항</span></label>
+          <div class="time-row">
+            <input class="form-input" type="time" id="f-time-start">
+            <span class="time-sep">~</span>
+            <input class="form-input" type="time" id="f-time-end">
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" id="modal-cancel">취소</button>
+      <button class="btn btn-primary" id="modal-save">저장</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
