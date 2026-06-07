@@ -94,3 +94,9 @@ Thumbs.db
 *.backup
 *.bak
 *.old
+
+# 옛 reforge 프로젝트 / claude worktree 잔여물
+soon/reforge/
+
+# Gradle 캐시
+soon/reacecondition/.gradle/

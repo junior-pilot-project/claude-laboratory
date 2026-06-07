@@ -1,0 +1,8 @@
+[gd_resource type="FontVariation" format=3 uid="uid://dajapoqehxe66"]
+
+[ext_resource type="FontFile" path="res://assets/ui/NormalFont.ttf" id="1"]
+[ext_resource type="FontFile" path="res://assets/ui/Galmuri14.ttf" id="2"]
+
+[resource]
+base_font = ExtResource("1")
+fallbacks = Array[Font]([ExtResource("2")])

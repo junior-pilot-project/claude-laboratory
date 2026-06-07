@@ -1,0 +1,9 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scenes/actors/SlashFX.gd" id="1"]
+[ext_resource type="Texture2D" path="res://assets/fx/slash.png" id="2"]
+
+[node name="SlashFX" type="Sprite2D"]
+texture = ExtResource("2")
+z_index = 5
+script = ExtResource("1")

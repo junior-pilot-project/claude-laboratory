@@ -1,0 +1,155 @@
+[gd_scene load_steps=9 format=3]
+
+[ext_resource type="Script" path="res://scenes/ui/HUD.gd" id="1"]
+[ext_resource type="Texture2D" path="res://assets/ui/pack/bar_box.png" id="2"]
+[ext_resource type="Texture2D" path="res://assets/items/bag.png" id="11"]
+[ext_resource type="Texture2D" path="res://assets/items/info.png" id="12"]
+[ext_resource type="Texture2D" path="res://assets/items/settings.png" id="13"]
+[ext_resource type="Texture2D" path="res://assets/ui/pack/hpbar_box.png" id="9"]
+[ext_resource type="Texture2D" path="res://assets/ui/pack/hpbar_fill.png" id="10"]
+
+[sub_resource type="StyleBoxEmpty" id="bar_sb"]
+
+[sub_resource type="StyleBoxTexture" id="menu_sb"]
+content_margin_left = 6.0
+content_margin_top = 6.0
+content_margin_right = 6.0
+content_margin_bottom = 6.0
+texture = ExtResource("2")
+texture_margin_left = 10.0
+texture_margin_top = 16.0
+texture_margin_right = 10.0
+texture_margin_bottom = 14.0
+
+[node name="HUD" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+script = ExtResource("1")
+
+[node name="Bar" type="PanelContainer" parent="."]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 4.0
+offset_top = 4.0
+offset_right = -4.0
+offset_bottom = 28.0
+theme_override_styles/panel = SubResource("bar_sb")
+
+[node name="Rows" type="VBoxContainer" parent="Bar"]
+layout_mode = 2
+theme_override_constants/separation = 3
+
+[node name="Row1" type="HBoxContainer" parent="Bar/Rows"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="HPBar" type="TextureProgressBar" parent="Bar/Rows/Row1"]
+custom_minimum_size = Vector2(80, 16)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+max_value = 1000.0
+value = 1000.0
+step = 1.0
+nine_patch_stretch = true
+stretch_margin_left = 11
+stretch_margin_top = 7
+stretch_margin_right = 11
+stretch_margin_bottom = 7
+texture_under = ExtResource("9")
+texture_progress = ExtResource("10")
+
+[node name="HPText" type="Label" parent="Bar/Rows/Row1/HPBar"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.98, 0.94, 0.86, 1)
+theme_override_colors/font_outline_color = Color(0.18, 0.09, 0.05, 1)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 10
+text = "1000"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Spacer1" type="Control" parent="Bar/Rows/Row1"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Burger" type="Button" parent="."]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(22, 20)
+layout_mode = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -26.0
+offset_top = 78.0
+offset_right = -4.0
+offset_bottom = 98.0
+theme_override_font_sizes/font_size = 12
+text = "≡"
+
+[node name="Menu" type="PanelContainer" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -116.0
+offset_top = 102.0
+offset_right = -4.0
+offset_bottom = 144.0
+theme_override_styles/panel = SubResource("menu_sb")
+visible = false
+
+[node name="MenuItems" type="HBoxContainer" parent="Menu"]
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="InvButton" type="Button" parent="Menu/MenuItems"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+flat = true
+icon = ExtResource("11")
+expand_icon = true
+icon_alignment = 1
+vertical_icon_alignment = 1
+
+[node name="InfoButton" type="Button" parent="Menu/MenuItems"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+flat = true
+icon = ExtResource("12")
+expand_icon = true
+icon_alignment = 1
+vertical_icon_alignment = 1
+
+[node name="SettingsButton" type="Button" parent="Menu/MenuItems"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+flat = true
+icon = ExtResource("13")
+expand_icon = true
+icon_alignment = 1
+vertical_icon_alignment = 1
+
+[node name="ClearBanner" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -120.0
+offset_top = 70.0
+offset_right = 120.0
+offset_bottom = 100.0
+horizontal_alignment = 1
+text = "강화 80 달성!  클리어!"
+visible = false

@@ -1,0 +1,15 @@
+# Godot 4+ specific ignores
+.godot/
+/android/
+
+# Build output (web export + verification screenshots)
+/build/
+
+# Raw third-party asset pack (curated subset lives in assets/; source zip is tracked)
+/Ninja Adventure - Asset Pack/
+
+# Stray default scene
+/node_2d.tscn
+
+# Python tool caches
+__pycache__/
