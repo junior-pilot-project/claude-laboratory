@@ -1,5 +1,32 @@
+const TERMINALS = {
+  kobus: [
+    '서울경부', '동서울', '센트럴시티(서울)',
+    '인천', '인천공항T1', '인천공항T2', '수원',
+    '대전복합', '대구', '동대구',
+    '부산', '서부산(사상)', '울산', '광주', '속초',
+  ],
+  bustago: [
+    '동서울', '고양종합',
+    '인천', '인천공항T1', '인천공항T2', '수원터미널',
+    '대전복합', '대전서부', '동대구', '대구북부',
+    '부산동부(노포)', '부산서부', '부산해운대',
+    '광주(유스퀘어)', '전주', '순천',
+  ],
+};
+
 let state = { interval: 60, routes: [] };
 let editingIndex = null;
+
+function updateTerminalSelects(site, fromVal = '', toVal = '') {
+  const terminals = TERMINALS[site] ?? [];
+  const fromEl = document.getElementById('f-from');
+  const toEl   = document.getElementById('f-to');
+  const opts = terminals.map(t => `<option value="${t}">${t}</option>`).join('');
+  fromEl.innerHTML = opts;
+  toEl.innerHTML   = opts;
+  if (fromVal) fromEl.value = fromVal;
+  if (toVal)   toEl.value   = toVal;
+}
 
 function renderRoutes() {
   const list = document.getElementById('route-list');
@@ -58,10 +85,9 @@ function openAdd() {
   document.getElementById('modal-title').textContent = '노선 추가';
   document.getElementById('f-site').value = 'kobus';
   document.getElementById('f-date').value = '';
-  document.getElementById('f-from').value = '';
-  document.getElementById('f-to').value = '';
   document.getElementById('f-time-start').value = '';
   document.getElementById('f-time-end').value = '';
+  updateTerminalSelects('kobus');
   openModal();
 }
 
@@ -71,10 +97,9 @@ function openEdit(index) {
   document.getElementById('modal-title').textContent = '노선 수정';
   document.getElementById('f-site').value = r.site;
   document.getElementById('f-date').value = r.date;
-  document.getElementById('f-from').value = r.from;
-  document.getElementById('f-to').value = r.to;
   document.getElementById('f-time-start').value = r.timeRange?.start ?? '';
   document.getElementById('f-time-end').value = r.timeRange?.end ?? '';
+  updateTerminalSelects(r.site, r.from, r.to);
   openModal();
 }
 
@@ -154,6 +179,9 @@ async function saveConfig() {
 }
 
 // ── 이벤트 바인딩 ─────────────────────────────────
+document.getElementById('f-site').addEventListener('change', e => {
+  updateTerminalSelects(e.target.value);
+});
 document.getElementById('btn-add').addEventListener('click', openAdd);
 document.getElementById('modal-close').addEventListener('click', closeModal);
 document.getElementById('modal-cancel').addEventListener('click', closeModal);

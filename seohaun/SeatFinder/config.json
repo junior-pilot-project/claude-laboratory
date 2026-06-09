@@ -1,12 +1,15 @@
 {
-  "interval": 60,
+  "interval": 600,
   "routes": [
     {
-      "site": "bustago",
-      "from": "인천공항T1",
-      "to": "동대구",
-      "date": "2026-06-07",
-      "timeRange": { "start": "07:00", "end": "12:00" }
+      "site": "kobus",
+      "from": "인천",
+      "to": "속초",
+      "date": "2026-07-06",
+      "timeRange": {
+        "start": "06:00",
+        "end": "11:00"
+      }
     }
   ]
 }

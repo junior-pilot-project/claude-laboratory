@@ -26,6 +26,21 @@ SeatFinder/
 
 ---
 
+## Config UI (웹 설정 화면)
+
+`config.json`을 웹 브라우저에서 편집할 수 있는 설정 화면.
+
+```bash
+node config-ui.js   # http://localhost:3000
+```
+
+- 노선 추가/수정/삭제
+- 출발지·도착지는 사이트별 유효 터미널 드롭다운으로 선택 (오타 방지)
+- 사이트 변경 시 터미널 목록 자동 갱신
+- `💾 config.json 저장` 버튼으로 즉시 반영
+
+---
+
 ## 실행 방법
 
 ```bash
