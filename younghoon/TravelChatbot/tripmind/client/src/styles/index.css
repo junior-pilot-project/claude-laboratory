@@ -1,0 +1,259 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-bg-primary: #0a0f1e;
+  --color-bg-secondary: #0d1424;
+  --color-bg-card: #1a2234;
+  --color-accent: #f97316;
+  --color-accent-soft: #fed7aa;
+  --color-text-primary: #f1f5f9;
+  --color-text-secondary: #94a3b8;
+  --color-border: #1e293b;
+  --color-user-bubble: #1d4ed8;
+  --color-ai-bubble: #1e293b;
+}
+
+@layer base {
+  html {
+    font-family: 'Pretendard', 'Apple SD Gothic Neo', -apple-system, BlinkMacSystemFont,
+      'Segoe UI', 'Noto Sans KR', sans-serif;
+  }
+
+  body {
+    background-color: var(--color-bg-primary);
+    color: var(--color-text-primary);
+    @apply antialiased;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply px-4 py-2 rounded-xl text-sm font-medium transition-all;
+    background-color: var(--color-accent);
+    color: white;
+  }
+  .btn-primary:hover {
+    background-color: #fb923c;
+    transform: scale(1.02);
+  }
+  .btn-primary:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .btn-ghost {
+    @apply px-3 py-1.5 rounded-lg text-sm transition-all;
+    color: var(--color-text-secondary);
+    border: 1px solid #475569;
+  }
+  .btn-ghost:hover {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+    transform: scale(1.02);
+  }
+
+  .card {
+    border-radius: 1rem;
+    background-color: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    transition: all 0.2s ease;
+  }
+  .card:hover {
+    border-color: rgba(249, 115, 22, 0.5);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  }
+
+  .markdown-content p { margin-bottom: 0.5rem; }
+  .markdown-content p:last-child { margin-bottom: 0; }
+  .markdown-content ul { list-style: disc; padding-left: 1.25rem; margin-bottom: 0.5rem; }
+  .markdown-content ol { list-style: decimal; padding-left: 1.25rem; margin-bottom: 0.5rem; }
+  .markdown-content li { margin-bottom: 0.25rem; }
+  .markdown-content strong { color: var(--color-accent-soft); font-weight: 600; }
+  .markdown-content code {
+    background: rgba(255,255,255,0.08);
+    padding: 0.1rem 0.3rem;
+    border-radius: 0.25rem;
+    font-size: 0.85em;
+  }
+}
+
+/* ── 스트리밍 커서 ── */
+.streaming-cursor::after {
+  content: '▋';
+  animation: blink 0.7s step-end infinite;
+  margin-left: 2px;
+  color: var(--color-accent);
+}
+
+@keyframes blink {
+  50% { opacity: 0; }
+}
+
+/* ── 타이핑 점 애니메이션 ── */
+.typing-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: var(--color-text-secondary);
+  animation: typing-bounce 1.2s infinite ease-in-out;
+}
+.typing-dot:nth-child(1) { animation-delay: 0s; }
+.typing-dot:nth-child(2) { animation-delay: 0.2s; }
+.typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes typing-bounce {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+  30% { transform: translateY(-6px); opacity: 1; }
+}
+
+/* ── 메시지 등장 애니메이션 ── */
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.2s ease-out both;
+}
+
+/* ── 카드 stagger 등장 ── */
+.card-enter {
+  animation: fade-in-up 0.25s ease-out both;
+}
+.card-enter-delay-1 { animation-delay: 50ms; }
+.card-enter-delay-2 { animation-delay: 100ms; }
+.card-enter-delay-3 { animation-delay: 150ms; }
+.card-enter-delay-4 { animation-delay: 200ms; }
+.card-enter-delay-5 { animation-delay: 250ms; }
+
+/* ── Detail 패널 펼침 (max-height 트랜지션) ── */
+.detail-panel {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-out;
+}
+.detail-panel.open {
+  max-height: 3000px;
+}
+
+/* ── FlightPanel 슬라이드 ── */
+@keyframes flight-slide {
+  from {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.animate-flight-slide {
+  animation: flight-slide 0.25s ease-out;
+}
+
+/* ── 슬라이드 다운 (커맨드 팔레트) ── */
+@keyframes slide-down {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-slide-down {
+  animation: slide-down 0.2s ease-out;
+}
+
+/* ── 헤더 backdrop-blur ── */
+.header-blur {
+  background: rgba(10, 15, 30, 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--color-border);
+}
+
+/* ── 입력창 포커스 ── */
+.input-field {
+  background: #111827;
+  border: 1px solid var(--color-border);
+  color: var(--color-text-primary);
+  transition: border-color 0.15s ease;
+}
+.input-field:focus {
+  outline: none;
+  border-color: var(--color-accent);
+}
+
+/* ── 원형 전송 버튼 ── */
+.send-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.15s ease;
+  cursor: pointer;
+  border: none;
+}
+.send-btn:hover:not(:disabled) {
+  background: #fb923c;
+  transform: scale(1.05);
+}
+.send-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ── 모바일 safe-area ── */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .safe-bottom {
+    padding-bottom: calc(env(safe-area-inset-bottom) + 0.75rem);
+  }
+}
+
+/* ── 스크롤바 ── */
+.scrollbar-thin::-webkit-scrollbar { width: 4px; }
+.scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
+.scrollbar-thin::-webkit-scrollbar-thumb { background: #2d3748; border-radius: 2px; }
+.scrollbar-thin::-webkit-scrollbar-thumb:hover { background: #4a5568; }
+
+/* ── 에러 배너 ── */
+.error-toast {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #fca5a5;
+  border-radius: 0.75rem;
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* ── DestinationCard hover ── */
+.destination-card {
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: 1rem;
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+.destination-card:hover {
+  border-color: rgba(249, 115, 22, 0.5);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.4);
+}

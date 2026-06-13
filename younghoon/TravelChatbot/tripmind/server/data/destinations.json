@@ -1,0 +1,853 @@
+[
+  {
+    "id": "bangkok",
+    "city": "방콕",
+    "city_en": "Bangkok",
+    "country": "태국",
+    "country_en": "Thailand",
+    "emoji_flag": "🇹🇭",
+    "iata_code": "BKK",
+    "timezone": "Asia/Bangkok",
+    "season_scores": {
+      "1": 90, "2": 88, "3": 75, "4": 60,
+      "5": 55, "6": 70, "7": 68, "8": 65,
+      "9": 72, "10": 80, "11": 85, "12": 92
+    },
+    "style_tags": ["도시", "음식", "사원", "쇼핑"],
+    "highlights": [
+      { "name": "왓 포 사원", "name_en": "Wat Pho", "type": "역사", "desc": "거대한 황금 와불상으로 유명한 방콕 최고의 사원" },
+      { "name": "왓 아룬", "name_en": "Wat Arun", "type": "역사", "desc": "차오프라야강변의 새벽 사원, 일몰 뷰가 환상적" },
+      { "name": "짜뚜짝 주말시장", "name_en": "Chatuchak Market", "type": "쇼핑", "desc": "세계 최대 규모의 주말 시장, 수천 개의 상점" },
+      { "name": "카오산로드", "name_en": "Khao San Road", "type": "여행", "desc": "세계 배낭여행자들의 성지, 활기찬 거리 문화" },
+      { "name": "그랜드 팰리스", "name_en": "Grand Palace", "type": "역사", "desc": "태국 왕실의 웅장한 궁전, 에메랄드 사원 포함" }
+    ],
+    "restaurants": [
+      { "name": "쏨분 씨푸드", "cuisine": "해산물", "price_range": "$$", "must_try": "뿌팟퐁커리" },
+      { "name": "제이 파이", "cuisine": "타이 스트리트", "price_range": "$", "must_try": "팟키마오" },
+      { "name": "블루 엘리펀트", "cuisine": "로열 타이", "price_range": "$$$", "must_try": "매사만 커리" }
+    ],
+    "activities": ["짜뚜짝 시장 쇼핑", "차오프라야강 크루즈", "태국 요리 클래스", "무에타이 관람", "룸피니 공원 산책"],
+    "estimated_budget_krw": {
+      "flight_round_trip": 550000,
+      "accommodation_per_night": 80000,
+      "daily_food": 30000,
+      "tips": "비수기(5~9월)에 항공권이 40% 저렴"
+    },
+    "best_months": [11, 12, 1, 2, 3],
+    "visa_info": "한국 국적 30일 무비자"
+  },
+  {
+    "id": "tokyo",
+    "city": "도쿄",
+    "city_en": "Tokyo",
+    "country": "일본",
+    "country_en": "Japan",
+    "emoji_flag": "🇯🇵",
+    "iata_code": "NRT",
+    "timezone": "Asia/Tokyo",
+    "season_scores": {
+      "1": 65, "2": 65, "3": 90, "4": 95,
+      "5": 85, "6": 70, "7": 65, "8": 60,
+      "9": 75, "10": 92, "11": 88, "12": 70
+    },
+    "style_tags": ["도시", "음식", "문화", "쇼핑", "자연"],
+    "highlights": [
+      { "name": "아사쿠사 센소지", "name_en": "Senso-ji Temple", "type": "역사", "desc": "도쿄에서 가장 오래된 사원, 나카미세 쇼핑 거리" },
+      { "name": "시부야 스크램블", "name_en": "Shibuya Crossing", "type": "도시", "desc": "세계에서 가장 바쁜 교차로, 도쿄의 상징" },
+      { "name": "신주쿠 교엔", "name_en": "Shinjuku Gyoen", "type": "자연", "desc": "봄 벚꽃과 가을 단풍의 명소" },
+      { "name": "도쿄 스카이트리", "name_en": "Tokyo Skytree", "type": "전망", "desc": "634m 높이의 세계 최고 탑, 도쿄 전경 조망" },
+      { "name": "아키하바라", "name_en": "Akihabara", "type": "쇼핑", "desc": "전자제품과 애니메이션 문화의 중심지" }
+    ],
+    "restaurants": [
+      { "name": "스키야바시 지로", "cuisine": "스시", "price_range": "$$$$", "must_try": "오마카세 스시" },
+      { "name": "이치란 라멘", "cuisine": "라멘", "price_range": "$", "must_try": "하카타 라멘" },
+      { "name": "우카이 도리야마", "cuisine": "야키도리", "price_range": "$$$", "must_try": "야키도리 코스" }
+    ],
+    "activities": ["벚꽃 피크닉", "츠키지 시장 새벽 투어", "스모 관람", "다도 체험", "닌텐도 도쿄 방문"],
+    "estimated_budget_krw": {
+      "flight_round_trip": 380000,
+      "accommodation_per_night": 120000,
+      "daily_food": 50000,
+      "tips": "JR 패스로 신칸센 이동 시 비용 절약"
+    },
+    "best_months": [3, 4, 10, 11],
+    "visa_info": "한국 국적 90일 무비자"
+  },
+  {
+    "id": "bali",
+    "city": "발리",
+    "city_en": "Bali",
+    "country": "인도네시아",
+    "country_en": "Indonesia",
+    "emoji_flag": "🇮🇩",
+    "iata_code": "DPS",
+    "timezone": "Asia/Makassar",
+    "season_scores": {
+      "1": 60, "2": 58, "3": 65, "4": 75,
+      "5": 88, "6": 92, "7": 95, "8": 95,
+      "9": 90, "10": 80, "11": 65, "12": 58
+    },
+    "style_tags": ["자연", "해변", "문화", "휴양", "요가"],
+    "highlights": [
+      { "name": "우붓 원숭이 숲", "name_en": "Ubud Monkey Forest", "type": "자연", "desc": "600마리 이상의 원숭이가 사는 신성한 자연 보호구역" },
+      { "name": "따나롯 사원", "name_en": "Tanah Lot", "type": "역사", "desc": "바다 위 바위섬에 세워진 발리의 상징적 사원" },
+      { "name": "테가랄랑 라이스 테라스", "name_en": "Tegallalang Rice Terraces", "type": "자연", "desc": "유네스코 세계문화유산, 계단식 논의 절경" },
+      { "name": "쿠타 비치", "name_en": "Kuta Beach", "type": "해변", "desc": "발리 최대 서핑 비치, 일몰이 아름다움" },
+      { "name": "우붓 왕궁", "name_en": "Ubud Palace", "type": "역사", "desc": "발리 전통 건축의 정수, 저녁 케착 댄스 공연" }
+    ],
+    "restaurants": [
+      { "name": "와룽 복스", "cuisine": "발리니즈", "price_range": "$", "must_try": "나시 짬뿌르" },
+      { "name": "로컬 조", "cuisine": "인터내셔널", "price_range": "$$", "must_try": "아보카도 토스트" },
+      { "name": "삭스 파이프라인", "cuisine": "시푸드", "price_range": "$$", "must_try": "생선구이" }
+    ],
+    "activities": ["서핑 레슨", "요가 리트릿", "래프팅", "전통 마사지", "석양 관람"],
+    "estimated_budget_krw": {
+      "flight_round_trip": 620000,
+      "accommodation_per_night": 90000,
+      "daily_food": 25000,
+      "tips": "건기(5~9월)가 최적 시기, 우기엔 30% 저렴"
+    },
+    "best_months": [5, 6, 7, 8, 9],
+    "visa_info": "한국 국적 30일 무비자 (도착 비자 선택 가능)"
+  },
+  {
+    "id": "singapore",
+    "city": "싱가포르",
+    "city_en": "Singapore",
+    "country": "싱가포르",
+    "country_en": "Singapore",
+    "emoji_flag": "🇸🇬",
+    "iata_code": "SIN",
+    "timezone": "Asia/Singapore",
+    "season_scores": {
+      "1": 78, "2": 82, "3": 80, "4": 78,
+      "5": 75, "6": 78, "7": 82, "8": 80,
+      "9": 75, "10": 72, "11": 70, "12": 75
+    },
+    "style_tags": ["도시", "음식", "쇼핑", "자연", "가족"],
+    "highlights": [
+      { "name": "마리나 베이 샌즈", "name_en": "Marina Bay Sands", "type": "랜드마크", "desc": "싱가포르 스카이라인의 상징, 인피니티 풀 유명" },
+      { "name": "가든스 바이 더 베이", "name_en": "Gardens by the Bay", "type": "자연", "desc": "미래형 식물원, 수퍼트리 그로브의 야경이 환상적" },
+      { "name": "차이나타운", "name_en": "Chinatown", "type": "문화", "desc": "다양한 먹거리와 전통 문화가 공존하는 지역" },
+      { "name": "센토사 섬", "name_en": "Sentosa Island", "type": "레저", "desc": "유니버설 스튜디오와 리조트 월드 위치" },
+      { "name": "리틀 인디아", "name_en": "Little India", "type": "문화", "desc": "인도 문화와 향신료 향이 가득한 색채로운 지구" }
+    ],
+    "restaurants": [
+      { "name": "뉴턴 호커 센터", "cuisine": "싱가포르 로컬", "price_range": "$", "must_try": "칠리 크랩" },
+      { "name": "점보 씨푸드", "cuisine": "해산물", "price_range": "$$$", "must_try": "블랙 페퍼 크랩" },
+      { "name": "레이 가든", "cuisine": "광동요리", "price_range": "$$", "must_try": "딤섬" }
+    ],
+    "activities": ["유니버설 스튜디오", "나이트 사파리", "싱가포르 강 크루즈", "호커 센터 투어", "오차드 로드 쇼핑"],
+    "estimated_budget_krw": {
+      "flight_round_trip": 480000,
+      "accommodation_per_night": 180000,
+      "daily_food": 40000,
+      "tips": "호커 센터 이용 시 식비 대폭 절약"
+    },
+    "best_months": [2, 3, 7, 8],
+    "visa_info": "한국 국적 30일 무비자"
+  },
+  {
+    "id": "hanoi",
+    "city": "하노이",
+    "city_en": "Hanoi",
+    "country": "베트남",
+    "country_en": "Vietnam",
+    "emoji_flag": "🇻🇳",
+    "iata_code": "HAN",
+    "timezone": "Asia/Ho_Chi_Minh",
+    "season_scores": {
+      "1": 75, "2": 72, "3": 78, "4": 80,
+      "5": 72, "6": 65, "7": 62, "8": 60,
+      "9": 68, "10": 82, "11": 88, "12": 80
+    },
+    "style_tags": ["역사", "음식", "문화", "저예산"],
+    "highlights": [
+      { "name": "호안끼엠 호수", "name_en": "Hoan Kiem Lake", "type": "자연", "desc": "하노이 중심부의 아름다운 호수, 거북이 전설" },
+      { "name": "하노이 구시가지", "name_en": "Old Quarter", "type": "문화", "desc": "36개 거리가 미로처럼 얽힌 천년 역사의 구도심" },
+      { "name": "호찌민 영묘", "name_en": "Ho Chi Minh Mausoleum", "type": "역사", "desc": "베트남 건국 영웅 호찌민의 영묘" },
+      { "name": "문묘", "name_en": "Temple of Literature", "type": "역사", "desc": "베트남 최초의 국립대학, 공자를 모시는 사원" },
+      { "name": "하롱베이", "name_en": "Ha Long Bay", "type": "자연", "desc": "유네스코 세계자연유산, 2000개 섬의 절경 (당일 투어)" }
+    ],
+    "restaurants": [
+      { "name": "퍼 10 리신응", "cuisine": "베트남", "price_range": "$", "must_try": "쌀국수(퍼)" },
+      { "name": "분짜 흐엉리엔", "cuisine": "베트남", "price_range": "$", "must_try": "분짜" },
+      { "name": "키우기 카페", "cuisine": "카페", "price_range": "$", "must_try": "에그 커피" }
+    ],
+    "activities": ["하롱베이 크루즈", "오토바이 스트리트 투어", "요리 클래스", "쩐꿕 사원 방문", "야시장 쇼핑"],
+    "estimated_budget_krw": {
+      "flight_round_trip": 420000,
+      "accommodation_per_night": 50000,
+      "daily_food": 15000,
+      "tips": "10~11월이 최적기, 우기 7~8월 피하기"
+    },
+    "best_months": [10, 11, 12, 1, 2],
+    "visa_info": "한국 국적 45일 무비자"
+  },
+  {
+    "id": "taipei",
+    "city": "타이베이",
+    "city_en": "Taipei",
+    "country": "대만",
+    "country_en": "Taiwan",
+    "emoji_flag": "🇹🇼",
+    "iata_code": "TPE",
+    "timezone": "Asia/Taipei",
+    "season_scores": {
+      "1": 70, "2": 68, "3": 72, "4": 78,
+      "5": 80, "6": 75, "7": 72, "8": 70,
+      "9": 78, "10": 88, "11": 90, "12": 80
+    },
+    "style_tags": ["음식", "야시장", "도시", "자연"],
+    "highlights": [
+      { "name": "타이베이 101", "name_en": "Taipei 101", "type": "랜드마크", "desc": "한때 세계 최고 빌딩, 타이베이 스카이라인의 상징" },
+      { "name": "스린 야시장", "name_en": "Shilin Night Market", "type": "음식", "desc": "대만 최대의 야시장, 길거리 음식의 천국" },
+      { "name": "지우펀", "name_en": "Jiufen", "type": "관광", "desc": "계단과 홍등이 아름다운 산악 마을, 센과 치히로 배경지" },
+      { "name": "국립 고궁 박물원", "name_en": "National Palace Museum", "type": "역사", "desc": "세계 4대 박물관, 중국 문화재의 보고" },
+      { "name": "양명산 국립공원", "name_en": "Yangmingshan", "type": "자연", "desc": "화산 지형의 국립공원, 봄철 진달래 명소" }
+    ],
+    "restaurants": [
+      { "name": "딘타이펑 본점", "cuisine": "만두", "price_range": "$$", "must_try": "소룡포" },
+      { "name": "요시노야 스테이크", "cuisine": "스테이크", "price_range": "$$$", "must_try": "와규 스테이크" },
+      { "name": "진메이탕", "cuisine": "대만요리", "price_range": "$$", "must_try": "삼배육" }
+    ],
+    "activities": ["야시장 투어", "지우펀 당일치기", "온천 체험", "자전거 라이딩", "사찰 방문"],
+    "estimated_budget_krw": {
+      "flight_round_trip": 350000,
+      "accommodation_per_night": 100000,
+      "daily_food": 35000,
+      "tips": "이지카드로 교통·관광 편리하게"
+    },
+    "best_months": [10, 11, 3, 4],
+    "visa_info": "한국 국적 90일 무비자"
+  },
+  {
+    "id": "hong_kong",
+    "city": "홍콩",
+    "city_en": "Hong Kong",
+    "country": "홍콩",
+    "country_en": "Hong Kong",
+    "emoji_flag": "🇭🇰",
+    "iata_code": "HKG",
+    "timezone": "Asia/Hong_Kong",
+    "season_scores": {
+      "1": 75, "2": 72, "3": 70, "4": 72,
+      "5": 68, "6": 62, "7": 60, "8": 58,
+      "9": 68, "10": 85, "11": 90, "12": 85
+    },
+    "style_tags": ["도시", "음식", "쇼핑", "야경"],
+    "highlights": [
+      { "name": "빅토리아 피크", "name_en": "Victoria Peak", "type": "전망", "desc": "홍콩 최고의 전망대, 야경이 세계적으로 유명" },
+      { "name": "침사추이 워터프론트", "name_en": "Tsim Sha Tsui Promenade", "type": "관광", "desc": "빅토리아 항구와 홍콩 섬 스카이라인 감상" },
+      { "name": "몽콕 야시장", "name_en": "Mong Kok Night Market", "type": "쇼핑", "desc": "홍콩 최고의 쇼핑 거리, 여인가와 새 시장" },
+      { "name": "란타우 섬", "name_en": "Lantau Island", "type": "자연", "desc": "천단대불과 옹핑 케이블카, 자연과 문화의 조화" },
+      { "name": "스탠리 마켓", "name_en": "Stanley Market", "type": "쇼핑", "desc": "해변 옆 아기자기한 시장, 기념품과 예술품" }
+    ],
+    "restaurants": [
+      { "name": "팀호완", "cuisine": "딤섬", "price_range": "$", "must_try": "BBQ 포크 번" },
+      { "name": "운든 면집", "cuisine": "완탕면", "price_range": "$", "must_try": "새우 완탕면" },
+      { "name": "페닌슐라 하이티", "cuisine": "애프터눈 티", "price_range": "$$$", "must_try": "영국식 하이티" }
+    ],
+    "activities": ["트램 빅토리아 피크", "스타페리 탑승", "마카오 당일치기", "홍콩 디즈니랜드", "딤섬 브런치"],
+    "estimated_budget_krw": {
+      "flight_round_trip": 450000,
+      "accommodation_per_night": 200000,
+      "daily_food": 50000,
+      "tips": "옥토퍼스 카드로 교통·편의점 이용"
+    },
+    "best_months": [10, 11, 12, 1],
+    "visa_info": "한국 국적 90일 무비자"
+  },
+  {
+    "id": "phuket",
+    "city": "푸켓",
+    "city_en": "Phuket",
+    "country": "태국",
+    "country_en": "Thailand",
+    "emoji_flag": "🇹🇭",
+    "iata_code": "HKT",
+    "timezone": "Asia/Bangkok",
+    "season_scores": {
+      "1": 92, "2": 95, "3": 90, "4": 80,
+      "5": 55, "6": 45, "7": 42, "8": 40,
+      "9": 45, "10": 55, "11": 80, "12": 90
+    },
+    "style_tags": ["해변", "다이빙", "휴양", "리조트"],
+    "highlights": [
+      { "name": "파통 비치", "name_en": "Patong Beach", "type": "해변", "desc": "푸켓 최대 해변, 수상 스포츠와 나이트라이프" },
+      { "name": "피피 아일랜드", "name_en": "Phi Phi Islands", "type": "자연", "desc": "에메랄드 바다의 석회암 섬, 영화 더 비치 촬영지" },
+      { "name": "빅 부다", "name_en": "Big Buddha", "type": "역사", "desc": "45m 높이의 대형 백색 불상, 섬 전체 조망" },
+      { "name": "제임스 본드 아일랜드", "name_en": "James Bond Island", "type": "자연", "desc": "007 영화 촬영지, 팡아 만의 기암괴석" },
+      { "name": "올드 푸켓 타운", "name_en": "Old Phuket Town", "type": "문화", "desc": "포르투갈 식민지 건축과 색채로운 벽화" }
+    ],
+    "restaurants": [
+      { "name": "카오 만까이 나이옥", "cuisine": "타이", "price_range": "$", "must_try": "카오 만 까이" },
+      { "name": "로브스터 이터", "cuisine": "시푸드", "price_range": "$$$", "must_try": "랍스터 구이" },
+      { "name": "카이 팟 씨푸드", "cuisine": "해산물", "price_range": "$$", "must_try": "팟타이" }
+    ],
+    "activities": ["스노클링", "스쿠버 다이빙", "코끼리 보호구역", "무에타이 관람", "선셋 크루즈"],
+    "estimated_budget_krw": {
+      "flight_round_trip": 600000,
+      "accommodation_per_night": 150000,
+      "daily_food": 30000,
+      "tips": "건기 11~4월이 최적, 우기 6~10월 폭풍 주의"
+    },
+    "best_months": [11, 12, 1, 2, 3],
+    "visa_info": "한국 국적 30일 무비자"
+  },
+  {
+    "id": "shanghai",
+    "city": "상하이",
+    "city_en": "Shanghai",
+    "country": "중국",
+    "country_en": "China",
+    "emoji_flag": "🇨🇳",
+    "iata_code": "PVG",
+    "timezone": "Asia/Shanghai",
+    "season_scores": {
+      "1": 55, "2": 55, "3": 72, "4": 85,
+      "5": 88, "6": 75, "7": 65, "8": 62,
+      "9": 78, "10": 88, "11": 80, "12": 62
+    },
+    "style_tags": ["도시", "역사", "음식", "쇼핑", "현대"],
+    "highlights": [
+      { "name": "외탄(번드)", "name_en": "The Bund", "type": "랜드마크", "desc": "황푸강변의 유럽식 건축과 푸동 스카이라인의 대비" },
+      { "name": "예원", "name_en": "Yu Garden", "type": "역사", "desc": "명나라 시대 전통 정원, 2만 평 규모의 명승지" },
+      { "name": "동방명주 타워", "name_en": "Oriental Pearl Tower", "type": "전망", "desc": "468m 높이의 상하이 랜드마크" },
+      { "name": "티엔쯔팡", "name_en": "Tianzifang", "type": "문화", "desc": "예술가 골목, 카페와 공예품 가득" },
+      { "name": "신천지", "name_en": "Xintiandi", "type": "문화", "desc": "전통 석고문 가옥과 현대적 라이프스타일의 조화" }
+    ],
+    "restaurants": [
+      { "name": "남상 만두관", "cuisine": "소룡포", "price_range": "$", "must_try": "게살 소룡포" },
+      { "name": "광저 루", "cuisine": "상하이요리", "price_range": "$$$", "must_try": "홍소육" },
+      { "name": "웨이리 진진", "cuisine": "훠궈", "price_range": "$$", "must_try": "쓰촨 훠궈" }
+    ],
+    "activities": ["황푸강 야경 크루즈", "쇼핑(난징루)", "상하이 디즈니랜드", "쿵푸 쇼 관람", "자전거 시티 투어"],
+    "estimated_budget_krw": {
+      "flight_round_trip": 400000,
+      "accommodation_per_night": 130000,
+      "daily_food": 35000,
+      "tips": "비자 필요 (144시간 무비자 경유 활용 가능)"
+    },
+    "best_months": [4, 5, 10, 11],
+    "visa_info": "중국 비자 필요 (144시간 무비자 환승 가능)"
+  },
+  {
+    "id": "kyoto",
+    "city": "교토",
+    "city_en": "Kyoto",
+    "country": "일본",
+    "country_en": "Japan",
+    "emoji_flag": "🇯🇵",
+    "iata_code": "KIX",
+    "timezone": "Asia/Tokyo",
+    "season_scores": {
+      "1": 60, "2": 62, "3": 90, "4": 98,
+      "5": 85, "6": 72, "7": 68, "8": 65,
+      "9": 75, "10": 95, "11": 90, "12": 68
+    },
+    "style_tags": ["역사", "문화", "사원", "자연", "전통"],
+    "highlights": [
+      { "name": "후시미 이나리 신사", "name_en": "Fushimi Inari Shrine", "type": "역사", "desc": "수천 개의 토리이 문이 이어지는 신비로운 산책로" },
+      { "name": "아라시야마 대나무숲", "name_en": "Arashiyama Bamboo Grove", "type": "자연", "desc": "하늘 높이 솟은 대나무가 만드는 환상적 터널" },
+      { "name": "긴카쿠지", "name_en": "Ginkaku-ji", "type": "역사", "desc": "은각사라 불리는 선종 사원, 모래 정원이 유명" },
+      { "name": "기온 거리", "name_en": "Gion District", "type": "문화", "desc": "게이샤의 거리, 전통 마치야 건물 보존" },
+      { "name": "키요미즈데라", "name_en": "Kiyomizu-dera", "type": "역사", "desc": "언덕 위 무대식 건축, 교토 시내 전망 명소" }
+    ],
+    "restaurants": [
+      { "name": "기오지 카이세키", "cuisine": "가이세키", "price_range": "$$$$", "must_try": "교카이세키 코스" },
+      { "name": "나카무라", "cuisine": "두부요리", "price_range": "$$$", "must_try": "유도후" },
+      { "name": "니시키 시장", "cuisine": "교토 로컬", "price_range": "$", "must_try": "교야채 피클" }
+    ],
+    "activities": ["다도 체험", "기모노 착용", "철학의 길 산책", "교토 야간 사원 관람", "교토 자전거 투어"],
+    "estimated_budget_krw": {
+      "flight_round_trip": 420000,
+      "accommodation_per_night": 150000,
+      "daily_food": 55000,
+      "tips": "오사카와 연계 여행 시 효율적, 벚꽃 시즌 호텔 조기 예약 필수"
+    },
+    "best_months": [3, 4, 10, 11],
+    "visa_info": "한국 국적 90일 무비자"
+  },
+  {
+    "id": "paris",
+    "city": "파리",
+    "city_en": "Paris",
+    "country": "프랑스",
+    "country_en": "France",
+    "emoji_flag": "🇫🇷",
+    "iata_code": "CDG",
+    "timezone": "Europe/Paris",
+    "season_scores": {
+      "1": 55, "2": 58, "3": 68, "4": 78,
+      "5": 88, "6": 92, "7": 90, "8": 88,
+      "9": 85, "10": 75, "11": 62, "12": 58
+    },
+    "style_tags": ["예술", "문화", "음식", "낭만", "역사"],
+    "highlights": [
+      { "name": "에펠탑", "name_en": "Eiffel Tower", "type": "랜드마크", "desc": "파리의 상징, 야간 조명 쇼가 매 시간 펼쳐짐" },
+      { "name": "루브르 박물관", "name_en": "Louvre Museum", "type": "예술", "desc": "세계 최대 박물관, 모나리자와 밀로의 비너스" },
+      { "name": "몽마르트르", "name_en": "Montmartre", "type": "문화", "desc": "예술가들의 언덕, 사크레쾨르 성당과 좁은 골목" },
+      { "name": "샹젤리제 거리", "name_en": "Champs-Élysées", "type": "쇼핑", "desc": "세계에서 가장 아름다운 거리, 개선문까지 이어짐" },
+      { "name": "베르사유 궁전", "name_en": "Palace of Versailles", "type": "역사", "desc": "루이 14세의 화려한 궁전과 광대한 정원" }
+    ],
+    "restaurants": [
+      { "name": "르 쥘 베른", "cuisine": "프렌치 파인", "price_range": "$$$$", "must_try": "에펠탑 뷰 가이세키" },
+      { "name": "카페 드 플로르", "cuisine": "프렌치 카페", "price_range": "$$", "must_try": "크로와상과 카페" },
+      { "name": "브레스트 카페", "cuisine": "프렌치", "price_range": "$$$", "must_try": "스테이크 타르타르" }
+    ],
+    "activities": ["세느강 크루즈", "오르세 미술관", "마레 지구 산책", "파리 오페라 관람", "와인 시음 투어"],
+    "estimated_budget_krw": {
+      "flight_round_trip": 1200000,
+      "accommodation_per_night": 250000,
+      "daily_food": 80000,
+      "tips": "뮤지엄 패스로 주요 박물관 무제한 입장"
+    },
+    "best_months": [4, 5, 6, 9, 10],
+    "visa_info": "솅겐 비자 필요 (무비자 협정 없음, 90일 이내 무비자 검토 중)"
+  },
+  {
+    "id": "rome",
+    "city": "로마",
+    "city_en": "Rome",
+    "country": "이탈리아",
+    "country_en": "Italy",
+    "emoji_flag": "🇮🇹",
+    "iata_code": "FCO",
+    "timezone": "Europe/Rome",
+    "season_scores": {
+      "1": 60, "2": 62, "3": 72, "4": 85,
+      "5": 90, "6": 88, "7": 82, "8": 78,
+      "9": 90, "10": 85, "11": 68, "12": 62
+    },
+    "style_tags": ["역사", "예술", "음식", "건축", "문화"],
+    "highlights": [
+      { "name": "콜로세움", "name_en": "Colosseum", "type": "역사", "desc": "2000년 역사의 검투사 경기장, 로마 제국의 유산" },
+      { "name": "바티칸 시국", "name_en": "Vatican City", "type": "역사", "desc": "세계 최소 국가, 시스티나 예배당과 성 베드로 대성당" },
+      { "name": "트레비 분수", "name_en": "Trevi Fountain", "type": "랜드마크", "desc": "동전을 던지면 다시 돌아온다는 전설의 분수" },
+      { "name": "판테온", "name_en": "Pantheon", "type": "역사", "desc": "2000년이 지나도 완벽한 콘크리트 돔 건축물" },
+      { "name": "보르게세 미술관", "name_en": "Borghese Gallery", "type": "예술", "desc": "베르니니 조각과 카라바조 회화의 보고" }
+    ],
+    "restaurants": [
+      { "name": "다 엔조 알 29", "cuisine": "로마 전통", "price_range": "$$", "must_try": "카르보나라" },
+      { "name": "리스토란테 일 팔라초", "cuisine": "이탈리안 파인", "price_range": "$$$$", "must_try": "트러플 파스타" },
+      { "name": "피체리아 다 비토", "cuisine": "피자", "price_range": "$", "must_try": "마르게리타 피자" }
+    ],
+    "activities": ["로마 시내 도보 투어", "글라디에이터 체험", "요리 클래스", "카타콤베 투어", "티볼리 빌라 방문"],
+    "estimated_budget_krw": {
+      "flight_round_trip": 1100000,
+      "accommodation_per_night": 200000,
+      "daily_food": 70000,
+      "tips": "로마 패스로 교통+박물관 할인"
+    },
+    "best_months": [4, 5, 9, 10],
+    "visa_info": "솅겐 비자 필요"
+  },
+  {
+    "id": "barcelona",
+    "city": "바르셀로나",
+    "city_en": "Barcelona",
+    "country": "스페인",
+    "country_en": "Spain",
+    "emoji_flag": "🇪🇸",
+    "iata_code": "BCN",
+    "timezone": "Europe/Madrid",
+    "season_scores": {
+      "1": 62, "2": 65, "3": 72, "4": 80,
+      "5": 88, "6": 92, "7": 90, "8": 88,
+      "9": 90, "10": 82, "11": 70, "12": 64
+    },
+    "style_tags": ["예술", "해변", "건축", "음식", "야경"],
+    "highlights": [
+      { "name": "사그라다 파밀리아", "name_en": "Sagrada Familia", "type": "건축", "desc": "가우디의 미완성 걸작, 현재도 건설 중인 대성당" },
+      { "name": "구엘 공원", "name_en": "Park Güell", "type": "예술", "desc": "가우디의 색채로운 모자이크 공원" },
+      { "name": "바르셀로네타 해변", "name_en": "Barceloneta Beach", "type": "해변", "desc": "도심 접근성 최고의 지중해 해변" },
+      { "name": "람블라스 거리", "name_en": "Las Ramblas", "type": "문화", "desc": "바르셀로나의 메인 거리, 각종 퍼포먼스와 상점" },
+      { "name": "고딕 지구", "name_en": "Gothic Quarter", "type": "역사", "desc": "2000년 로마 시대부터 이어지는 중세 역사 지구" }
+    ],
+    "restaurants": [
+      { "name": "엘 불리", "cuisine": "모던 스패니시", "price_range": "$$$$", "must_try": "분자요리 타파스" },
+      { "name": "보케리아 시장", "cuisine": "타파스", "price_range": "$", "must_try": "생햄과 치즈" },
+      { "name": "세르베세리아 카탈루냐", "cuisine": "타파스", "price_range": "$$", "must_try": "파타타스 브라바스" }
+    ],
+    "activities": ["가우디 건축 투어", "플라멩코 공연", "FC 바르셀로나 경기", "해변 비치 발리볼", "와인 투어"],
+    "estimated_budget_krw": {
+      "flight_round_trip": 1150000,
+      "accommodation_per_night": 200000,
+      "daily_food": 65000,
+      "tips": "사그라다 파밀리아는 사전 예약 필수"
+    },
+    "best_months": [5, 6, 9, 10],
+    "visa_info": "솅겐 비자 필요"
+  },
+  {
+    "id": "amsterdam",
+    "city": "암스테르담",
+    "city_en": "Amsterdam",
+    "country": "네덜란드",
+    "country_en": "Netherlands",
+    "emoji_flag": "🇳🇱",
+    "iata_code": "AMS",
+    "timezone": "Europe/Amsterdam",
+    "season_scores": {
+      "1": 50, "2": 52, "3": 65, "4": 82,
+      "5": 88, "6": 85, "7": 82, "8": 80,
+      "9": 75, "10": 65, "11": 55, "12": 52
+    },
+    "style_tags": ["예술", "문화", "자전거", "역사", "자유"],
+    "highlights": [
+      { "name": "반 고흐 미술관", "name_en": "Van Gogh Museum", "type": "예술", "desc": "세계 최대 반 고흐 컬렉션, 200점 이상의 원화" },
+      { "name": "안네 프랑크 하우스", "name_en": "Anne Frank House", "type": "역사", "desc": "2차 대전 은신처, 일기로 유명한 역사적 장소" },
+      { "name": "운하 크루즈", "name_en": "Canal Cruise", "type": "관광", "desc": "165개 운하를 따라 즐기는 암스테르담 유람" },
+      { "name": "케우켄호프 공원", "name_en": "Keukenhof", "type": "자연", "desc": "봄철(3~5월) 700만 송이 튤립의 천국" },
+      { "name": "국립 박물관", "name_en": "Rijksmuseum", "type": "예술", "desc": "렘브란트의 야경 등 네덜란드 황금기 예술" }
+    ],
+    "restaurants": [
+      { "name": "팬케이크 베이커리", "cuisine": "네덜란드", "price_range": "$", "must_try": "더치 팬케이크" },
+      { "name": "더 앤드류스", "cuisine": "비스트로", "price_range": "$$", "must_try": "청어 초절임" },
+      { "name": "카페 아메리칸", "cuisine": "인터내셔널", "price_range": "$$$", "must_try": "스탬팟" }
+    ],
+    "activities": ["자전거 투어", "운하 크루즈", "튤립 시장", "하이네켄 체험관", "치즈 공장 방문"],
+    "estimated_budget_krw": {
+      "flight_round_trip": 1200000,
+      "accommodation_per_night": 230000,
+      "daily_food": 70000,
+      "tips": "4~5월 튤립 시즌이 하이라이트"
+    },
+    "best_months": [4, 5, 6, 7],
+    "visa_info": "솅겐 비자 필요"
+  },
+  {
+    "id": "new_york",
+    "city": "뉴욕",
+    "city_en": "New York",
+    "country": "미국",
+    "country_en": "USA",
+    "emoji_flag": "🇺🇸",
+    "iata_code": "JFK",
+    "timezone": "America/New_York",
+    "season_scores": {
+      "1": 55, "2": 55, "3": 65, "4": 80,
+      "5": 88, "6": 85, "7": 80, "8": 78,
+      "9": 88, "10": 88, "11": 72, "12": 65
+    },
+    "style_tags": ["도시", "예술", "음식", "쇼핑", "엔터테인먼트"],
+    "highlights": [
+      { "name": "자유의 여신상", "name_en": "Statue of Liberty", "type": "랜드마크", "desc": "미국의 상징, 페리로 접근하여 섬에서 관람" },
+      { "name": "센트럴 파크", "name_en": "Central Park", "type": "자연", "desc": "맨해튼 중심의 341ha 도심 공원" },
+      { "name": "메트로폴리탄 미술관", "name_en": "The Met", "type": "예술", "desc": "세계 3대 박물관 중 하나, 500만 점 이상 소장" },
+      { "name": "타임스퀘어", "name_en": "Times Square", "type": "랜드마크", "desc": "세계의 교차로, 브로드웨이 뮤지컬의 중심" },
+      { "name": "브루클린 브리지", "name_en": "Brooklyn Bridge", "type": "건축", "desc": "1883년 개통, 맨해튼 스카이라인 조망 최고의 뷰포인트" }
+    ],
+    "restaurants": [
+      { "name": "피터 루거", "cuisine": "스테이크하우스", "price_range": "$$$$", "must_try": "포터하우스 스테이크" },
+      { "name": "코시 샌드위치", "cuisine": "샌드위치", "price_range": "$", "must_try": "뉴욕 파니니" },
+      { "name": "한일관 코리아타운", "cuisine": "한식", "price_range": "$$", "must_try": "갈비 BBQ" }
+    ],
+    "activities": ["브로드웨이 뮤지컬", "첼시 마켓", "하이라인 파크", "소호 아트 갤러리", "야구 관람(MLB)"],
+    "estimated_budget_krw": {
+      "flight_round_trip": 1300000,
+      "accommodation_per_night": 350000,
+      "daily_food": 100000,
+      "tips": "ESTA 전자 비자 사전 신청 필수, 지하철 패스 활용"
+    },
+    "best_months": [4, 5, 9, 10],
+    "visa_info": "ESTA 전자여행허가 필요 (관광 90일 이내)"
+  },
+  {
+    "id": "sydney",
+    "city": "시드니",
+    "city_en": "Sydney",
+    "country": "호주",
+    "country_en": "Australia",
+    "emoji_flag": "🇦🇺",
+    "iata_code": "SYD",
+    "timezone": "Australia/Sydney",
+    "season_scores": {
+      "1": 85, "2": 85, "3": 82, "4": 78,
+      "5": 70, "6": 62, "7": 60, "8": 65,
+      "9": 72, "10": 80, "11": 85, "12": 88
+    },
+    "style_tags": ["해변", "자연", "도시", "스포츠", "음식"],
+    "highlights": [
+      { "name": "오페라 하우스", "name_en": "Sydney Opera House", "type": "랜드마크", "desc": "유네스코 세계유산, 현대 건축의 걸작" },
+      { "name": "하버 브리지", "name_en": "Harbour Bridge", "type": "건축", "desc": "세계에서 가장 넓은 아치 다리, 클라이밍 체험 가능" },
+      { "name": "본다이 비치", "name_en": "Bondi Beach", "type": "해변", "desc": "세계적 서핑 명소, 백사장과 코발트 블루 바다" },
+      { "name": "블루 마운틴", "name_en": "Blue Mountains", "type": "자연", "desc": "세 자매 바위와 유칼립투스 숲, 당일 투어 가능" },
+      { "name": "달링 하버", "name_en": "Darling Harbour", "type": "관광", "desc": "수족관, 레스토랑, 쇼핑이 집중된 항구 지역" }
+    ],
+    "restaurants": [
+      { "name": "세인트 피터", "cuisine": "시푸드", "price_range": "$$$", "must_try": "피시 앤 칩스" },
+      { "name": "빌리 콰이", "cuisine": "이탈리안", "price_range": "$$", "must_try": "해산물 파스타" },
+      { "name": "마스", "cuisine": "호주 파인", "price_range": "$$$$", "must_try": "캥거루 스테이크" }
+    ],
+    "activities": ["본다이 비치 서핑", "하버 크루즈", "블루 마운틴 하이킹", "타롱가 동물원", "오페라 하우스 관람"],
+    "estimated_budget_krw": {
+      "flight_round_trip": 1000000,
+      "accommodation_per_night": 220000,
+      "daily_food": 75000,
+      "tips": "한국 여름(7~8월)이 호주 겨울, 비수기 특가 노려볼 수 있음"
+    },
+    "best_months": [11, 12, 1, 2, 3],
+    "visa_info": "ETA 전자 비자 신청 필요"
+  },
+  {
+    "id": "dubai",
+    "city": "두바이",
+    "city_en": "Dubai",
+    "country": "아랍에미리트",
+    "country_en": "UAE",
+    "emoji_flag": "🇦🇪",
+    "iata_code": "DXB",
+    "timezone": "Asia/Dubai",
+    "season_scores": {
+      "1": 92, "2": 92, "3": 85, "4": 78,
+      "5": 65, "6": 50, "7": 42, "8": 40,
+      "9": 52, "10": 72, "11": 88, "12": 92
+    },
+    "style_tags": ["럭셔리", "쇼핑", "사막", "도시", "현대"],
+    "highlights": [
+      { "name": "부르즈 할리파", "name_en": "Burj Khalifa", "type": "랜드마크", "desc": "세계 최고 빌딩(828m), At the Top 전망대" },
+      { "name": "두바이 몰", "name_en": "Dubai Mall", "type": "쇼핑", "desc": "세계 최대 쇼핑몰, 실내 스케이트장과 수족관 포함" },
+      { "name": "사막 사파리", "name_en": "Desert Safari", "type": "자연", "desc": "낙타 트래킹, 모래언덕 드라이빙, 별밤 캠프" },
+      { "name": "두바이 크릭", "name_en": "Dubai Creek", "type": "문화", "desc": "전통 나무배(아브라)로 건너는 올드 두바이" },
+      { "name": "팜 주메이라", "name_en": "Palm Jumeirah", "type": "랜드마크", "desc": "야자수 모양의 인공 섬, 아틀란티스 호텔" }
+    ],
+    "restaurants": [
+      { "name": "알 만달", "cuisine": "아라비안", "price_range": "$$", "must_try": "샤와르마" },
+      { "name": "노부 두바이", "cuisine": "퓨전 일식", "price_range": "$$$$", "must_try": "블랙 코드 미소" },
+      { "name": "피에르 가니에르 도바이", "cuisine": "프렌치 파인", "price_range": "$$$$", "must_try": "프랑스 코스 요리" }
+    ],
+    "activities": ["사막 사파리", "스키 두바이", "헬기 투어", "아쿠아벤처 워터파크", "골드 수크 쇼핑"],
+    "estimated_budget_krw": {
+      "flight_round_trip": 700000,
+      "accommodation_per_night": 250000,
+      "daily_food": 80000,
+      "tips": "10~4월이 최적기, 여름(6~8월)은 50도 육박"
+    },
+    "best_months": [11, 12, 1, 2, 3],
+    "visa_info": "한국 국적 30일 무비자"
+  },
+  {
+    "id": "istanbul",
+    "city": "이스탄불",
+    "city_en": "Istanbul",
+    "country": "튀르키예",
+    "country_en": "Turkey",
+    "emoji_flag": "🇹🇷",
+    "iata_code": "IST",
+    "timezone": "Europe/Istanbul",
+    "season_scores": {
+      "1": 55, "2": 58, "3": 68, "4": 80,
+      "5": 88, "6": 90, "7": 88, "8": 85,
+      "9": 88, "10": 80, "11": 68, "12": 58
+    },
+    "style_tags": ["역사", "문화", "음식", "동서양", "시장"],
+    "highlights": [
+      { "name": "아야 소피아", "name_en": "Hagia Sophia", "type": "역사", "desc": "1500년 역사, 비잔틴 제국과 오스만 제국의 상징" },
+      { "name": "블루 모스크", "name_en": "Blue Mosque", "type": "역사", "desc": "6개의 첨탑과 푸른 이즈닉 타일로 장식된 이슬람 사원" },
+      { "name": "그랜드 바자르", "name_en": "Grand Bazaar", "type": "쇼핑", "desc": "세계 최대 재래시장, 4000개 이상의 상점" },
+      { "name": "돌마바흐체 궁전", "name_en": "Dolmabahçe Palace", "type": "역사", "desc": "오스만 제국의 마지막 궁전, 유럽식 화려함" },
+      { "name": "보스포루스 해협", "name_en": "Bosphorus Strait", "type": "자연", "desc": "유럽과 아시아를 나누는 해협, 크루즈 여행 명소" }
+    ],
+    "restaurants": [
+      { "name": "칸틴", "cuisine": "튀르키예", "price_range": "$", "must_try": "케밥" },
+      { "name": "미크라 아시아", "cuisine": "퓨전", "price_range": "$$$", "must_try": "터키식 아침식사" },
+      { "name": "베야즈 핏", "cuisine": "생선", "price_range": "$$", "must_try": "고등어 샌드위치" }
+    ],
+    "activities": ["보스포루스 크루즈", "터키식 목욕(하맘)", "카파도키아 기구 투어", "에페소스 유적지", "스파이스 마켓"],
+    "estimated_budget_krw": {
+      "flight_round_trip": 900000,
+      "accommodation_per_night": 130000,
+      "daily_food": 40000,
+      "tips": "이스탄불 카드로 대중교통 편리하게"
+    },
+    "best_months": [4, 5, 6, 9, 10],
+    "visa_info": "전자 비자(e-Visa) 사전 신청 필요"
+  },
+  {
+    "id": "london",
+    "city": "런던",
+    "city_en": "London",
+    "country": "영국",
+    "country_en": "United Kingdom",
+    "emoji_flag": "🇬🇧",
+    "iata_code": "LHR",
+    "timezone": "Europe/London",
+    "season_scores": {
+      "1": 55, "2": 58, "3": 65, "4": 72,
+      "5": 80, "6": 85, "7": 88, "8": 85,
+      "9": 80, "10": 72, "11": 60, "12": 58
+    },
+    "style_tags": ["역사", "문화", "예술", "쇼핑", "음식"],
+    "highlights": [
+      { "name": "대영 박물관", "name_en": "British Museum", "type": "예술", "desc": "인류 역사 최대 컬렉션, 로제타 스톤과 이집트 미라" },
+      { "name": "타워 오브 런던", "name_en": "Tower of London", "type": "역사", "desc": "900년 역사의 왕실 요새, 왕관 보석 전시" },
+      { "name": "버킹엄 궁전", "name_en": "Buckingham Palace", "type": "역사", "desc": "영국 왕실의 공식 관저, 근위병 교대식 유명" },
+      { "name": "테이트 모던", "name_en": "Tate Modern", "type": "예술", "desc": "세계 최고 현대 미술관, 템즈강 뷰" },
+      { "name": "코벤트 가든", "name_en": "Covent Garden", "type": "문화", "desc": "거리 공연과 레스토랑이 가득한 런던의 핫플" }
+    ],
+    "restaurants": [
+      { "name": "더 팻 덕", "cuisine": "모던 브리티시", "price_range": "$$$$", "must_try": "달팽이 포리지" },
+      { "name": "디숨", "cuisine": "인도 퓨전", "price_range": "$$", "must_try": "블랙 달" },
+      { "name": "피시 앤 칩스 숍", "cuisine": "영국", "price_range": "$", "must_try": "피시 앤 칩스" }
+    ],
+    "activities": ["런던 아이 탑승", "웨스트엔드 뮤지컬", "노팅힐 포토벨로 마켓", "해리포터 스튜디오", "템즈강 유람선"],
+    "estimated_budget_krw": {
+      "flight_round_trip": 1100000,
+      "accommodation_per_night": 280000,
+      "daily_food": 90000,
+      "tips": "오이스터 카드로 지하철 편리하게, 박물관 대부분 무료"
+    },
+    "best_months": [6, 7, 8, 9],
+    "visa_info": "ETA 전자여행허가 신청 필요 (2024년 도입)"
+  },
+  {
+    "id": "cancun",
+    "city": "칸쿤",
+    "city_en": "Cancun",
+    "country": "멕시코",
+    "country_en": "Mexico",
+    "emoji_flag": "🇲🇽",
+    "iata_code": "CUN",
+    "timezone": "America/Cancun",
+    "season_scores": {
+      "1": 88, "2": 90, "3": 90, "4": 88,
+      "5": 82, "6": 72, "7": 75, "8": 72,
+      "9": 60, "10": 65, "11": 80, "12": 88
+    },
+    "style_tags": ["해변", "리조트", "다이빙", "유적", "파티"],
+    "highlights": [
+      { "name": "치첸이트사", "name_en": "Chichen Itza", "type": "역사", "desc": "세계 7대 불가사의, 마야 문명의 피라미드" },
+      { "name": "세노테 이크킬", "name_en": "Cenote Ik Kil", "type": "자연", "desc": "마야의 신성한 천연 수영장, 지하 석회암 동굴" },
+      { "name": "이슬라 무헤레스", "name_en": "Isla Mujeres", "type": "해변", "desc": "에메랄드 빛 카리브 해변의 작은 섬" },
+      { "name": "툴룸 유적지", "name_en": "Tulum Ruins", "type": "역사", "desc": "카리브해를 내려다보는 마야 해안 요새" },
+      { "name": "칸쿤 호텔존", "name_en": "Hotel Zone", "type": "리조트", "desc": "22km의 백사장, 올인클루시브 리조트 밀집" }
+    ],
+    "restaurants": [
+      { "name": "엘 포블라노", "cuisine": "멕시칸", "price_range": "$", "must_try": "타코스 알 파스토르" },
+      { "name": "라 파롤라", "cuisine": "시푸드", "price_range": "$$", "must_try": "세비체" },
+      { "name": "하리 초우", "cuisine": "인터내셔널", "price_range": "$$$", "must_try": "해산물 플래터" }
+    ],
+    "activities": ["세노테 스노클링", "치첸이트사 투어", "카리브해 다이빙", "올인클루시브 리조트", "나이트 클럽"],
+    "estimated_budget_krw": {
+      "flight_round_trip": 1500000,
+      "accommodation_per_night": 200000,
+      "daily_food": 55000,
+      "tips": "올인클루시브로 예약하면 식비 절약, 허리케인 시즌(9월) 피하기"
+    },
+    "best_months": [11, 12, 1, 2, 3, 4],
+    "visa_info": "한국 국적 관광 무비자 (180일 이내)"
+  },
+  {
+    "id": "los_angeles",
+    "city": "로스앤젤레스",
+    "city_en": "Los Angeles",
+    "country": "미국",
+    "country_en": "USA",
+    "emoji_flag": "🇺🇸",
+    "iata_code": "LAX",
+    "timezone": "America/Los_Angeles",
+    "season_scores": {
+      "1": 78, "2": 80, "3": 82, "4": 85,
+      "5": 88, "6": 85, "7": 82, "8": 82,
+      "9": 88, "10": 88, "11": 82, "12": 78
+    },
+    "style_tags": ["도시", "해변", "엔터테인먼트", "음식", "쇼핑"],
+    "highlights": [
+      { "name": "할리우드", "name_en": "Hollywood", "type": "문화", "desc": "영화 산업의 메카, 유니버설 스튜디오와 명예의 거리" },
+      { "name": "산타모니카 비치", "name_en": "Santa Monica Beach", "type": "해변", "desc": "태평양의 황금 해변, 명물 산타모니카 피어" },
+      { "name": "게티 센터", "name_en": "The Getty Center", "type": "예술", "desc": "세계 최고 수준의 미술관, LA 전경과 함께 무료 입장" },
+      { "name": "그리피스 천문대", "name_en": "Griffith Observatory", "type": "전망", "desc": "LA 전경과 야경 최고의 뷰포인트" },
+      { "name": "베벌리 힐스", "name_en": "Beverly Hills", "type": "쇼핑", "desc": "로데오 드라이브, 세계 최고 럭셔리 브랜드의 집결지" }
+    ],
+    "restaurants": [
+      { "name": "인앤아웃 버거", "cuisine": "아메리칸", "price_range": "$", "must_try": "더블더블 버거" },
+      { "name": "노부 말리부", "cuisine": "퓨전 일식", "price_range": "$$$$", "must_try": "미소 마리네이드 블랙 코드" },
+      { "name": "그랜드 센트럴 마켓", "cuisine": "다국적", "price_range": "$", "must_try": "에그 슬럿" }
+    ],
+    "activities": ["유니버설 스튜디오", "베니스 비치 산책", "할리우드 사인 하이킹", "디즈니랜드", "로데오 드라이브 쇼핑"],
+    "estimated_budget_krw": {
+      "flight_round_trip": 1200000,
+      "accommodation_per_night": 300000,
+      "daily_food": 90000,
+      "tips": "ESTA 전자 비자 사전 신청 필수, 렌터카 이용 추천"
+    },
+    "best_months": [4, 5, 9, 10, 11],
+    "visa_info": "ESTA 전자여행허가 필요 (관광 90일 이내)"
+  },
+  {
+    "id": "hawaii",
+    "city": "하와이",
+    "city_en": "Hawaii",
+    "country": "미국",
+    "country_en": "USA",
+    "emoji_flag": "🌺",
+    "iata_code": "HNL",
+    "timezone": "Pacific/Honolulu",
+    "season_scores": {
+      "1": 82, "2": 82, "3": 85, "4": 88,
+      "5": 90, "6": 92, "7": 95, "8": 95,
+      "9": 90, "10": 88, "11": 85, "12": 82
+    },
+    "style_tags": ["해변", "자연", "허니문", "서핑", "휴양"],
+    "highlights": [
+      { "name": "와이키키 비치", "name_en": "Waikiki Beach", "type": "해변", "desc": "하와이의 상징, 다이아몬드 헤드를 배경으로 한 황금 해변" },
+      { "name": "다이아몬드 헤드", "name_en": "Diamond Head", "type": "자연", "desc": "호놀룰루 전경을 내려다보는 화산 분화구 하이킹" },
+      { "name": "진주만", "name_en": "Pearl Harbor", "type": "역사", "desc": "2차 세계대전 역사의 현장, USS 애리조나 기념관" },
+      { "name": "할레아칼라", "name_en": "Haleakala National Park", "type": "자연", "desc": "세계 최대 휴화산, 일출 뷰가 압도적" },
+      { "name": "나팔리 코스트", "name_en": "Na Pali Coast", "type": "자연", "desc": "카우아이의 절벽 해안선, 헬기 투어로 감상" }
+    ],
+    "restaurants": [
+      { "name": "레인보우 드라이브인", "cuisine": "로컬", "price_range": "$", "must_try": "로코모코" },
+      { "name": "알라 모아나 푸드코트", "cuisine": "포케", "price_range": "$", "must_try": "참치 포케 볼" },
+      { "name": "마이타이 바", "cuisine": "아메리칸", "price_range": "$$$", "must_try": "마이타이 칵테일" }
+    ],
+    "activities": ["서핑 레슨", "스노클링", "루아우 디너쇼", "헬기 투어", "노스쇼어 파도 구경"],
+    "estimated_budget_krw": {
+      "flight_round_trip": 1100000,
+      "accommodation_per_night": 350000,
+      "daily_food": 90000,
+      "tips": "ESTA 전자 비자 필요, 렌터카 필수. 허니문 패키지 예약 시 할인 많음"
+    },
+    "best_months": [4, 5, 6, 7, 8, 9],
+    "visa_info": "ESTA 전자여행허가 필요 (관광 90일 이내)"
+  },
+  {
+    "id": "las_vegas",
+    "city": "라스베이거스",
+    "city_en": "Las Vegas",
+    "country": "미국",
+    "country_en": "USA",
+    "emoji_flag": "🇺🇸",
+    "iata_code": "LAS",
+    "timezone": "America/Los_Angeles",
+    "season_scores": {
+      "1": 70, "2": 75, "3": 82, "4": 85,
+      "5": 82, "6": 72, "7": 60, "8": 58,
+      "9": 78, "10": 88, "11": 80, "12": 72
+    },
+    "style_tags": ["카지노", "엔터테인먼트", "쇼", "음식", "나이트라이프"],
+    "highlights": [
+      { "name": "라스베이거스 스트립", "name_en": "The Strip", "type": "랜드마크", "desc": "세계 최고의 카지노 호텔들이 즐비한 6km 황금 거리" },
+      { "name": "그랜드 캐니언", "name_en": "Grand Canyon", "type": "자연", "desc": "당일치기 투어로 갈 수 있는 세계 최대 협곡" },
+      { "name": "프리몬트 스트리트", "name_en": "Fremont Street", "type": "관광", "desc": "올드 라스베이거스, LED 캐노피 쇼가 매시간 펼쳐짐" },
+      { "name": "벨라지오 분수쇼", "name_en": "Bellagio Fountains", "type": "랜드마크", "desc": "1000개 분수의 댄스, 무료 야외 공연" },
+      { "name": "후버댐", "name_en": "Hoover Dam", "type": "건축", "desc": "1936년 완공된 미국 대공황 시대의 거대 토목 공사" }
+    ],
+    "restaurants": [
+      { "name": "조엘 로부숑", "cuisine": "프렌치 파인", "price_range": "$$$$", "must_try": "10코스 테이스팅 메뉴" },
+      { "name": "고든 램지 버거", "cuisine": "아메리칸", "price_range": "$$", "must_try": "헬스 키친 버거" },
+      { "name": "윈 카지노 뷔페", "cuisine": "뷔페", "price_range": "$$", "must_try": "킹크랩 뷔페" }
+    ],
+    "activities": ["카지노 체험", "태양의 서커스 공연", "그랜드 캐니언 헬기 투어", "벨라지오 분수쇼", "프리몬트 집라인"],
+    "estimated_budget_krw": {
+      "flight_round_trip": 1300000,
+      "accommodation_per_night": 150000,
+      "daily_food": 80000,
+      "tips": "카지노 호텔 숙박비 저렴한 대신 카지노 지출 조심, 봄·가을이 최적 시즌"
+    },
+    "best_months": [3, 4, 5, 10, 11],
+    "visa_info": "ESTA 전자여행허가 필요 (관광 90일 이내)"
+  }
+]
