@@ -1,5 +1,7 @@
 import CoreBluetooth
 import Combine
+import UIKit
+import UserNotifications
 
 class BluetoothManager: NSObject, ObservableObject {
     @Published var liveReading: WeightReading?
@@ -18,8 +20,59 @@ class BluetoothManager: NSObject, ObservableObject {
         history = store.load()
         centralManager = CBCentralManager(
             delegate: self,
-            queue: DispatchQueue.global(qos: .userInitiated)
+            queue: DispatchQueue.global(qos: .userInitiated),
+            options: [CBCentralManagerOptionRestoreIdentifierKey: "WeightTrackCentralManager"]
         )
+        observeAppLifecycle()
+        requestNotificationPermission()
+    }
+
+    private func requestNotificationPermission() {
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { _, _ in }
+    }
+
+    private func sendWeightNotification(_ reading: WeightReading) {
+        let content = UNMutableNotificationContent()
+        content.title = "체중 측정 완료"
+        content.body = "\(reading.formattedWeight) kg 기록됐습니다"
+        content.sound = .default
+
+        let request = UNNotificationRequest(
+            identifier: UUID().uuidString,
+            content: content,
+            trigger: nil
+        )
+        UNUserNotificationCenter.current().add(request)
+    }
+
+    private func observeAppLifecycle() {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(appDidEnterBackground),
+            name: UIApplication.didEnterBackgroundNotification,
+            object: nil
+        )
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(appDidBecomeActive),
+            name: UIApplication.didBecomeActiveNotification,
+            object: nil
+        )
+    }
+
+    @objc private func appDidEnterBackground() {
+        // Re-start scan without allowDuplicates — required for background BLE
+        centralManager.stopScan()
+        centralManager.scanForPeripherals(
+            withServices: [scaleServiceUUID],
+            options: [CBCentralManagerScanOptionAllowDuplicatesKey: false]
+        )
+    }
+
+    @objc private func appDidBecomeActive() {
+        // Restore full scan with allowDuplicates for live updates in foreground
+        guard centralManager.state == .poweredOn else { return }
+        startScanning()
     }
 
     func startScanning() {
@@ -82,6 +135,7 @@ class BluetoothManager: NSObject, ObservableObject {
                 self.stableReading = reading
                 self.history.insert(reading, at: 0)
                 self.store.save(self.history)
+                self.sendWeightNotification(reading)
             }
         }
     }
@@ -90,6 +144,12 @@ class BluetoothManager: NSObject, ObservableObject {
 extension BluetoothManager: CBCentralManagerDelegate {
     func centralManagerDidUpdateState(_ central: CBCentralManager) {
         DispatchQueue.main.async { self.bluetoothState = central.state }
+        if central.state == .poweredOn {
+            startScanning()
+        }
+    }
+
+    func centralManager(_ central: CBCentralManager, willRestoreState dict: [String: Any]) {
         if central.state == .poweredOn {
             startScanning()
         }
