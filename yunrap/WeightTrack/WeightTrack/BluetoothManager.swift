@@ -9,12 +9,13 @@ class BluetoothManager: NSObject, ObservableObject {
     @Published var bluetoothState: CBManagerState = .unknown
 
     private var centralManager: CBCentralManager!
+    private let store = WeightStore()
 
-    // Mi Smart Scale (XMTZC01HM/02HM) broadcasts weight via Weight Scale service (0x181D)
     private let scaleServiceUUID = CBUUID(string: "0000181D-0000-1000-8000-00805F9B34FB")
 
     override init() {
         super.init()
+        history = store.load()
         centralManager = CBCentralManager(
             delegate: self,
             queue: DispatchQueue.global(qos: .userInitiated)
@@ -41,6 +42,7 @@ class BluetoothManager: NSObject, ObservableObject {
             self.history = []
             self.stableReading = nil
             self.liveReading = nil
+            self.store.save([])
         }
     }
 
@@ -79,9 +81,7 @@ class BluetoothManager: NSObject, ObservableObject {
             if isStabilized {
                 self.stableReading = reading
                 self.history.insert(reading, at: 0)
-                if self.history.count > 20 {
-                    self.history = Array(self.history.prefix(20))
-                }
+                self.store.save(self.history)
             }
         }
     }

@@ -4,6 +4,21 @@ struct ContentView: View {
     @StateObject private var bluetooth = BluetoothManager()
 
     var body: some View {
+        TabView {
+            liveTab
+                .tabItem {
+                    Label("측정", systemImage: "scalemass")
+                }
+
+            MonthlyView(bluetooth: bluetooth)
+                .tabItem {
+                    Label("기록", systemImage: "calendar")
+                }
+        }
+        .preferredColorScheme(.dark)
+    }
+
+    private var liveTab: some View {
         ZStack {
             Color.black.ignoresSafeArea()
 
@@ -17,13 +32,8 @@ struct ContentView: View {
 
                 statusBar
                     .padding(.bottom, 12)
-
-                if !bluetooth.history.isEmpty {
-                    historyList
-                }
             }
         }
-        .preferredColorScheme(.dark)
     }
 
     // MARK: - Header
@@ -137,49 +147,9 @@ struct ContentView: View {
         }
     }
 
-    // MARK: - History
-
-    private var historyList: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            HStack {
-                Text("측정 기록")
-                    .font(.caption)
-                    .foregroundColor(.gray)
-                    .padding(.leading, 20)
-
-                Spacer()
-
-                Button("지우기") {
-                    withAnimation {
-                        bluetooth.clearHistory()
-                    }
-                }
-                .font(.caption)
-                .foregroundColor(.gray.opacity(0.6))
-                .padding(.trailing, 20)
-            }
-            .padding(.vertical, 10)
-
-            Divider()
-                .background(Color.white.opacity(0.08))
-
-            ScrollView {
-                LazyVStack(spacing: 0) {
-                    ForEach(bluetooth.history) { reading in
-                        HistoryRow(reading: reading)
-                        Divider()
-                            .background(Color.white.opacity(0.06))
-                            .padding(.leading, 20)
-                    }
-                }
-            }
-            .frame(maxHeight: 200)
-        }
-        .background(Color.white.opacity(0.03))
-    }
 }
 
-// MARK: - History Row
+// MARK: - History Row (unused, kept for reference)
 
 struct HistoryRow: View {
     let reading: WeightReading

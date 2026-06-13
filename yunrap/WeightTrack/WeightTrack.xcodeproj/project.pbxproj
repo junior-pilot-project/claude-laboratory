@@ -11,6 +11,8 @@
 		B3C4D5E6F7A8B9C0D1E2F3A4 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8B9C0D1E2F3A4B5C6D7E8F9 /* ContentView.swift */; };
 		B4C5D6E7F8A9B0C1D2E3F4A5 /* BluetoothManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9B0C1D2E3F4A5B6C7D8E9F0 /* BluetoothManager.swift */; };
 		B5C6D7E8F9A0B1C2D3E4F5A6 /* WeightReading.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0C1D2E3F4A5B6C7D8E9F0A1 /* WeightReading.swift */; };
+		D3E4F5A6B7C8D9E0F1A2B3C4 /* WeightStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1E2F3A4B5C6D7E8F9A0B1C2 /* WeightStore.swift */; };
+		D4E5F6A7B8C9D0E1F2A3B4C5 /* MonthlyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2E3F4A5B6C7D8E9F0A1B2C3 /* MonthlyView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -20,6 +22,8 @@
 		A9B0C1D2E3F4A5B6C7D8E9F0 /* BluetoothManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluetoothManager.swift; sourceTree = "<group>"; };
 		B0C1D2E3F4A5B6C7D8E9F0A1 /* WeightReading.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeightReading.swift; sourceTree = "<group>"; };
 		B1C2D3E4F5A6B7C8D9E0F1A2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D1E2F3A4B5C6D7E8F9A0B1C2 /* WeightStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeightStore.swift; sourceTree = "<group>"; };
+		D2E3F4A5B6C7D8E9F0A1B2C3 /* MonthlyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MonthlyView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -48,6 +52,8 @@
 				A8B9C0D1E2F3A4B5C6D7E8F9 /* ContentView.swift */,
 				A9B0C1D2E3F4A5B6C7D8E9F0 /* BluetoothManager.swift */,
 				B0C1D2E3F4A5B6C7D8E9F0A1 /* WeightReading.swift */,
+				D1E2F3A4B5C6D7E8F9A0B1C2 /* WeightStore.swift */,
+				D2E3F4A5B6C7D8E9F0A1B2C3 /* MonthlyView.swift */,
 				B1C2D3E4F5A6B7C8D9E0F1A2 /* Info.plist */,
 			);
 			path = WeightTrack;
@@ -133,6 +139,8 @@
 				B3C4D5E6F7A8B9C0D1E2F3A4 /* ContentView.swift in Sources */,
 				B4C5D6E7F8A9B0C1D2E3F4A5 /* BluetoothManager.swift in Sources */,
 				B5C6D7E8F9A0B1C2D3E4F5A6 /* WeightReading.swift in Sources */,
+				D3E4F5A6B7C8D9E0F1A2B3C4 /* WeightStore.swift in Sources */,
+				D4E5F6A7B8C9D0E1F2A3B4C5 /* MonthlyView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
